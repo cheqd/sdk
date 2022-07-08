@@ -1,0 +1,34 @@
+{
+  "name": "sdk",
+  "version": "0.1.0",
+  "description": "A JavaScript SDK built with cosmjs to interact with cheqd network Cosmos-SDK Node & other compatible vendors.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose ./tests/unit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheqd/sdk.git"
+  },
+  "keywords": [
+    "cheqd",
+    "sdk",
+    "ssi",
+    "did",
+    "vc",
+    "resources"
+  ],
+  "author": "Tasos Derisiotis <tasos@cheqd.io>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cheqd/sdk/issues"
+  },
+  "homepage": "https://github.com/cheqd/sdk#readme",
+  "devDependencies": {
+    "@types/jest": "^28.1.4",
+    "@types/node": "^18.0.3",
+    "jest": "^28.1.2",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
+  }
+}
