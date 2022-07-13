@@ -30,5 +30,12 @@
     "jest": "^28.1.2",
     "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@cheqd/ts-proto": "1.0.0",
+    "@cosmjs/proto-signing": "^0.28.10",
+    "@cosmjs/stargate": "^0.28.10",
+    "@cosmjs/tendermint-rpc": "^0.28.10",
+    "cosmjs-types": "^0.5.0"
   }
 }
