@@ -36,7 +36,7 @@ export const CheqdRegistry = new Registry(defaultCheqdRegistryTypes)
 
 export interface MsgCreateDidEncodeObject extends EncodeObject {
     readonly typeUrl: typeof typeUrlMsgCreateDid,
-    readonly value: MsgCreateDid
+    readonly value: Partial<MsgCreateDid>
 }
 
 export function isMsgCreateDidEncodeObject(obj: EncodeObject): obj is MsgCreateDidEncodeObject {
@@ -45,7 +45,7 @@ export function isMsgCreateDidEncodeObject(obj: EncodeObject): obj is MsgCreateD
 
 export interface MsgCreateDidResponseEncodeObject extends EncodeObject {
     readonly typeUrl: typeof typeUrlMsgCreateDidResponse,
-    readonly value: MsgCreateDidResponse
+    readonly value: Partial<MsgCreateDidResponse>
 }
 
 export function MsgCreateDidResponseEncodeObject(obj: EncodeObject): obj is MsgCreateDidResponseEncodeObject {
@@ -54,7 +54,7 @@ export function MsgCreateDidResponseEncodeObject(obj: EncodeObject): obj is MsgC
 
 export interface MsgUpdateDidEncodeObject extends EncodeObject {
     readonly typeUrl: typeof typeUrlMsgUpdateDid,
-    readonly value: MsgUpdateDid
+    readonly value: Partial<MsgUpdateDid>
 }
 
 export function MsgUpdateDidEncodeObject(obj: EncodeObject): obj is MsgUpdateDidEncodeObject {
@@ -63,7 +63,7 @@ export function MsgUpdateDidEncodeObject(obj: EncodeObject): obj is MsgUpdateDid
 
 export interface MsgUpdateDidResponseEncodeObject extends EncodeObject {
     readonly typeUrl: typeof typeUrlMsgUpdateDidResponse,
-    readonly value: MsgUpdateDidResponse
+    readonly value: Partial<MsgUpdateDidResponse>
 }
 
 export function MsgUpdateDidResponseEncodeObject(obj: EncodeObject): obj is MsgUpdateDidResponseEncodeObject {

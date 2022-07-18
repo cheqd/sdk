@@ -37,6 +37,7 @@
     "@cosmjs/proto-signing": "^0.28.10",
     "@cosmjs/stargate": "^0.28.10",
     "@cosmjs/tendermint-rpc": "^0.28.10",
-    "cosmjs-types": "^0.5.0"
+    "cosmjs-types": "^0.5.0",
+    "did-jwt": "^6.2.0"
   }
 }
