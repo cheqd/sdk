@@ -1,4 +1,4 @@
-import { AbstractCheqdSDKModule } from "./_"
+import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 
 
@@ -7,3 +7,5 @@ export class ResourcesModule extends AbstractCheqdSDKModule {
         super(signer)
     }
 }
+
+export type MinimalImportableResourcesModule = MinimalImportableCheqdSDKModule<ResourcesModule>

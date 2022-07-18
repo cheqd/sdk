@@ -29,4 +29,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
             this.cheqdExtensions = QueryClient.withExtensions(tmClient, setupCheqdExtensions)
         } */
     }
+
+    async signDIDTx(privateKeyHex: string, did: string, tx: any): Promise<string> {
+        return 'signature'
+    }
 }

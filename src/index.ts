@@ -1,9 +1,9 @@
 import { OfflineSigner } from '@cosmjs/proto-signing'
-import { DIDModule } from './modules/did'
-import { ResourcesModule } from './modules/resources'
-import { AbstractCheqdSDKModule, applyMixins, } from './modules/_'
+import { DIDModule, MinimalImportableDIDModule } from './modules/did'
+import { MinimalImportableResourcesModule, ResourcesModule } from './modules/resources'
+import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, } from './modules/_'
 import { CheqdSigningStargateClient } from './signer'
-import { CheqdNetwork } from './types'
+import { CheqdNetwork, IContext, IModuleMethodMap } from './types'
 
 export interface ICheqdSDKOptions {
     modules: AbstractCheqdSDKModule[]
@@ -13,13 +13,15 @@ export interface ICheqdSDKOptions {
     readonly wallet: OfflineSigner
 }
 
-export interface CheqdSDK extends DIDModule, ResourcesModule {}
+export type DefaultCheqdSDKModules = MinimalImportableDIDModule & MinimalImportableResourcesModule
+
+export interface CheqdSDK extends DefaultCheqdSDKModules {}
 
 export class CheqdSDK {
-    methods: string[]
+    methods: IModuleMethodMap
     signer: CheqdSigningStargateClient
     options: ICheqdSDKOptions
-    private protectedMethods: string[] = ['build', 'loadModules']
+    private protectedMethods: string[] = ['constructor', 'build', 'loadModules']
 
     constructor(options: ICheqdSDKOptions) {
         if (!options?.wallet) {
@@ -32,13 +34,29 @@ export class CheqdSDK {
             ...options
         }
 
-        this.methods = this.options.authorizedMethods || []
+        this.methods = {}
         this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, {})
     }
 
+    async execute<P = any, R = any>(method: string, ...params: P[]): Promise<R> {
+        if (!Object.keys(this.methods).includes(method)) {
+            throw new Error(`Method ${method} is not authorized`)
+        }
+        return await this.methods[method](...params, { sdk: this } as IContext)
+    }
+
     private loadModules(modules: AbstractCheqdSDKModule[]): CheqdSDK {
+        this.options.modules = this.options.modules.map((module: any) => instantiateCheqdSDKModule(module, this.signer, { sdk: this } as IContext) as unknown as AbstractCheqdSDKModule)
+
         const methods = applyMixins(this, modules)
-        this.methods = this.methods.concat(methods)
+        this.methods = { ...this.methods, ...filterUnauthorizedMethods(methods, this.options.authorizedMethods || [], this.protectedMethods) }
+
+        for(const method of Object.keys(this.methods)) {
+            // @ts-ignore
+            this[method] = async (...params: any[]) => {
+                return await this.execute(method, ...params)
+            }
+        }
 
         return this
     }
@@ -48,10 +66,21 @@ export class CheqdSDK {
             this.options.rpcUrl,
             this.options.wallet
         )
-        this.options.modules = this.options.modules.map(module => module.constructor(this.signer)) || []
 
         return this.loadModules(this.options.modules)
     }
+}
+
+export function filterUnauthorizedMethods(methods: IModuleMethodMap, authorizedMethods: string[], protectedMethods: string[]): IModuleMethodMap {
+    let _methods = Object.keys(methods)
+    if (authorizedMethods.length === 0) 
+        return _methods
+                .filter(method => !protectedMethods.includes(method))
+                .reduce((acc, method) => ({ ...acc, [method]: methods[method] }), {})
+
+    return _methods
+            .filter(method => authorizedMethods.includes(method) && !protectedMethods.includes(method))
+            .reduce((acc, method) => ({ ...acc, [method]: methods[method] }), {})
 }
 
 export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSDK> {

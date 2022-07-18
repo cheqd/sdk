@@ -1,34 +1,41 @@
+import { GeneratedType, Registry } from "@cosmjs/proto-signing";
 import { QueryClient } from "@cosmjs/stargate";
 import { CheqdSigningStargateClient } from '../signer'
+import { IModuleMethodMap } from "../types";
 import { setupDidExtension } from './did'
 
 export abstract class AbstractCheqdSDKModule {
     _signer: CheqdSigningStargateClient
+    methods: IModuleMethodMap = {}
+    readonly _protectedMethods: string[] = ['constructor', 'exportMethods', 'registryTypes']
 
     constructor(signer: CheqdSigningStargateClient) {
         if (!signer) {
-            throw new Error("signer is required");
+            throw new Error("signer is required")
         }
         this._signer = signer
     }
+
+    static registryTypes(): Iterable<[string, GeneratedType]> {
+        return []
+    }
 }
 
-export function applyMixins(derivedCtor: any, constructors: any[]): string[] {
-    let methods: string[] = []
+export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_protectedMethods'>
+
+export function instantiateCheqdSDKModule<T extends new (...args: any[]) => T>(module: T, ...args: ConstructorParameters<T>): T {
+    return new module(...args)
+}
+
+export function applyMixins(derivedCtor: any, constructors: any[]): IModuleMethodMap {
+    let methods: IModuleMethodMap = {}
 
     constructors.forEach((baseCtor) => {
         Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-            const property = Object.getOwnPropertyDescriptor(baseCtor.prototype, name)
-            if (typeof property !== 'function' || name in derivedCtor.prototype || derivedCtor?.protectedMethods.includes(name)) return
+            const property = baseCtor.prototype[name]
+            if (typeof property !== 'function' || derivedCtor.hasOwnProperty(name) || derivedCtor?.protectedMethods.includes(name) || baseCtor.prototype?._protectedMethods?.includes(name)) return
 
-            Object.defineProperty(
-                derivedCtor.prototype,
-                name,
-                property ||
-                Object.create(null)
-            );
-
-            methods.push(name)
+            methods = { ...methods, [name]: property }
         });
     });
 
