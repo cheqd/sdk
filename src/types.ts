@@ -17,7 +17,7 @@ export interface IContext {
 }
 
 export enum VerificationMethods {
-    Multibase = 'Ed25519VerificationKey2020',
+    Multibase58 = 'Ed25519VerificationKey2020',
     JWK = 'JsonWebKey2020',
 }
 
@@ -28,4 +28,14 @@ export type TSignerAlgo = {
 export interface ISignInputs {
     verificationMethodId: string
     privateKeyHex: string
+}
+
+export interface IKeyPair {
+    publicKey: string
+    privateKey: string
+}
+
+export interface IKeyValuePair {
+    key: string
+    value: any
 }

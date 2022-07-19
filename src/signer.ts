@@ -35,7 +35,11 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
         } */
     }
 
-    private async checkDidSigners(verificationMethods: VerificationMethod[] = []) {
+    async checkDidSigners(verificationMethods: VerificationMethod[] = []): Promise<TSignerAlgo> {
+        if (verificationMethods.length === 0) {
+            throw new Error('No verification methods provided')
+        }
+
         verificationMethods.forEach((verificationMethod) => {
             if (!(Object.values(VerificationMethods) as string[]).includes(verificationMethod.type)) {
                 throw new Error(`Unsupported verification method type: ${verificationMethod.type}`)
@@ -44,10 +48,16 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
                 this.didSigners[verificationMethod.type] = EdDSASigner
             }
         })
+
+        return this.didSigners
     }
 
-    async getDidSigner(verificationMethodId: string, verificationMethods: VerificationMethod[]): Promise<(secretKey: Uint8Array) => Signer> {
-        return this.didSigners[verificationMethods.find(method => method.id === verificationMethodId)!.type] ?? EdDSASigner
+    async getDidSigner(verificationMethodId: string, verificationMethods: Partial<VerificationMethod>[]): Promise<(secretKey: Uint8Array) => Signer> {
+        const verificationMethod = verificationMethods.find(method => method.id === verificationMethodId)?.type
+        if (!verificationMethod) {
+            throw new Error(`Verification method for ${verificationMethodId} not found`)
+        }
+        return this.didSigners[verificationMethod] ?? EdDSASigner
     }
 
     async signDIDTx(signInputs: ISignInputs[], payload: MsgCreateDidPayload): Promise<SignInfo[]> {
