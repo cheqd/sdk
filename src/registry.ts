@@ -1,15 +1,15 @@
 import {
-    Registry,
-    GeneratedType,
-    EncodeObject
+	Registry,
+	GeneratedType,
+	EncodeObject
 } from '@cosmjs/proto-signing'
 
 import {
-    defaultRegistryTypes
+	defaultRegistryTypes
 } from '@cosmjs/stargate'
 
 import {
-    MsgCreateDid, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidResponse
+	MsgCreateDid, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidResponse
 } from '@cheqd/ts-proto/cheqd/v1/tx'
 
 export const typeUrlMsgCreateDid = '/cheqdid.cheqdnode.cheqd.v1.MsgCreateDid'
@@ -17,55 +17,46 @@ export const typeUrlMsgCreateDidResponse = '/cheqdid.cheqdnode.cheqd.v1.MsgCreat
 export const typeUrlMsgUpdateDid = '/cheqdid.cheqdnode.cheqd.v1.MsgUpdateDid'
 export const typeUrlMsgUpdateDidResponse = '/cheqdid.cheqdnode.cheqd.v1.MsgUpdateDidResponse'
 
-const defaultCheqdRegistryTypes: Iterable<[string, GeneratedType]> = [
-    ...defaultRegistryTypes,
+export function createDefaultCheqdRegistry(customTypes?: Iterable<[string, GeneratedType]>): Registry {
+	if (!customTypes) customTypes = [];
 
-    /** Move them as registrations to each module's constructor. */
-
-    [typeUrlMsgCreateDid, MsgCreateDid],
-    [typeUrlMsgCreateDidResponse, MsgCreateDidResponse],
-    [typeUrlMsgUpdateDid, MsgUpdateDid],
-    [typeUrlMsgUpdateDidResponse, MsgUpdateDidResponse],
-]
-
-export function createDefaultCheqdRegistry(): Registry {
-    return new Registry(defaultCheqdRegistryTypes)
+	return new Registry([...defaultRegistryTypes, ...customTypes])
 }
 
-export const CheqdRegistry = new Registry(defaultCheqdRegistryTypes)
+export const CheqdRegistry = new Registry(defaultRegistryTypes)
 
 export interface MsgCreateDidEncodeObject extends EncodeObject {
-    readonly typeUrl: typeof typeUrlMsgCreateDid,
-    readonly value: Partial<MsgCreateDid>
+	readonly typeUrl: typeof typeUrlMsgCreateDid,
+	readonly value: Partial<MsgCreateDid>
 }
 
 export function isMsgCreateDidEncodeObject(obj: EncodeObject): obj is MsgCreateDidEncodeObject {
-    return obj.typeUrl === typeUrlMsgCreateDid
+	return obj.typeUrl === typeUrlMsgCreateDid
 }
 
 export interface MsgCreateDidResponseEncodeObject extends EncodeObject {
-    readonly typeUrl: typeof typeUrlMsgCreateDidResponse,
-    readonly value: Partial<MsgCreateDidResponse>
+	readonly typeUrl: typeof typeUrlMsgCreateDidResponse,
+	readonly value: Partial<MsgCreateDidResponse>
 }
 
 export function MsgCreateDidResponseEncodeObject(obj: EncodeObject): obj is MsgCreateDidResponseEncodeObject {
-    return obj.typeUrl === typeUrlMsgCreateDidResponse
+	return obj.typeUrl === typeUrlMsgCreateDidResponse
 }
 
 export interface MsgUpdateDidEncodeObject extends EncodeObject {
-    readonly typeUrl: typeof typeUrlMsgUpdateDid,
-    readonly value: Partial<MsgUpdateDid>
+	readonly typeUrl: typeof typeUrlMsgUpdateDid,
+	readonly value: Partial<MsgUpdateDid>
 }
 
 export function MsgUpdateDidEncodeObject(obj: EncodeObject): obj is MsgUpdateDidEncodeObject {
-    return obj.typeUrl === typeUrlMsgUpdateDid
+	return obj.typeUrl === typeUrlMsgUpdateDid
 }
 
 export interface MsgUpdateDidResponseEncodeObject extends EncodeObject {
-    readonly typeUrl: typeof typeUrlMsgUpdateDidResponse,
-    readonly value: Partial<MsgUpdateDidResponse>
+	readonly typeUrl: typeof typeUrlMsgUpdateDidResponse,
+	readonly value: Partial<MsgUpdateDidResponse>
 }
 
 export function MsgUpdateDidResponseEncodeObject(obj: EncodeObject): obj is MsgUpdateDidResponseEncodeObject {
-    return obj.typeUrl === typeUrlMsgUpdateDidResponse
+	return obj.typeUrl === typeUrlMsgUpdateDidResponse
 }
