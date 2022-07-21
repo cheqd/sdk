@@ -1,8 +1,11 @@
-import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
+import { createProtobufRpcClient, DeliverTxResponse, QueryClient, StdFee } from "@cosmjs/stargate"
 /* import { QueryClientImpl } from '@cheqd/ts-proto/cheqd/v1/query' */
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
-import { IContext } from "../types"
+import { DidStdFee, IContext, ISignInputs } from "../types"
+import { MsgCreateDid, MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { MsgCreateDidEncodeObject, typeUrlMsgCreateDid } from "../registry"
+import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
 
 export class DIDModule extends AbstractCheqdSDKModule {
     constructor(signer: CheqdSigningStargateClient){
@@ -13,11 +16,33 @@ export class DIDModule extends AbstractCheqdSDKModule {
         }
     }
 
-    async createDidTx(did: string, publicKey: string, context?: IContext): Promise<string> {
+    async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
         if (!this._signer) {
             this._signer = context!.sdk!.signer
         }
-        return ''
+
+        const payload = MsgCreateDidPayload.fromPartial(didPayload)
+        const signatures = await this._signer.signDidTx(signInputs, payload)
+
+        console.warn(payload)
+        console.warn(signatures)
+
+        const value: MsgCreateDid = {
+            payload,
+            signatures
+        }
+
+        const createDidMsg: MsgCreateDidEncodeObject = {
+            typeUrl: typeUrlMsgCreateDid,
+            value
+        }
+
+        return this._signer.signAndBroadcast(
+            address,
+            [createDidMsg],
+            fee,
+            memo
+        )
     }
 
     async updateDidTx(did: string, publicKey: string): Promise<string> {

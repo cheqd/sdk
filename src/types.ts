@@ -1,5 +1,6 @@
 import { CheqdSDK } from "."
 import { EdDSASigner, Signer } from 'did-jwt'
+import { Coin } from "@cosmjs/proto-signing"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
@@ -38,4 +39,11 @@ export interface IKeyPair {
 export interface IKeyValuePair {
     key: string
     value: any
+}
+
+export interface DidStdFee {
+    readonly amount: readonly Coin[]
+    readonly gas: string
+    payer?: string
+    granter?: string
 }
