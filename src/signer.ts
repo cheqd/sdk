@@ -1,12 +1,10 @@
 import { CheqdExtensions } from './modules/_'
-import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeAuthInfoBytes, makeSignDoc } from "@cosmjs/proto-signing"
-import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, StdFee, calculateFee, SignerData } from "@cosmjs/stargate"
+import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc } from "@cosmjs/proto-signing"
+import { DeliverTxResponse, GasPrice, HttpEndpoint, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
-import { MsgCreateDidPayload, SignInfo } from '@cheqd/ts-proto/cheqd/v1/tx'
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types'
-import { VerificationMethod } from '@cheqd/ts-proto/cheqd/v1/did'
-import { base64ToBytes, EdDSASigner, hexToBytes, Signer } from 'did-jwt'
+import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@cheqd/ts-proto/cheqd/v1/tx';
+import { DidStdFee, ISignInputs } from './types'
 import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
@@ -58,7 +56,6 @@ export function makeDidAuthInfoBytes(
 
 export class CheqdSigningStargateClient extends SigningStargateClient {
     public readonly cheqdExtensions: CheqdExtensions | undefined
-    private didSigners: TSignerAlgo = {}
     private readonly _gasPrice: GasPrice | undefined
     private readonly _signer: OfflineSigner
 
@@ -84,31 +81,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
         /* if (tmClient) {
             this.cheqdExtensions = QueryClient.withExtensions(tmClient, setupCheqdExtensions)
         } */
-    }
-
-    async checkDidSigners(verificationMethods: VerificationMethod[] = []): Promise<TSignerAlgo> {
-        if (verificationMethods.length === 0) {
-            throw new Error('No verification methods provided')
-        }
-
-        verificationMethods.forEach((verificationMethod) => {
-            if (!(Object.values(VerificationMethods) as string[]).includes(verificationMethod.type)) {
-                throw new Error(`Unsupported verification method type: ${verificationMethod.type}`)
-            }
-            if (!this.didSigners[verificationMethod.type]) {
-                this.didSigners[verificationMethod.type] = EdDSASigner
-            }
-        })
-
-        return this.didSigners
-    }
-
-    async getDidSigner(verificationMethodId: string, verificationMethods: Partial<VerificationMethod>[]): Promise<(secretKey: Uint8Array) => Signer> {
-        const verificationMethod = verificationMethods.find(method => method.id === verificationMethodId)?.type
-        if (!verificationMethod) {
-            throw new Error(`Verification method for ${verificationMethodId} not found`)
-        }
-        return this.didSigners[verificationMethod] ?? EdDSASigner
     }
 
     async signAndBroadcast(
@@ -196,17 +168,26 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
         })
     }
 
-    async signDidTx(signInputs: ISignInputs[], payload: MsgCreateDidPayload): Promise<SignInfo[]> {
-        await this.checkDidSigners(payload?.verificationMethod)
+    async signIdentityTx(signInputs: ISignInputs[], signBytes: Uint8Array): Promise<SignInfo[]> {
+        let signInfos: SignInfo[] = []
 
-        const signBytes = MsgCreateDidPayload.encode(payload).finish()
-        const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
-            return {
+        for (const signInput of signInputs) {
+            signInfos.push({
                 verificationMethodId: signInput.verificationMethodId,
-                signature: toString(base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string), 'base64pad')
-            }
-        }))
+                signature: toString(await signInput.signer(signBytes), 'base64pad'),
+            })
+        }
 
         return signInfos
+    }
+
+    async signDidTx(signInputs: ISignInputs[], payload: MsgCreateDidPayload): Promise<SignInfo[]> {
+        const signBytes = MsgCreateDidPayload.encode(payload).finish()
+        return this.signIdentityTx(signInputs, signBytes)
+    }
+
+    async signUpdateDidTx(signInputs: ISignInputs[], payload: MsgUpdateDidPayload): Promise<SignInfo[]> {
+        const signBytes = MsgUpdateDidPayload.encode(payload).finish()
+        return this.signIdentityTx(signInputs, signBytes)
     }
 }

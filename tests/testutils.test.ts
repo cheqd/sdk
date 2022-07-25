@@ -1,9 +1,7 @@
 import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { CheqdNetwork, IKeyPair, IKeyValuePair, TSignerAlgo, VerificationMethods } from "../src/types"
+import { CheqdNetwork, IKeyValuePair, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
-import { base64ToBytes } from "did-jwt"
-import { fromString, toString } from 'uint8arrays'
-import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
+import { toString } from 'uint8arrays'
 import { GasPrice } from "@cosmjs/stargate"
 
 export const faucet = {
@@ -19,20 +17,8 @@ export const exampleCheqdNetwork = {
     gasPrice: GasPrice.fromString( `25${faucet.minimalDenom}` )
 }
 
-export function createKeyPairRaw(): KeyPair {
-    return generateKeyPair()
-}
-
-export function createKeyPairBase64(): IKeyPair {
-    const keyPair = generateKeyPair()
-    return {
-        publicKey: toString(keyPair.publicKey, 'base64'),
-        privateKey: toString(keyPair.secretKey, 'base64'),
-    }
-}
-
-export function createDidPayload(keyPair: IKeyPair, verificationMethodType: VerificationMethods, network: CheqdNetwork = CheqdNetwork.Testnet): MsgCreateDidPayload {
-    const methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
+export function createDidPayload(publicKey: Uint8Array, verificationMethodType: VerificationMethods, network: CheqdNetwork = CheqdNetwork.Testnet): MsgCreateDidPayload {
+    const methodSpecificId = bases['base58btc'].encode(publicKey)
     const did = `did:cheqd:${network}:${methodSpecificId.substring(0, 16)}`
     const keyId = `${did}#key-1`
 
@@ -56,7 +42,7 @@ export function createDidPayload(keyPair: IKeyPair, verificationMethodType: Veri
             const jwk = {
                 crv: 'Ed25519',
                 kty: 'OKP',
-                x: toString( fromString( keyPair.publicKey, 'base64pad' ), 'base64url' )
+                x: toString(publicKey, 'base64url')
             }
             return MsgCreateDidPayload.fromPartial({
                 id: did,

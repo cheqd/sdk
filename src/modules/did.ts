@@ -3,8 +3,8 @@ import { createProtobufRpcClient, DeliverTxResponse, QueryClient, StdFee } from 
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
-import { MsgCreateDid, MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { MsgCreateDidEncodeObject, typeUrlMsgCreateDid } from "../registry"
+import { MsgCreateDid, MsgCreateDidPayload, MsgUpdateDid, MsgUpdateDidPayload } from '@cheqd/ts-proto/cheqd/v1/tx';
+import { MsgCreateDidEncodeObject, MsgUpdateDidEncodeObject, typeUrlMsgCreateDid, typeUrlMsgUpdateDid } from '../registry';
 import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
 
 export class DIDModule extends AbstractCheqdSDKModule {
@@ -45,8 +45,33 @@ export class DIDModule extends AbstractCheqdSDKModule {
         )
     }
 
-    async updateDidTx(did: string, publicKey: string): Promise<string> {
-        return ''
+    async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+        if (!this._signer) {
+            this._signer = context!.sdk!.signer
+        }
+
+        const payload = MsgUpdateDidPayload.fromPartial(didPayload)
+        const signatures = await this._signer.signUpdateDidTx(signInputs, payload)
+
+        console.warn(payload)
+        console.warn(signatures)
+
+        const value: MsgUpdateDid = {
+            payload,
+            signatures
+        }
+
+        const createDidMsg: MsgUpdateDidEncodeObject = {
+            typeUrl: typeUrlMsgUpdateDid,
+            value
+        }
+
+        return this._signer.signAndBroadcast(
+            address,
+            [createDidMsg],
+            fee,
+            memo
+        )
     }
 }
 

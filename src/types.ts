@@ -22,18 +22,11 @@ export enum VerificationMethods {
     JWK = 'JsonWebKey2020',
 }
 
-export type TSignerAlgo = {
-    [key in VerificationMethods as string]?: (secretKey: Uint8Array) => Signer
-}
+export type IdentitySigner = (data: Uint8Array) => Promise<Uint8Array>
 
 export interface ISignInputs {
     verificationMethodId: string
-    privateKeyHex: string
-}
-
-export interface IKeyPair {
-    publicKey: string
-    privateKey: string
+    signer: IdentitySigner
 }
 
 export interface IKeyValuePair {
