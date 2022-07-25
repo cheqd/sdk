@@ -1,10 +1,12 @@
 import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { CheqdNetwork, IKeyPair, IKeyValuePair, TSignerAlgo, VerificationMethods } from "../src/types"
+import { CheqdNetwork, IKeyPair, IKeyValuePair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TSignerAlgo, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
 import { base64ToBytes } from "did-jwt"
 import { fromString, toString } from 'uint8arrays'
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { GasPrice } from "@cosmjs/stargate"
+import uuid from 'uuid'
+import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
 
 export const faucet = {
     prefix: 'cheqd',
@@ -31,47 +33,76 @@ export function createKeyPairBase64(): IKeyPair {
     }
 }
 
-export function createDidPayload(keyPair: IKeyPair, verificationMethodType: VerificationMethods, network: CheqdNetwork = CheqdNetwork.Testnet): MsgCreateDidPayload {
-    const methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
-    const did = `did:cheqd:${network}:${methodSpecificId.substring(0, 16)}`
-    const keyId = `${did}#key-1`
-
-    switch (verificationMethodType) {
-        case VerificationMethods.Multibase58:
-            return MsgCreateDidPayload.fromPartial({
-                id: did,
-                controller: [did],
-                verificationMethod: [
-                    {
-                        id: keyId,
-                        type: VerificationMethods.Multibase58,
-                        controller: did,
-                        publicKeyMultibase: methodSpecificId
-                    }
-                ],
-                authentication: [keyId]
-            })
-
-        case VerificationMethods.JWK:
-            const jwk = {
-                crv: 'Ed25519',
-                kty: 'OKP',
-                x: toString( fromString( keyPair.publicKey, 'base64pad' ), 'base64url' )
+export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificIdAlgo, key: TVerificationKey<TVerificationKeyPrefix, number>, length: number = 32, network: CheqdNetwork = CheqdNetwork.Testnet): IVerificationKeys {
+    let methodSpecificId: TMethodSpecificId
+    let didUrl: IVerificationKeys['didUrl']
+    switch (algo) {
+        case MethodSpecificIdAlgo.Base58:
+            methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
+            didUrl = `did:cheqd:${network}:${methodSpecificId.substring(0, length)}`
+            return {
+                methodSpecificId,
+                didUrl,
+                keyId: `${didUrl}#${key}`,
+                publicKey: keyPair.publicKey,
             }
-            return MsgCreateDidPayload.fromPartial({
-                id: did,
-                controller: [did],
-                verificationMethod: [
-                    {
-                        id: keyId,
-                        type: VerificationMethods.JWK,
-                        controller: did,
-                        publicKeyJwk: parseToKeyValuePair(jwk),
-                    }
-                ],
-                authentication: [keyId]
-            })
+        case MethodSpecificIdAlgo.Uuid:
+            methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
+            didUrl = `did:cheqd:${network}:${uuid.v4()}`
+            return {
+                methodSpecificId,
+                didUrl,
+                keyId: `${didUrl}#${key}`,
+                publicKey: keyPair.publicKey,
+            }
     }
+}
+
+export function createDidVerificationMethod(verificationMethodTypes: VerificationMethods[], verificationKeys: IVerificationKeys[]): VerificationMethod[] {
+    return verificationMethodTypes.map((type, _) => {
+        switch (type) {
+            case VerificationMethods.Base58:
+                return {
+                    id: verificationKeys[_].keyId,
+                    type: type,
+                    controller: verificationKeys[_].didUrl,
+                    publicKeyMultibase: verificationKeys[_].methodSpecificId,
+                    publicKeyJwk: []
+                }
+
+            case VerificationMethods.JWK:
+                return {
+                    id: verificationKeys[_].keyId,
+                    type: type,
+                    controller: verificationKeys[_].didUrl,
+                    publicKeyJwk: parseToKeyValuePair(
+                        {
+                            crv: 'Ed25519',
+                            kty: 'OKP',
+                            x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
+                        }
+                    ),
+                    publicKeyMultibase: ''
+                }
+        }
+    }) ?? []
+}
+
+export function createDidPayload(verificationMethods: VerificationMethod[], verificationKeys: IVerificationKeys[]): MsgCreateDidPayload {
+    if (!verificationMethods || verificationMethods.length === 0)
+        throw new Error('No verification methods provided')
+    if (!verificationKeys || verificationKeys.length === 0)
+        throw new Error('No verification keys provided')
+
+    const did = verificationKeys[0].didUrl
+    return MsgCreateDidPayload.fromPartial(
+        {
+            id: did,
+            controller: verificationKeys.map(key => key.didUrl),
+            verificationMethod: verificationMethods,
+            authentication: verificationKeys.map(key => key.keyId)
+        }
+    )
 }
 
 export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePair[] {

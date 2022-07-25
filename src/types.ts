@@ -18,8 +18,13 @@ export interface IContext {
 }
 
 export enum VerificationMethods {
-    Multibase58 = 'Ed25519VerificationKey2020',
+    Base58 = 'Ed25519VerificationKey2020',
     JWK = 'JsonWebKey2020',
+}
+
+export enum MethodSpecificIdAlgo {
+    Base58 = 'base58btc',
+    Uuid = 'uuid',
 }
 
 export type TSignerAlgo = {
@@ -40,6 +45,19 @@ export interface IKeyValuePair {
     key: string
     value: any
 }
+
+export type TVerificationKeyPrefix = string
+
+export type TVerificationKey<K extends TVerificationKeyPrefix, N extends number> = `${K}-${N}`
+
+export interface IVerificationKeys {
+    readonly methodSpecificId: TMethodSpecificId
+    readonly didUrl: `did:cheqd:${CheqdNetwork}:${IVerificationKeys['methodSpecificId']}` extends string ? string : never
+    readonly keyId: `${IVerificationKeys['didUrl']}#${TVerificationKey<TVerificationKeyPrefix, number>}`
+    readonly publicKey: string
+}
+
+export type TMethodSpecificId = string
 
 export interface DidStdFee {
     readonly amount: readonly Coin[]

@@ -4,15 +4,32 @@ import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing"
 import { base64ToBytes, EdDSASigner } from "did-jwt"
 import { typeUrlMsgCreateDid } from "../src/registry"
 import { CheqdSigningStargateClient } from "../src/signer"
-import { ISignInputs, VerificationMethods } from "../src/types"
+import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../src/types"
 import { fromString, toString } from 'uint8arrays'
-import { createDidPayload, createKeyPairBase64, exampleCheqdNetwork, faucet } from "./testutils.test"
+import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "./testutils.test"
 import { verify } from "@stablelib/ed25519"
 
 const nonExistingDid = "did:cHeQd:fantasticnet:123"
 const nonExistingKeyId = 'did:cHeQd:fantasticnet:123#key-678'
 const nonExistingPublicKeyMultibase = '1234567890'
 const nonExistingVerificationMethod = 'ExtraTerrestrialVerificationKey2045'
+const nonExistingVerificationDidDocument = {
+    "authentication": [
+        "did:cheqd:testnet:z6Jn6NmYkaCepQe2#key-1"
+    ],
+    "controller": [
+        "did:cheqd:testnet:z6Jn6NmYkaCepQe2"
+    ],
+    "id": "did:cheqd:testnet:z6Jn6NmYkaCepQe2",
+    "verificationMethod": [
+        {
+            "controller": "did:cheqd:testnet:z6Jn6NmYkaCepQe2",
+            "id": "did:cheqd:testnet:z6Jn6NmYkaCepQe2#key-1",
+            "publicKeyMultibase": "z6Jn6NmYkaCepQe29vgCZQhFfRkN3YpEPiu14F8HbbmqW",
+            "type": nonExistingVerificationMethod
+        }
+    ]
+}
 
 describe('CheqdSigningStargateClient', () => {
     describe('constructor', () => {
@@ -35,25 +52,29 @@ describe('CheqdSigningStargateClient', () => {
         it('can get a signer for a did', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
-            const didPayload = createDidPayload(createKeyPairBase64(), VerificationMethods.Multibase58)
+            const keyPair = createKeyPairBase64()
+            const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             const didSigner = await signer.getDidSigner(didPayload.verificationMethod[0].id, didPayload.verificationMethod)
 
             expect(didSigner).toBe(EdDSASigner)
         })
 
-        it('should not return a did payload for a non-supported verification method', async () => {
+        it('should throw for a non-supported verification method', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
-            //@ts-ignore
-            const didPayload = createDidPayload(createKeyPairBase64(), 'ExtraTerrestrialVerificationKey2045')
 
-            expect(didPayload).toBe(undefined)
+            await expect(signer.getDidSigner(nonExistingVerificationDidDocument.verificationMethod[0].id, nonExistingVerificationDidDocument.verificationMethod)).rejects.toThrow()
         })
 
         it('should throw for non-matching verification method id', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
-            const didPayload = createDidPayload(createKeyPairBase64(), VerificationMethods.JWK)
+            const keyPair = createKeyPairBase64()
+            const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             await expect(signer.getDidSigner(nonExistingKeyId, didPayload.verificationMethod)).rejects.toThrow()
         })
     })
@@ -62,23 +83,29 @@ describe('CheqdSigningStargateClient', () => {
         it('it should instantiate a signer for a did', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
-            const didPayload = createDidPayload(createKeyPairBase64(), VerificationMethods.Multibase58)
+            const keyPair = createKeyPairBase64()
+            const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
-            expect(didSigners[VerificationMethods.Multibase58]).toBe(EdDSASigner)
+            expect(didSigners[VerificationMethods.Base58]).toBe(EdDSASigner)
         })
 
         it('should instantiate multiple signers for a did with multiple verification methods', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
-            const didPayload = createDidPayload(createKeyPairBase64(), VerificationMethods.Multibase58)
-
-            didPayload.verificationMethod.push(createDidPayload(createKeyPairBase64(), VerificationMethods.JWK).verificationMethod[0])
+            const keyPair1 = createKeyPairBase64()
+            const keyPair2 = createKeyPairBase64()
+            const verificationKeys1 = createVerificationKeys(keyPair1, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+            const verificationKeys2 = createVerificationKeys(keyPair2, MethodSpecificIdAlgo.Base58, 'key-2', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58, VerificationMethods.JWK], [verificationKeys1, verificationKeys2])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys1, verificationKeys2])
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
-            expect(didSigners[VerificationMethods.Multibase58]).toBe(EdDSASigner)
+            expect(didSigners[VerificationMethods.Base58]).toBe(EdDSASigner)
             expect(didSigners[VerificationMethods.JWK]).toBe(EdDSASigner)
         })
 
@@ -101,7 +128,9 @@ describe('CheqdSigningStargateClient', () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const keyPair = createKeyPairBase64()
-            const didPayload = createDidPayload(keyPair, VerificationMethods.Multibase58)
+            const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             const signInputs: ISignInputs[] = [
                 {
                     verificationMethodId: didPayload.verificationMethod[0].id,

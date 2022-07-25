@@ -5,7 +5,6 @@ import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
 import { MsgCreateDid, MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
 import { MsgCreateDidEncodeObject, typeUrlMsgCreateDid } from "../registry"
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
 
 export class DIDModule extends AbstractCheqdSDKModule {
     constructor(signer: CheqdSigningStargateClient){
@@ -23,9 +22,6 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
         const payload = MsgCreateDidPayload.fromPartial(didPayload)
         const signatures = await this._signer.signDidTx(signInputs, payload)
-
-        console.warn(payload)
-        console.warn(signatures)
 
         const value: MsgCreateDid = {
             payload,
