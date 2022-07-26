@@ -6,24 +6,26 @@ defaults:
     shell: bash
 
 jobs:
-  build_and_test:
+  build:
+    name: "Build Node.js"
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
-      - name: "Execute build"
-        run: |
-          npm install
-          npm run build
+      - name: "Clean install dependencies"
+        run: npm install
+        env:
+          NPM_GITHUB_PAT: ${{ secrets.NPM_GITHUB_PAT }}
 
-      - name: "Execute tests"
+      - name: "Run npm build"
+        run: npm run build
+
+      - name: "Run npm test"
         run: npm run test
