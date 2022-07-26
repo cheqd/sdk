@@ -1,4 +1,4 @@
-name: "Build"
+name: "Build & Test"
 on:
   workflow_call:
 defaults:
@@ -6,9 +6,9 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,3 +23,6 @@ jobs:
       - name: "Execute build"
         run: |
           npm run build
+
+      - name: "Execute tests"
+        run: npm run test
