@@ -3,8 +3,8 @@ import { createProtobufRpcClient, DeliverTxResponse, QueryClient, StdFee } from 
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
-import { MsgCreateDid, MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { MsgCreateDidEncodeObject, typeUrlMsgCreateDid } from "../registry"
+import { MsgCreateDid, MsgCreateDidPayload, MsgUpdateDid, MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { MsgCreateDidEncodeObject, MsgUpdateDidEncodeObject, typeUrlMsgCreateDid, typeUrlMsgUpdateDid } from "../registry"
 
 export class DIDModule extends AbstractCheqdSDKModule {
     constructor(signer: CheqdSigningStargateClient){
@@ -21,7 +21,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
         }
 
         const payload = MsgCreateDidPayload.fromPartial(didPayload)
-        const signatures = await this._signer.signDidTx(signInputs, payload)
+        const signatures = await this._signer.signCreateDidTx(signInputs, payload)
 
         const value: MsgCreateDid = {
             payload,
@@ -41,8 +41,30 @@ export class DIDModule extends AbstractCheqdSDKModule {
         )
     }
 
-    async updateDidTx(did: string, publicKey: string): Promise<string> {
-        return ''
+    async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+        if (!this._signer) {
+            this._signer = context!.sdk!.signer
+        }
+
+        const payload = MsgUpdateDidPayload.fromPartial(didPayload)
+        const signatures = await this._signer.signUpdateDidTx(signInputs, payload)
+
+        const value: MsgUpdateDid = {
+            payload,
+            signatures
+        }
+
+        const updateDidMsg: MsgUpdateDidEncodeObject = {
+            typeUrl: typeUrlMsgUpdateDid,
+            value
+        }
+
+        return this._signer.signAndBroadcast(
+            address,
+            [updateDidMsg],
+            fee,
+            memo
+        )
     }
 }
 

@@ -137,7 +137,7 @@ describe('CheqdSigningStargateClient', () => {
                     privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex')
                 }
             ]
-            const signInfos = await signer.signDidTx(signInputs, didPayload)
+            const signInfos = await signer.signCreateDidTx(signInputs, didPayload)
             const publicKeyRaw = fromString(keyPair.publicKey, 'base64')
             const messageRaw = MsgCreateDidPayload.encode(didPayload).finish()
             const signatureRaw = base64ToBytes(signInfos[0].signature)
