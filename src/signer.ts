@@ -3,7 +3,7 @@ import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBod
 import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, StdFee, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
-import { MsgCreateDidPayload, SignInfo } from '@cheqd/ts-proto/cheqd/v1/tx'
+import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@cheqd/ts-proto/cheqd/v1/tx';
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types'
 import { VerificationMethod } from '@cheqd/ts-proto/cheqd/v1/did'
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer } from 'did-jwt'
@@ -197,13 +197,29 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
         return this.didSigners[verificationMethod]!
     }
 
-    async signDidTx(signInputs: ISignInputs[], payload: MsgCreateDidPayload): Promise<SignInfo[]> {
+    async signCreateDidTx(signInputs: ISignInputs[], payload: MsgCreateDidPayload): Promise<SignInfo[]> {
         await this.checkDidSigners(payload?.verificationMethod)
 
         const signBytes = MsgCreateDidPayload.encode(payload).finish()
         const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
             return {
                 verificationMethodId: signInput.verificationMethodId,
+                // TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
+                signature: toString(base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string), 'base64pad')
+            }
+        }))
+
+        return signInfos
+    }
+
+    async signUpdateDidTx(signInputs: ISignInputs[], payload: MsgUpdateDidPayload): Promise<SignInfo[]> {
+        await this.checkDidSigners(payload?.verificationMethod)
+
+        const signBytes = MsgUpdateDidPayload.encode(payload).finish()
+        const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
+            return {
+                verificationMethodId: signInput.verificationMethodId,
+                // TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
                 signature: toString(base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string), 'base64pad')
             }
         }))
