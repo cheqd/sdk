@@ -1,10 +1,12 @@
 {
   "name": "sdk",
   "version": "0.1.0",
-  "description": "A JavaScript SDK built with cosmjs to interact with cheqd network Cosmos-SDK Node & other compatible vendors.",
-  "main": "index.js",
+  "description": "A TypeScript SDK built with cosmjs to interact with cheqd network Cosmos-SDK Node & other compatible vendors.",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --passWithNoTests --watch",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -34,7 +36,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@cheqd/ts-proto": "^1.0.1",
+    "@cheqd/ts-proto": "^1.0.6",
     "@cosmjs/amino": "^0.28.11",
     "@cosmjs/encoding": "^0.28.11",
     "@cosmjs/math": "^0.28.11",

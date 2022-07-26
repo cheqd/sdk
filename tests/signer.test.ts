@@ -123,7 +123,7 @@ describe('CheqdSigningStargateClient', () => {
         })
     })
 
-    describe('signDidTx', () => {
+    describe('signCreateDidTx', () => {
         it('should sign a did tx with valid signature', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
