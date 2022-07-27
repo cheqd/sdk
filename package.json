@@ -1,7 +1,9 @@
 {
-  "name": "sdk",
+  "name": "@cheqd/sdk",
   "version": "0.1.0",
-  "description": "A TypeScript SDK built with cosmjs to interact with cheqd network Cosmos-SDK Node & other compatible vendors.",
+  "description": "A TypeScript SDK built with CosmJS to interact with cheqd network Cosmos-SDK Node & other compatible vendors.",
+  "licence": "Apache-2.0",
+  "author": "Cheqd Foundation Limited (https://github.com/cheqd)",
   "main": "src/index.ts",
   "scripts": {
     "test": "jest --passWithNoTests",
@@ -20,8 +22,6 @@
     "vc",
     "resources"
   ],
-  "author": "Tasos Derisiotis <tasos@cheqd.io>",
-  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/cheqd/sdk/issues"
   },
