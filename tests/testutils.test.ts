@@ -5,7 +5,7 @@ import { base64ToBytes } from "did-jwt"
 import { fromString, toString } from 'uint8arrays'
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { GasPrice } from "@cosmjs/stargate"
-import uuid from 'uuid'
+import { v4 } from 'uuid'
 import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
 
 export const faucet = {
@@ -48,7 +48,7 @@ export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificId
             }
         case MethodSpecificIdAlgo.Uuid:
             methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
-            didUrl = `did:cheqd:${network}:${uuid.v4()}`
+            didUrl = `did:cheqd:${network}:${v4()}`
             return {
                 methodSpecificId,
                 didUrl,

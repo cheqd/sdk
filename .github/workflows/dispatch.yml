@@ -22,9 +22,9 @@ jobs:
   #   needs: call-build
   #   uses: ./.github/workflows/test.yml
 
-  # call-release:
-  #   name: "Release"
-  #   # needs: call-build
-  #   if: ${{ github.ref_protected == true }}
-  #   uses: ./.github/workflows/release.yml
-  #   secrets: inherit
+  call-release:
+    name: "Release"
+    # needs: call-build
+    if: ${{ github.ref_protected == true }}
+    uses: ./.github/workflows/release.yml
+    secrets: inherit
