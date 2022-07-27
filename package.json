@@ -42,7 +42,7 @@
     "@semantic-release/release-notes-generator": "^10.0.3"
   },
   "dependencies": {
-    "@cheqd/ts-proto": "^1.0.6",
+    "@cheqd/ts-proto": "^1.0.7",
     "@cosmjs/amino": "^0.28.11",
     "@cosmjs/encoding": "^0.28.11",
     "@cosmjs/math": "^0.28.11",
