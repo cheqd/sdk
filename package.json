@@ -56,5 +56,8 @@
     "multiformats": "^9.7.0",
     "uint8arrays": "^3.0.0",
     "uuid": "^8.3.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
