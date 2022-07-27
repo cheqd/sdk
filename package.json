@@ -10,10 +10,7 @@
     "test:watch": "jest --passWithNoTests --watch",
     "build": "tsc"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cheqd/sdk.git"
-  },
+  "repository": "https://github.com/cheqd/sdk.git",
   "keywords": [
     "cheqd",
     "sdk",
