@@ -4,9 +4,10 @@ import { DeliverTxResponse } from "@cosmjs/stargate"
 import { fromString, toString } from 'uint8arrays'
 import { DIDModule } from "../../src"
 import { CheqdSigningStargateClient } from "../../src/signer"
-import { CheqdNetwork, DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
+import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
+const defaultAsyncTxTimeout = 10000
 
 describe('DIDModule', () => {
     describe('constructor', () => {
@@ -19,7 +20,6 @@ describe('DIDModule', () => {
     })
 
     describe('createDidTx', () => {
-        jest.setTimeout(30000)
         it('should create a new multibase DID', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
@@ -55,7 +55,7 @@ describe('DIDModule', () => {
             console.warn(`DID Tx: ${JSON.stringify(didTx)}`)
 
             expect(didTx.code).toBe(0)
-        })
+        }, defaultAsyncTxTimeout)
 
         it('should create a new uuid DID', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
@@ -92,11 +92,10 @@ describe('DIDModule', () => {
             console.warn(`DID Tx: ${JSON.stringify(didTx)}`)
 
             expect(didTx.code).toBe(0)
-        })
+        }, defaultAsyncTxTimeout)
     })
 
     describe('updateDidTx', () => {
-        jest.setTimeout(20000)
         it('should update a DID', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
@@ -154,6 +153,6 @@ describe('DIDModule', () => {
 
             console.warn(updateDidTx)
             expect(updateDidTx.code).toBe(0)
-        })
+        }, defaultAsyncTxTimeout)
     })
 })

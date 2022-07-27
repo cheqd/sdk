@@ -1,5 +1,5 @@
 import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { CheqdNetwork, IKeyPair, IKeyValuePair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TSignerAlgo, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
+import { CheqdNetwork, IKeyPair, IKeyValuePair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
 import { base64ToBytes } from "did-jwt"
 import { fromString, toString } from 'uint8arrays'

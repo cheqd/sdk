@@ -1,4 +1,4 @@
-import { OfflineSigner } from '@cosmjs/proto-signing'
+import { OfflineSigner } from '@cosmjs/proto-signing';
 import { DIDModule, MinimalImportableDIDModule } from './modules/did'
 import { MinimalImportableResourcesModule, ResourcesModule } from './modules/resources'
 import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, } from './modules/_'
