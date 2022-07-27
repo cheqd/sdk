@@ -1,7 +1,7 @@
-import { GeneratedType, Registry } from "@cosmjs/proto-signing";
-import { QueryClient } from "@cosmjs/stargate";
+import { GeneratedType, Registry } from "@cosmjs/proto-signing"
+import { QueryClient } from "@cosmjs/stargate"
 import { CheqdSigningStargateClient } from '../signer'
-import { IModuleMethodMap } from "../types";
+import { IModuleMethodMap } from "../types"
 import { setupDidExtension } from './did'
 
 export abstract class AbstractCheqdSDKModule {

@@ -27,19 +27,19 @@
   },
   "homepage": "https://github.com/cheqd/sdk#readme",
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.4",
+    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",
     "@types/uuid": "^8.3.4",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.6",
     "ts-node": "^10.8.2",
-    "typescript": "^4.7.4",
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/commit-analyzer": "^9.0.2",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^8.0.4",
-    "@semantic-release/npm": "^9.0.1",
-    "@semantic-release/release-notes-generator": "^10.0.3"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@cheqd/ts-proto": "^1.0.6",
