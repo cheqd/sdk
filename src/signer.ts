@@ -1,6 +1,6 @@
 import { CheqdExtensions } from './modules/_'
-import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeAuthInfoBytes, makeSignDoc } from "@cosmjs/proto-signing"
-import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, StdFee, calculateFee, SignerData } from "@cosmjs/stargate"
+import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc } from "@cosmjs/proto-signing"
+import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@cheqd/ts-proto/cheqd/v1/tx';
