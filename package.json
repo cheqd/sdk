@@ -1,7 +1,7 @@
 {
   "name": "@cheqd/sdk",
   "version": "1.0.0",
-  "description": "A TypeScript SDK built with CosmJS to interact with cheqd network ledger.",
+  "description": "A TypeScript SDK built with CosmJS to interact with cheqd network ledger",
   "licence": "Apache-2.0",
   "author": "Cheqd Foundation Limited (https://github.com/cheqd)",
   "main": "src/index.ts",
