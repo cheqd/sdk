@@ -19,12 +19,12 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 16
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
       - name: "Clean install dependencies"
-        run: npm install --save false
+        run: npm ci
 
       - name: "Run npm build"
         run: npm run build
