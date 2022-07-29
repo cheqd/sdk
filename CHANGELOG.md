@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/cheqd/sdk/compare/1.0.0...1.1.0) (2022-07-29)
+
+
+### Features
+
+* **registry:** Fixed registration logic & improved extensibility ([3d76466](https://github.com/cheqd/sdk/commit/3d76466e322657817d380bf384d9f6c45c1eb793))
+
 ## 1.0.0 (2022-07-28)
 
 
