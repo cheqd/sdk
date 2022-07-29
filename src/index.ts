@@ -1,4 +1,4 @@
-import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
+import { GeneratedType, OfflineSigner, Registry } from '@cosmjs/proto-signing'
 import { DIDModule, MinimalImportableDIDModule } from './modules/did'
 import { MinimalImportableResourcesModule, ResourcesModule } from './modules/resources'
 import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, } from './modules/_'
@@ -49,6 +49,14 @@ export class CheqdSDK {
 	private loadModules(modules: AbstractCheqdSDKModule[]): CheqdSDK {
 		this.options.modules = this.options.modules.map((module: any) => instantiateCheqdSDKModule(module, this.signer, { sdk: this } as IContext) as unknown as AbstractCheqdSDKModule)
 
+		let registryTypes: Iterable<[string, GeneratedType]> = [];
+		this.options.modules.forEach((module: AbstractCheqdSDKModule) => {
+			registryTypes = [...registryTypes, ...module.registryTypes]
+		})
+		for (const registryType of registryTypes) {
+			this.signer.registry.register(registryType[0], registryType[1])
+		}
+
 		const methods = applyMixins(this, modules)
 		this.methods = { ...this.methods, ...filterUnauthorizedMethods(methods, this.options.authorizedMethods || [], this.protectedMethods) }
 
@@ -66,25 +74,9 @@ export class CheqdSDK {
 		this.signer = await CheqdSigningStargateClient.connectWithSigner(
 			this.options.rpcUrl,
 			this.options.wallet,
-			{
-				registry: this.buildCheqdRegistry(),
-			}
 		)
 
 		return this.loadModules(this.options.modules)
-	}
-
-	private buildCheqdRegistry = (): Registry => {
-		const registry = createDefaultCheqdRegistry();
-		this.options.modules.map((module: AbstractCheqdSDKModule) => {
-			for (const registryType of module.registryTypes()) {
-				// registryType[0] is always type URL
-				// registryType[1] is always the GenerateType based proto message
-				registry.register(registryType[0], registryType[1])
-			}
-		})
-
-		return registry;
 	}
 }
 

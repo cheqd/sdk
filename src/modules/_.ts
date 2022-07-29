@@ -8,16 +8,13 @@ export abstract class AbstractCheqdSDKModule {
 	_signer: CheqdSigningStargateClient
 	methods: IModuleMethodMap = {}
 	readonly _protectedMethods: string[] = ['constructor', 'exportMethods', 'registryTypes']
+	abstract readonly registryTypes: Iterable<[string, GeneratedType]>;
 
 	constructor(signer: CheqdSigningStargateClient) {
 		if (!signer) {
 			throw new Error("signer is required")
 		}
 		this._signer = signer
-	}
-
-	public registryTypes(): Iterable<[string, GeneratedType]> {
-		return []
 	}
 }
 

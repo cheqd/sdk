@@ -12,12 +12,16 @@ import {
 } from "../registry"
 
 export class DIDModule extends AbstractCheqdSDKModule {
+	readonly registryTypes: Iterable<[string, GeneratedType]>;
+
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
 		this.methods = {
 			createDidTx: this.createDidTx.bind(this),
 			updateDidTx: this.updateDidTx.bind(this)
 		}
+
+		this.registryTypes = this.getRegistryTypes();
 	}
 
 	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
@@ -72,7 +76,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	registryTypes = (): Iterable<[string, GeneratedType]> => {
+	private getRegistryTypes(): Iterable<[string, GeneratedType]> {
 		return [
 			[typeUrlMsgCreateDid, MsgCreateDid],
 			[typeUrlMsgCreateDidResponse, MsgCreateDidResponse],

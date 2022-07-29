@@ -4,11 +4,14 @@ import { GeneratedType } from "@cosmjs/proto-signing"
 
 
 export class ResourcesModule extends AbstractCheqdSDKModule {
+	registryTypes: Iterable<[string, GeneratedType]> = []
+
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
+		this.registryTypes = this.getRegistryTypes()
 	}
 
-	registryTypes = (): Iterable<[string, GeneratedType]> => {
+	private getRegistryTypes(): Iterable<[string, GeneratedType]> {
 		return []
 	}
 }
