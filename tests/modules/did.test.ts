@@ -3,11 +3,13 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { fromString, toString } from 'uint8arrays'
 import { DIDModule } from "../../src"
+import { AbstractCheqdSDKModule } from "../../src/modules/_"
+import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
-const defaultAsyncTxTimeout = 10000
+const defaultAsyncTxTimeout = 20000
 
 describe('DIDModule', () => {
     describe('constructor', () => {
@@ -22,7 +24,8 @@ describe('DIDModule', () => {
     describe('createDidTx', () => {
         it('should create a new multibase DID', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
-            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
+            const registry = createDefaultCheqdRegistry(DIDModule.registryTypes)
+            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet, { registry })
             const didModule = new DIDModule(signer)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
@@ -59,7 +62,8 @@ describe('DIDModule', () => {
 
         it('should create a new uuid DID', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
-            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
+            const registry = createDefaultCheqdRegistry(DIDModule.registryTypes)
+            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet, { registry })
             const didModule = new DIDModule(signer)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Uuid, 'key-1', 16)
@@ -98,7 +102,8 @@ describe('DIDModule', () => {
     describe('updateDidTx', () => {
         it('should update a DID', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
-            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
+            const registry = createDefaultCheqdRegistry(DIDModule.registryTypes)
+            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet, { registry })
             const didModule = new DIDModule(signer)
             
             const keyPair = createKeyPairBase64()
