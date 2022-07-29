@@ -1,7 +1,7 @@
 import { GeneratedType, OfflineSigner, Registry } from '@cosmjs/proto-signing'
 import { DIDModule, MinimalImportableDIDModule } from './modules/did'
 import { MinimalImportableResourcesModule, ResourcesModule } from './modules/resources'
-import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, } from './modules/_'
+import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, } from './modules/_'
 import { createDefaultCheqdRegistry } from './registry'
 import { CheqdSigningStargateClient } from './signer'
 import { CheqdNetwork, IContext, IModuleMethodMap } from './types'
@@ -22,7 +22,7 @@ export class CheqdSDK {
 	methods: IModuleMethodMap
 	signer: CheqdSigningStargateClient
 	options: ICheqdSDKOptions
-	private protectedMethods: string[] = ['constructor', 'build', 'loadModules']
+	private protectedMethods: string[] = ['constructor', 'build', 'loadModules', 'loadRegistry']
 
 	constructor(options: ICheqdSDKOptions) {
 		if (!options?.wallet) {
@@ -49,14 +49,6 @@ export class CheqdSDK {
 	private loadModules(modules: AbstractCheqdSDKModule[]): CheqdSDK {
 		this.options.modules = this.options.modules.map((module: any) => instantiateCheqdSDKModule(module, this.signer, { sdk: this } as IContext) as unknown as AbstractCheqdSDKModule)
 
-		let registryTypes: Iterable<[string, GeneratedType]> = [];
-		this.options.modules.forEach((module: AbstractCheqdSDKModule) => {
-			registryTypes = [...registryTypes, ...module.registryTypes]
-		})
-		for (const registryType of registryTypes) {
-			this.signer.registry.register(registryType[0], registryType[1])
-		}
-
 		const methods = applyMixins(this, modules)
 		this.methods = { ...this.methods, ...filterUnauthorizedMethods(methods, this.options.authorizedMethods || [], this.protectedMethods) }
 
@@ -70,10 +62,22 @@ export class CheqdSDK {
 		return this
 	}
 
-	async build() {
+    private loadRegistry(): Registry {
+        const registryTypes = this.options.modules.map((module: any) => instantiateCheqdSDKModuleRegistryTypes(module)).reduce((acc, types) => {
+            return [...acc, ...types]
+        })
+        return createDefaultCheqdRegistry(registryTypes)
+    }
+
+	async build(): Promise<CheqdSDK> {
+        const registry = this.loadRegistry()
+
 		this.signer = await CheqdSigningStargateClient.connectWithSigner(
 			this.options.rpcUrl,
 			this.options.wallet,
+            {
+                registry,
+            }
 		)
 
 		return this.loadModules(this.options.modules)

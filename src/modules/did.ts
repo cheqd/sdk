@@ -1,18 +1,59 @@
-import { createProtobufRpcClient, DeliverTxResponse, QueryClient, StdFee } from "@cosmjs/stargate"
+import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
 /* import { QueryClientImpl } from '@cheqd/ts-proto/cheqd/v1/query' */
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
-import { MsgCreateDid, MsgCreateDidPayload, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidPayload, MsgUpdateDidResponse } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { MsgCreateDidEncodeObject, MsgUpdateDidEncodeObject, typeUrlMsgCreateDid, typeUrlMsgUpdateDid, typeUrlMsgUpdateDidResponse } from "../registry"
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
-import { GeneratedType } from "@cosmjs/proto-signing"
-import {
-	typeUrlMsgCreateDidResponse,
-} from "../registry"
+import { MsgCreateDid, MsgCreateDidPayload, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidPayload, MsgUpdateDidResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
+
+export const typeUrlMsgCreateDid = `/${protobufPackage}.MsgCreateDid`
+export const typeUrlMsgCreateDidResponse = `/${protobufPackage}.MsgCreateDidResponse`
+export const typeUrlMsgUpdateDid = `/${protobufPackage}.MsgUpdateDid`
+export const typeUrlMsgUpdateDidResponse = `/${protobufPackage}.MsgUpdateDidResponse`
+
+export interface MsgCreateDidEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgCreateDid,
+	readonly value: Partial<MsgCreateDid>
+}
+
+export function isMsgCreateDidEncodeObject(obj: EncodeObject): obj is MsgCreateDidEncodeObject {
+	return obj.typeUrl === typeUrlMsgCreateDid
+}
+
+export interface MsgCreateDidResponseEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgCreateDidResponse,
+	readonly value: Partial<MsgCreateDidResponse>
+}
+
+export function MsgCreateDidResponseEncodeObject(obj: EncodeObject): obj is MsgCreateDidResponseEncodeObject {
+	return obj.typeUrl === typeUrlMsgCreateDidResponse
+}
+
+export interface MsgUpdateDidEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgUpdateDid,
+	readonly value: Partial<MsgUpdateDid>
+}
+
+export function MsgUpdateDidEncodeObject(obj: EncodeObject): obj is MsgUpdateDidEncodeObject {
+	return obj.typeUrl === typeUrlMsgUpdateDid
+}
+
+export interface MsgUpdateDidResponseEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgUpdateDidResponse,
+	readonly value: Partial<MsgUpdateDidResponse>
+}
+
+export function MsgUpdateDidResponseEncodeObject(obj: EncodeObject): obj is MsgUpdateDidResponseEncodeObject {
+	return obj.typeUrl === typeUrlMsgUpdateDidResponse
+}
 
 export class DIDModule extends AbstractCheqdSDKModule {
-	readonly registryTypes: Iterable<[string, GeneratedType]>;
+	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
+        [typeUrlMsgCreateDid, MsgCreateDid],
+        [typeUrlMsgCreateDidResponse, MsgCreateDidResponse],
+        [typeUrlMsgUpdateDid, MsgUpdateDid],
+        [typeUrlMsgUpdateDidResponse, MsgUpdateDidResponse],
+    ]
 
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
@@ -20,9 +61,11 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			createDidTx: this.createDidTx.bind(this),
 			updateDidTx: this.updateDidTx.bind(this)
 		}
-
-		this.registryTypes = this.getRegistryTypes();
 	}
+
+    public getRegistryTypes(): Iterable<[string, GeneratedType]> {
+        return DIDModule.registryTypes
+    }
 
 	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
@@ -74,15 +117,6 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			fee,
 			memo
 		)
-	}
-
-	private getRegistryTypes(): Iterable<[string, GeneratedType]> {
-		return [
-			[typeUrlMsgCreateDid, MsgCreateDid],
-			[typeUrlMsgCreateDidResponse, MsgCreateDidResponse],
-			[typeUrlMsgUpdateDid, MsgUpdateDid],
-			[typeUrlMsgUpdateDidResponse, MsgUpdateDidResponse],
-		]
 	}
 }
 

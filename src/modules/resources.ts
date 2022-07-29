@@ -8,10 +8,9 @@ export class ResourcesModule extends AbstractCheqdSDKModule {
 
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
-		this.registryTypes = this.getRegistryTypes()
 	}
 
-	private getRegistryTypes(): Iterable<[string, GeneratedType]> {
+	public getRegistryTypes(): Iterable<[string, GeneratedType]> {
 		return []
 	}
 }

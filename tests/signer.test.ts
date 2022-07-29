@@ -2,7 +2,7 @@ import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
 import { MsgCreateDid, MsgCreateDidPayload, SignInfo } from "@cheqd/ts-proto/cheqd/v1/tx"
 import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing"
 import { base64ToBytes, EdDSASigner } from "did-jwt"
-import { typeUrlMsgCreateDid } from "../src/registry"
+import { typeUrlMsgCreateDid } from '../src/modules/did'
 import { CheqdSigningStargateClient } from "../src/signer"
 import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../src/types"
 import { fromString, toString } from 'uint8arrays'

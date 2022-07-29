@@ -2,13 +2,13 @@ import { GeneratedType, Registry } from "@cosmjs/proto-signing"
 import { QueryClient } from "@cosmjs/stargate"
 import { CheqdSigningStargateClient } from '../signer'
 import { IModuleMethodMap } from "../types"
-import { setupDidExtension } from './did'
+import { DIDModule, setupDidExtension } from './did'
 
 export abstract class AbstractCheqdSDKModule {
 	_signer: CheqdSigningStargateClient
 	methods: IModuleMethodMap = {}
-	readonly _protectedMethods: string[] = ['constructor', 'exportMethods', 'registryTypes']
-	abstract readonly registryTypes: Iterable<[string, GeneratedType]>;
+	readonly _protectedMethods: string[] = ['constructor', 'getRegistryTypes']
+	static readonly registryTypes: Iterable<[string, GeneratedType]> = []
 
 	constructor(signer: CheqdSigningStargateClient) {
 		if (!signer) {
@@ -16,12 +16,20 @@ export abstract class AbstractCheqdSDKModule {
 		}
 		this._signer = signer
 	}
+
+    abstract getRegistryTypes(): Iterable<[string, GeneratedType]>
 }
 
-export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_protectedMethods'>
+type ProtectedMethods<T extends AbstractCheqdSDKModule, K extends keyof T> = T[K] extends string[] ? T[K][number] : T[K]
+
+export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_protectedMethods' | 'registryTypes' | 'getRegistryTypes'>
 
 export function instantiateCheqdSDKModule<T extends new (...args: any[]) => T>(module: T, ...args: ConstructorParameters<T>): T {
 	return new module(...args)
+}
+
+export function instantiateCheqdSDKModuleRegistryTypes(module: any): Iterable<[string, GeneratedType]> {
+    return module.registryTypes ?? []
 }
 
 export function applyMixins(derivedCtor: any, constructors: any[]): IModuleMethodMap {

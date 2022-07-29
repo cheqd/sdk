@@ -1,8 +1,9 @@
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing'
 import { createCheqdSDK, DIDModule, ICheqdSDKOptions } from '../src/index'
 import { exampleCheqdNetwork, faucet } from './testutils.test'
 import { AbstractCheqdSDKModule } from '../src/modules/_'
 import { CheqdSigningStargateClient } from '../src/signer'
+import { createDefaultCheqdRegistry } from '../src/registry'
 
 describe(
     'CheqdSDK', () => {
@@ -27,14 +28,17 @@ describe(
             it('should use module methods', async () => {
                 const rpcUrl = exampleCheqdNetwork.rpcUrl
                 const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
-                const testSigner = await CheqdSigningStargateClient.connectWithSigner(rpcUrl, wallet)
 
                 class TestModule extends AbstractCheqdSDKModule {
+                    registryTypes: Iterable<[string, GeneratedType]> = []
                     methods = {
                         doSomething: this.doSomething.bind(this)
                     }
                     constructor(signer: CheqdSigningStargateClient) {
                         super(signer)
+                    }
+                    public getRegistryTypes(): Iterable<[string, GeneratedType]> {
+                        return TestModule.registryTypes
                     }
                     async doSomething(): Promise<string> {
                         return 'did something'
@@ -57,6 +61,20 @@ describe(
                 //@ts-ignore
                 await cheqdSDK.doSomething()
                 expect(spy).toHaveBeenCalled()
+            })
+
+            it('should instantiate registry from passed modules', async () => {
+                const options = {
+                    modules: [DIDModule as unknown as AbstractCheqdSDKModule],
+                    rpcUrl: exampleCheqdNetwork.rpcUrl,
+                    wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
+                } as ICheqdSDKOptions
+                const cheqdSDK = await createCheqdSDK(options)
+
+                const didRegistryTypes = DIDModule.registryTypes
+                const cheqdRegistry = createDefaultCheqdRegistry(didRegistryTypes)
+
+                expect(cheqdSDK.signer.registry).toStrictEqual(cheqdRegistry)
             })
         })
     }
