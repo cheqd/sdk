@@ -1,5 +1,5 @@
 import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-import { CheqdNetwork, IKeyPair, IKeyValuePair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
+import { CheqdNetwork, IKeyPair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
 import { base64ToBytes } from "did-jwt"
 import { fromString, toString } from 'uint8arrays'
@@ -7,6 +7,7 @@ import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { GasPrice } from "@cosmjs/stargate"
 import { v4 } from 'uuid'
 import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
+import { parseToKeyValuePair } from '../src/utils'
 
 export const faucet = {
     prefix: 'cheqd',
@@ -30,6 +31,14 @@ export function createKeyPairBase64(): IKeyPair {
     return {
         publicKey: toString(keyPair.publicKey, 'base64'),
         privateKey: toString(keyPair.secretKey, 'base64'),
+    }
+}
+
+export function createKeyPairHex(): IKeyPair {
+    const keyPair = generateKeyPair()
+    return {
+        publicKey: toString(keyPair.publicKey, 'hex'),
+        privateKey: toString(keyPair.secretKey, 'hex'),
     }
 }
 
@@ -103,8 +112,4 @@ export function createDidPayload(verificationMethods: VerificationMethod[], veri
             authentication: verificationKeys.map(key => key.keyId)
         }
     )
-}
-
-export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePair[] {
-    return Object.entries(object).map(([key, value]) => ({ key, value }))
 }
