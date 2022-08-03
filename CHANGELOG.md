@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/cheqd/sdk/compare/1.1.0...1.2.0) (2022-08-03)
+
+
+### Features
+
+* **utils:** Added utils & interoperability improvements ([d0f5f4d](https://github.com/cheqd/sdk/commit/d0f5f4d9bac01ac144b4afff696750bb4b20ac72))
+
 ## [1.1.0](https://github.com/cheqd/sdk/compare/1.0.0...1.1.0) (2022-07-29)
 
 
