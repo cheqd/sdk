@@ -1,5 +1,5 @@
 import { CheqdExtensions } from './modules/_'
-import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc, Registry } from "@cosmjs/proto-signing"
+import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc } from "@cosmjs/proto-signing"
 import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
@@ -52,6 +52,8 @@ export function makeDidAuthInfoBytes(
 			payer: feePayer
 		}
 	}
+	//* There is a `Long` type incompatibility in the protobuf library that causes the following line to throw an error. No actual type mismatch is ever encountered.
+	// @ts-ignore
 	return AuthInfo.encode(AuthInfo.fromPartial(authInfo)).finish()
 }
 
