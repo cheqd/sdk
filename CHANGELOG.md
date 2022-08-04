@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/cheqd/sdk/compare/1.2.0...1.2.1) (2022-08-04)
+
+
+### Bug Fixes
+
+* **types:** Fixed type mismatch on compilation ([c0cfbd5](https://github.com/cheqd/sdk/commit/c0cfbd500ccd8cfb0d56ccf431fbd41886a5a3a6))
+
 ## [1.2.0](https://github.com/cheqd/sdk/compare/1.1.0...1.2.0) (2022-08-03)
 
 
