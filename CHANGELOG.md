@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/cheqd/sdk/compare/1.2.1...1.2.2) (2022-08-04)
+
+
+### Bug Fixes
+
+* **build:** Added deep level support of iterables ([1aeaea3](https://github.com/cheqd/sdk/commit/1aeaea3ed8062f1d1853930bd792b1c988e616d5))
+
 ## [1.2.1](https://github.com/cheqd/sdk/compare/1.2.0...1.2.1) (2022-08-04)
 
 
