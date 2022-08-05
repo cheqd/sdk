@@ -1,46 +1,38 @@
-# Veramo SDK for cheqd: SDK
+# cheqd SDK (Typescript)
 
 ## ℹ️ Overview
 
-The purpose of this package is enable users to easily perform identity transactions on the cheqd Ledger, either throught directly with an application, or through using [`@veramo/cli`](https://github.com/uport-project/veramo/tree/next/packages/cli).
+This package is used to consume the ledger functionality within an application. The purpose of this package is to enable users to easily perform identity transactions on the cheqd Ledger.
 
-This package contains the necessary modules required to do so, which includes:
+This package also provides useful tools for SDK interoperability, e.g. Veramo, and contains the necessary modules to do so, including:
+
 * [DID Module](https://github.com/cheqd/sdk/blob/main/src/modules/did.ts)
-* [@cosmjs](https://github.com/cheqd/sdk/blob/main/src/modules/_.ts)
+* [@cosmjs](https://github.com/cosmos/cosmjs)
+
+> If you are using the Versmo SDK for cheqd, this is installed as a dependency within `did-provider-cheqd` and therefore this package does not need to be installed additionally.
+
+## 🆔 Features
 
 With this SDK, users are able to:
 
-### 🆔 DIDs
+* ✅ Create a `did:cheqd` method DID
+* ✅ Update a `did:cheqd` method DID
+* 🚧 Create Resource within a `did:cheqd` method DID
 
-* Create Issuers DID + DIDDoc
-* Create Subject DID using `did:key`
-* Update DIDs
+## 🧰 Tooling
 
-### 🛂 Verifiable Credentials
-
-* Issue JSON credentials with JWT proof
-* Verify JSON credentials with JWT proof
-
-### 📱 Verifiable Presentations
-
-* Create a Verifiable Presentation with a JSON credential (JWT proof)
-* Verify a Verifiable Presentation with a JSON credential (JWT proof)
+* ✅ Raw payload creator helper
+  * Enables users to generate a valid raw DID payload which is ready to be populated, depending on the use case.
+  * For example, `did-provider-cheqd` leverages this helper in a CLI application.
+* ✅ DID key converter helper
+  * Enables users to convert specific key formats from different kinds of SDKs, by transforming the input keys into valid sign inputs for a cheqd specific DID transaction (e.g. `createDidTx`, `UpdateDidTx`)
+  * For example, the Veramo SDK for cheqd uses this helper to enable users to pass a key in a Veramo SDK specific format to a cheqd sign input keys interface.
 
 ## 🧑‍💻🛠 Developer Guide
 
 ### Architecture
 
-This SDK works alongside `did-provider-cheqd` which provides the functiomaltiy for writing to the ledger, using the Veramo SDK. 
-
-* [`@veramo/core`](https://github.com/uport-project/veramo/tree/next/packages/core)
-* [`@veramo/cli`](https://github.com/uport-project/veramo/tree/next/packages/cli)
-* [`@veramo/credential-w3c`](https://github.com/uport-project/veramo/tree/next/packages/credential-w3c)
-
-Find out about other Veramo plug-ins at [`veramo_agent/plugins/`](https://veramo.io/docs/veramo_agent/plugins/)
-
-You'll also see where this package sits in the overall archicture used across the Veramo SDK for cheqd in the diagram below:
-
-https://github.com/cheqd/sdk/blob/main/diagrams/sdk-modules.drawio
+x
 
 ### Setup
 
@@ -52,14 +44,6 @@ yarn install
 
 ### Config
 
-A default agent configuration is provided with the [`agent.yml`](https://github.com/cheqd/did-provider-cheqd/blob/main/agent.yml) file.
-
-To specify further configurations, see the Veramo docs, however when making changes, ensure the cheqd specific suggested configurations are retained.
-
-### Deploy
-
-`cheqd/sdk` supports the same out of the box use cases as Veramo provides.
-
-As such, this can be utilised in a backend (server-side) envrionment or frontend (browser/web) application, or in a CLI specific applications by leverage [`@veramo/cli`](https://github.com/uport-project/veramo/tree/next/packages/cli).
+x
 
 ## 📄 Documentation
