@@ -4,7 +4,9 @@
   "description": "A TypeScript SDK built with CosmJS to interact with cheqd network ledger",
   "licence": "Apache-2.0",
   "author": "Cheqd Foundation Limited (https://github.com/cheqd)",
-  "main": "src/index.ts",
+  "source": "src/index.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "test": "jest --passWithNoTests",
     "test:watch": "jest --passWithNoTests --watch",
