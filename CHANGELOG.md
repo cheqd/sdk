@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/cheqd/sdk/compare/1.2.2...1.2.3) (2022-08-05)
+
+
+### Bug Fixes
+
+* **build:** Fixed build type declarations standalones ([ffadfe5](https://github.com/cheqd/sdk/commit/ffadfe553be49a11d2bb347341b90964c75adb23))
+
 ## [1.2.2](https://github.com/cheqd/sdk/compare/1.2.1...1.2.2) (2022-08-04)
 
 
