@@ -6,7 +6,7 @@ import { DIDModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
-import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createKeyPairHex, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
+import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
 const defaultAsyncTxTimeout = 20000
 
@@ -30,13 +30,6 @@ describe('DIDModule', () => {
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
             const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
-            
-            const keyPairHex = { publicKeyHex: toString(fromString(keyPair.publicKey, 'base64'), 'hex'), privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex') }
-            
-            console.warn('Keypair:', JSON.stringify(keyPairHex, null, 2))
-            console.warn('Payload:', JSON.stringify(didPayload, null, 2))
-
-            throw new Error('h3h3')
 
             const signInputs: ISignInputs[] = [
                 {
