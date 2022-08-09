@@ -33,8 +33,7 @@
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^28.1.6",
-    "@types/long": "^4.0.2",
-    "@types/node": "^18.6.4",
+    "@types/node": "^18.6.5",
     "@types/uuid": "^8.3.4",
     "conventional-changelog-conventionalcommits": "^5.0.0",
     "jest": "^28.1.3",
@@ -43,7 +42,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@cheqd/ts-proto": "^1.0.11",
+    "@cheqd/ts-proto": "^1.0.12",
     "@cosmjs/amino": "^0.28.11",
     "@cosmjs/encoding": "^0.28.11",
     "@cosmjs/math": "^0.28.11",
@@ -53,9 +52,9 @@
     "@cosmjs/utils": "^0.28.11",
     "@stablelib/ed25519": "^1.0.2",
     "cosmjs-types": "^0.5.0",
-    "did-jwt": "^6.2.1",
+    "did-jwt": "^6.3.0",
     "multiformats": "^9.7.1",
-    "uint8arrays": "^3.0.0",
+    "uint8arrays": "^3.1.0",
     "uuid": "^8.3.2"
   },
   "publishConfig": {
