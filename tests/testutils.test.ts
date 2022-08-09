@@ -22,10 +22,20 @@ export const exampleCheqdNetwork = {
     gasPrice: GasPrice.fromString( `25${faucet.minimalDenom}` )
 }
 
+/**
+ *? General test utils. Look for src/utils.ts for stable utils exports.
+ *? Used for testing purposes.
+ ** NOTE: The following utils are stable but subject to change at any given moment.
+ */
 export function createKeyPairRaw(): KeyPair {
     return generateKeyPair()
 }
 
+/**
+ *? General test utils. Look for src/utils.ts for stable utils exports.
+ *? Used for testing purposes.
+ ** NOTE: The following utils are stable but subject to change at any given moment.
+ */
 export function createKeyPairBase64(): IKeyPair {
     const keyPair = generateKeyPair()
     return {
@@ -34,6 +44,11 @@ export function createKeyPairBase64(): IKeyPair {
     }
 }
 
+/**
+ *? General test utils. Look for src/utils.ts for stable utils exports.
+ *? Used for testing purposes.
+ ** NOTE: The following utils are stable but subject to change at any given moment.
+ */
 export function createKeyPairHex(): IKeyPair {
     const keyPair = generateKeyPair()
     return {
@@ -42,6 +57,11 @@ export function createKeyPairHex(): IKeyPair {
     }
 }
 
+/**
+ *? General test utils. Look for src/utils.ts for stable utils exports.
+ *? Used for testing purposes.
+ ** NOTE: The following utils are stable but subject to change at any given moment.
+ */
 export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificIdAlgo, key: TVerificationKey<TVerificationKeyPrefix, number>, length: number = 32, network: CheqdNetwork = CheqdNetwork.Testnet): IVerificationKeys {
     let methodSpecificId: TMethodSpecificId
     let didUrl: IVerificationKeys['didUrl']
@@ -67,6 +87,11 @@ export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificId
     }
 }
 
+/**
+ *? General test utils. Look for src/utils.ts for stable utils exports.
+ *? Used for testing purposes.
+ ** NOTE: The following utils are stable but subject to change at any given moment.
+ */
 export function createDidVerificationMethod(verificationMethodTypes: VerificationMethods[], verificationKeys: IVerificationKeys[]): VerificationMethod[] {
     return verificationMethodTypes.map((type, _) => {
         switch (type) {
@@ -97,6 +122,11 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
     }) ?? []
 }
 
+/**
+ *? General test utils. Look for src/utils.ts for stable utils exports.
+ *? Used for testing purposes.
+ ** NOTE: The following utils are stable but subject to change at any given moment.
+ */
 export function createDidPayload(verificationMethods: VerificationMethod[], verificationKeys: IVerificationKeys[]): MsgCreateDidPayload {
     if (!verificationMethods || verificationMethods.length === 0)
         throw new Error('No verification methods provided')
