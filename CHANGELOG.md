@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7](https://github.com/cheqd/sdk/compare/1.2.6...1.2.7) (2022-08-09)
+
+
+### Bug Fixes
+
+* **tests:** Removed experimental versioning ([93b714c](https://github.com/cheqd/sdk/commit/93b714c538cdd10f67385b19a33d284f042bc6c4))
+
 ## [1.2.6](https://github.com/cheqd/sdk/compare/1.2.5...1.2.6) (2022-08-09)
 
 
