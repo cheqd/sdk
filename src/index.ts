@@ -103,3 +103,11 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 
 export { DIDModule, ResourcesModule }
 export { createSignInputsFromImportableEd25519Key }
+export {
+	createKeyPairRaw, 
+	createKeyPairBase64,
+	createKeyPairHex,
+	createVerificationKeys,
+	createDidVerificationMethod,
+	createDidPayload
+} from './utils'
