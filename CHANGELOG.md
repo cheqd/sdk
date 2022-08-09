@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6](https://github.com/cheqd/sdk/compare/1.2.5...1.2.6) (2022-08-09)
+
+
+### Performance Improvements
+
+* **helpers:** Added env-specific utils exports ([4957f44](https://github.com/cheqd/sdk/commit/4957f445734380c0bb6758c16096cd25978c7cac))
+
 ## [1.2.5](https://github.com/cheqd/sdk/compare/1.2.4...1.2.5) (2022-08-09)
 
 ## [1.2.4](https://github.com/cheqd/sdk/compare/1.2.3...1.2.4) (2022-08-08)
