@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.8](https://github.com/cheqd/sdk/compare/1.2.7...1.2.8) (2022-08-09)
+
+
+### Bug Fixes
+
+* **exports:** Fixed lib exports ([f17dbe3](https://github.com/cheqd/sdk/commit/f17dbe3afcc9e87d13ff2858d62fde0823d0e78c))
+
 ## [1.2.7](https://github.com/cheqd/sdk/compare/1.2.6...1.2.7) (2022-08-09)
 
 
