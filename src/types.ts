@@ -1,6 +1,6 @@
 import { CheqdSDK } from "."
-import { EdDSASigner, Signer } from 'did-jwt'
 import { Coin } from "@cosmjs/proto-signing"
+import { Signer } from "did-jwt"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
@@ -28,6 +28,7 @@ export enum MethodSpecificIdAlgo {
 }
 
 export type TSignerAlgo = {
+    // This is wrong: there can be more then one signer of a given type
     [key in VerificationMethods as string]?: (secretKey: Uint8Array) => Signer
 }
 
@@ -35,6 +36,13 @@ export interface ISignInputs {
     verificationMethodId: string
     privateKeyHex: string
 }
+
+export interface ISignInputsWithSigner {
+    verificationMethodId: string
+    signer: CheqdSigner
+}
+
+export type CheqdSigner = (data: Uint8Array) => Promise<Uint8Array>
 
 export interface IKeyPair {
     publicKey: string

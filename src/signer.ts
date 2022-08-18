@@ -4,9 +4,9 @@ import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargate
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@cheqd/ts-proto/cheqd/v1/tx';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types'
+import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods, ISignInputsWithSigner } from './types';
 import { VerificationMethod } from '@cheqd/ts-proto/cheqd/v1/did'
-import { base64ToBytes, EdDSASigner, hexToBytes, Signer } from 'did-jwt'
+import { base64ToBytes, EdDSASigner, hexToBytes, Signer } from 'did-jwt';
 import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
@@ -17,6 +17,7 @@ import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
 import { Any } from 'cosmjs-types/google/protobuf/any'
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import Long from 'long'
+import { bytesToBase64 } from 'did-jwt/lib/util';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice)
@@ -172,6 +173,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		})
 	}
 
+	// What does this do?
+	// This is completely wrong
 	async checkDidSigners(verificationMethods: Partial<VerificationMethod>[] = []): Promise<TSignerAlgo> {
 		if (verificationMethods.length === 0) {
 			throw new Error('No verification methods provided')
@@ -189,6 +192,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this.didSigners
 	}
 
+	// Verification method id can be related to different DIDDoc. Also, for resources we don't have access to the corresponding DIDDoc.
 	async getDidSigner(verificationMethodId: string, verificationMethods: Partial<VerificationMethod>[]): Promise<(secretKey: Uint8Array) => Signer> {
 		await this.checkDidSigners(verificationMethods)
 		const verificationMethod = verificationMethods.find(method => method.id === verificationMethodId)?.type
@@ -224,6 +228,19 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 				signature: toString(base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string), 'base64pad')
 			}
 		}))
+
+		return signInfos
+	}
+
+	async signIdentityTx(signInputs: ISignInputsWithSigner[], signBytes: Uint8Array): Promise<SignInfo[]> {
+		let signInfos: SignInfo[] = [];
+
+		for (let signInput of signInputs) {
+			signInfos.push({
+				verificationMethodId: signInput.verificationMethodId,
+				signature: toString(await signInput.signer(signBytes), 'base64pad'),
+			});
+		}
 
 		return signInfos
 	}
