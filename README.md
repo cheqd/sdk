@@ -1,12 +1,10 @@
 # TypeScript SDK for cheqd
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/cheqd/sdk/Workflow%20Dispatch/main?label=Lint%2C%20Build%2C%20Test&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/dispatch.yml) [![npm (scoped)](https://img.shields.io/npm/v/@cheqd/sdk?style=flat-square)](https://www.npmjs.com/package/@cheqd/sdk)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cheqd/sdk?color=green&label=stable%20release&style=flat-square)](https://github.com/cheqd/sdk/releases/latest) ![GitHub Release Date](https://img.shields.io/github/release-date/cheqd/sdk?color=green&style=flat-square) [![GitHub license](https://img.shields.io/github/license/cheqd/sdk?color=blue&style=flat-square)](https://github.com/cheqd/sdk/blob/main/LICENSE)
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cheqd/sdk?color=green&label=stable&sort=semver&style=flat-square)](https://github.com/cheqd/sdk/releases/latest) ![GitHub Release Date](https://img.shields.io/github/release-date/cheqd/sdk?style=flat-square)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cheqd/sdk?include_prereleases&label=dev%20release&style=flat-square)](https://github.com/cheqd/sdk/releases/) ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/cheqd/sdk/latest?style=flat-square) [![GitHub contributors](https://img.shields.io/github/contributors/cheqd/sdk?label=contributors%20%E2%9D%A4%EF%B8%8F&style=flat-square)](https://github.com/cheqd/sdk/graphs/contributors)
 
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/cheqd/sdk?include_prereleases&label=latest%20%28incl.%20pre-release%29&sort=semver&style=flat-square)](https://github.com/cheqd/sdk/releases/) ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/cheqd/sdk/latest?style=flat-square)
-
-[![GitHub contributors](https://img.shields.io/github/contributors/cheqd/sdk?style=flat-square)](https://github.com/cheqd/sdk/graphs/contributors) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/sdk?style=flat-square)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cheqd/sdk/Workflow%20Dispatch?label=workflows&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/dispatch.yml) [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cheqd/sdk/CodeQL?label=CodeQL&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/codeql.yml) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/sdk?style=flat-square)
 
 ## ℹ️ Overview
 
