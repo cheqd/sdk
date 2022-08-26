@@ -28,13 +28,11 @@ export enum MethodSpecificIdAlgo {
 }
 
 export type TSignerAlgo = {
-    // This is wrong: there can be more then one signer of a given type
     [key in VerificationMethods as string]?: (secretKey: Uint8Array) => Signer
 }
 
 export interface ISignInputs {
     verificationMethodId: string
-
     keyType?: "ed25519" | "secp256k1" | "p256"
     privateKeyHex: string
 }

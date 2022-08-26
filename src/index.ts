@@ -101,7 +101,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 	return await (new CheqdSDK(options)).build()
 }
 
-export { DIDModule, ResourceModule as ResourcesModule }
+export { DIDModule, ResourceModule }
 export { createSignInputsFromImportableEd25519Key }
 export {
 	createKeyPairRaw, 

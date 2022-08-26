@@ -17,7 +17,6 @@ import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
 import { Any } from 'cosmjs-types/google/protobuf/any'
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import Long from 'long'
-import { bytesToBase64 } from 'did-jwt/lib/util';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice)
@@ -173,8 +172,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		})
 	}
 
-	// What does this do?
-	// This is completely wrong
 	async checkDidSigners(verificationMethods: Partial<VerificationMethod>[] = []): Promise<TSignerAlgo> {
 		if (verificationMethods.length === 0) {
 			throw new Error('No verification methods provided')
@@ -192,7 +189,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this.didSigners
 	}
 
-	// Verification method id can be related to different DIDDoc. Also, for resources we don't have access to the corresponding DIDDoc.
 	async getDidSigner(verificationMethodId: string, verificationMethods: Partial<VerificationMethod>[]): Promise<(secretKey: Uint8Array) => Signer> {
 		await this.checkDidSigners(verificationMethods)
 		const verificationMethod = verificationMethods.find(method => method.id === verificationMethodId)?.type

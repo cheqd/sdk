@@ -2,7 +2,7 @@ import { DirectSecp256k1HdWallet, GeneratedType } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { sign } from "@stablelib/ed25519"
 import { fromString, toString } from 'uint8arrays'
-import { DIDModule, ResourcesModule } from "../../src"
+import { DIDModule, ResourceModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../../src/types';
@@ -17,8 +17,8 @@ describe('ResourceModule', () => {
         it('should instantiate standalone module', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
-            const resourcesModule = new ResourcesModule(signer)
-            expect(resourcesModule).toBeInstanceOf(ResourcesModule)
+            const resourceModule = new ResourceModule(signer)
+            expect(resourceModule).toBeInstanceOf(ResourceModule)
         })
     })
 
@@ -27,7 +27,7 @@ describe('ResourceModule', () => {
             // Creating a DID
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
 
-            const registry = createDefaultCheqdRegistry(Array.from(DIDModule.registryTypes).concat(Array.from(ResourcesModule.registryTypes)))
+            const registry = createDefaultCheqdRegistry(Array.from(DIDModule.registryTypes).concat(Array.from(ResourceModule.registryTypes)))
 
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet, { registry })
             
@@ -70,7 +70,7 @@ describe('ResourceModule', () => {
 
             // Creating a resource
 
-            const resourceModule = new ResourcesModule(signer)
+            const resourceModule = new ResourceModule(signer)
 
             const resourcePayload: MsgCreateResourcePayload = {
                 collectionId: didPayload.id.split(":").reverse()[0],
