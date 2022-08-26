@@ -1,7 +1,7 @@
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
-import { DidStdFee, IContext, ISignInputsWithSigner } from '../types';
+import { DidStdFee, IContext, ISignInputs } from '../types';
 import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/resource/v1/tx"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { Writer } from "protobufjs"
@@ -32,61 +32,61 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		return []
 	}
 
-	// Describe the reason for using custom method.
-	encode(
-		message: MsgCreateResourcePayload,
-	  ): Uint8Array {
+	// We need this workagound because amino encoding is used in cheqd-node to derive sign bytes for identity messages.
+	// In most cases it works the same way as protobuf encoding, but in the MsgCreateResourcePayload
+	// we use non-default property indexes so we need this separate encoding function.
+	// TODO: Remove this workaround when cheqd-node will use protobuf encoding.
+	static getMsgCreateResourcePayloadAminoSignBytes(message: MsgCreateResourcePayload): Uint8Array {
 		const writer = new Writer();
 
 		if (message.collectionId !== "") {
-		  writer.uint32(10).string(message.collectionId);
+			writer.uint32(10).string(message.collectionId);
 		}
 		if (message.id !== "") {
-		  writer.uint32(18).string(message.id);
+			writer.uint32(18).string(message.id);
 		}
 		if (message.name !== "") {
-		  writer.uint32(26).string(message.name);
+			writer.uint32(26).string(message.name);
 		}
 		if (message.resourceType !== "") {
-		  writer.uint32(34).string(message.resourceType);
+			writer.uint32(34).string(message.resourceType);
 		}
 		if (message.data.length !== 0) {
-			// We use 42 instead of 50 or 00110.010 instead of 00101.010 because when we encode with animo
-			// the index of the field is 5 instead of 6.
-		  writer.uint32(42).bytes(message.data);
+			// Animo coded assigns index 5 to this property. In proto definitions it's 6.
+			// Since we use amino on node + non default property indexing, we need to encode it manually.
+			writer.uint32(42).bytes(message.data);
 		}
 
 		return writer.finish();
-	  }
+	}
 
-	async createResourceTx(signInputs: ISignInputsWithSigner[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	static async signPayload(payload: MsgCreateResourcePayload, signInputs: ISignInputs[]): Promise<MsgCreateResource> {
+		const signBytes = ResourceModule.getMsgCreateResourcePayloadAminoSignBytes(payload)
+		const signatures = await CheqdSigningStargateClient.signIdentityTx(signBytes, signInputs)
+		
+		return {
+			payload,
+			signatures
+		}
+	}
+
+	async createResourceTx(signInputs: ISignInputs[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
 		const payload = MsgCreateResourcePayload.fromPartial(resourcePayload)
 
+		const msg = await ResourceModule.signPayload(payload, signInputs)
 
-
-		const payloadBytes = this.encode(payload)
-
-		const signatures = await this._signer.signIdentityTx(signInputs, payloadBytes)
-
-		console.log("signatures", JSON.stringify(signatures, null, 2))
-
-		const value: MsgCreateResource = {
-			payload,
-			signatures
-		}
-
-		const createResourceMsg: MsgCreateResourceEncodeObject = {
+		const encObj: MsgCreateResourceEncodeObject = {
 			typeUrl: typeUrlMsgCreateResource,
-			value
+			value: msg
 		}
 
 		return this._signer.signAndBroadcast(
 			address,
-			[createResourceMsg],
+			[encObj],
 			fee,
 			memo
 		)

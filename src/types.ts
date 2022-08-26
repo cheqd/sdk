@@ -34,15 +34,10 @@ export type TSignerAlgo = {
 
 export interface ISignInputs {
     verificationMethodId: string
+
+    keyType?: "ed25519" | "secp256k1" | "p256"
     privateKeyHex: string
 }
-
-export interface ISignInputsWithSigner {
-    verificationMethodId: string
-    signer: CheqdSigner
-}
-
-export type CheqdSigner = (data: Uint8Array) => Promise<Uint8Array>
 
 export interface IKeyPair {
     publicKey: string

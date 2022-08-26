@@ -5,13 +5,10 @@ import { fromString, toString } from 'uint8arrays'
 import { DIDModule, ResourcesModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
-import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods, ISignInputsWithSigner } from '../../src/types';
+import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../../src/types';
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 import { MsgCreateResourcePayload } from '@cheqd/ts-proto/resource/v1/tx';
 import { randomUUID } from "crypto"
-import { Did } from "@cheqd/ts-proto/cheqd/v1/did"
-import { AminoTypes } from "@cosmjs/stargate"
-import { typeUrlMsgCreateResource } from "../../src/modules/resources"
 
 const defaultAsyncTxTimeout = 20000
 
@@ -73,14 +70,7 @@ describe('ResourceModule', () => {
 
             // Creating a resource
 
-            const resourcesModule = new ResourcesModule(signer)
-
-            const resourceSignInputs: ISignInputsWithSigner[] = [
-                {
-                    verificationMethodId: didPayload.verificationMethod[0].id,
-                    signer: async (data: Uint8Array) => Promise.resolve(sign(fromString(keyPair.privateKey, 'base64'), data))
-                }
-            ]
+            const resourceModule = new ResourcesModule(signer)
 
             const resourcePayload: MsgCreateResourcePayload = {
                 collectionId: didPayload.id.split(":").reverse()[0],
@@ -92,7 +82,15 @@ describe('ResourceModule', () => {
 
             console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`)
 
-            const resourceTx = await resourcesModule.createResourceTx(
+            const resourceSignInputs: ISignInputs[] = [
+                {
+                    verificationMethodId: didPayload.verificationMethod[0].id,
+                    keyType: 'ed25519',
+                    privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex')
+                }
+            ]
+
+            const resourceTx = await resourceModule.createResourceTx(
                 resourceSignInputs,
                 resourcePayload,
                 (await wallet.getAccounts())[0].address,
@@ -103,33 +101,5 @@ describe('ResourceModule', () => {
 
             expect(resourceTx.code).toBe(0)
         }, defaultAsyncTxTimeout)
-
-        it('should properly encode payload', async () => {
-            const resourcePayload: MsgCreateResourcePayload = {
-                // collectionId: "zAZrzcvsYSBwnMCU",
-                // id: "94087863-663f-4bac-a2e6-dd3dcad2add1",                
-                // name: 'Test Resource',
-                // resourceType: 'test-resource-type',
-                collectionId: "",
-                id: "",                
-                name: '',
-                resourceType: '',
-                data: new TextEncoder().encode("abc")
-            }
-
-            // let animoRegistry = new AminoTypes({});
-
-            // let encodeRes = animoRegistry.toAmino({
-                // typeUrl: typeUrlMsgCreateResource,
-                // value: resourcePayload
-            // })
-            // console.log(encodeRes)
-            // 2a - amino - 00101.010
-            // 32 - proto - 00110.010
-
-            let bytes = MsgCreateResourcePayload.encode(resourcePayload).finish()
-            console.log(`Bytes: `, toString(bytes, 'hex'))
-            console.log(`Bytes: `, bytes)
-        })
     })
 })

@@ -4,9 +4,9 @@ import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargate
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@cheqd/ts-proto/cheqd/v1/tx';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods, ISignInputsWithSigner } from './types';
+import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
 import { VerificationMethod } from '@cheqd/ts-proto/cheqd/v1/did'
-import { base64ToBytes, EdDSASigner, hexToBytes, Signer } from 'did-jwt';
+import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
@@ -232,13 +232,33 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return signInfos
 	}
 
-	async signIdentityTx(signInputs: ISignInputsWithSigner[], signBytes: Uint8Array): Promise<SignInfo[]> {
+	static async signIdentityTx(signBytes: Uint8Array, signInputs: ISignInputs[]): Promise<SignInfo[]> {
 		let signInfos: SignInfo[] = [];
 
 		for (let signInput of signInputs) {
+			if (typeof(signInput.keyType) === undefined) {
+				throw new Error('Key type is not defined')
+			}
+
+			let signature: string;
+
+			switch (signInput.keyType) {
+				case 'ed25519':
+					signature = (await EdDSASigner(hexToBytes(signInput.privateKeyHex))(signBytes)) as string;
+					break;
+				case 'secp256k1':
+					signature = (await ES256KSigner(hexToBytes(signInput.privateKeyHex))(signBytes)) as string;
+					break;
+				case 'p256':
+					signature = (await ES256Signer(hexToBytes(signInput.privateKeyHex))(signBytes)) as string;
+					break;
+				default:
+					throw new Error(`Unsupported signature type: ${signInput.keyType}`);
+			}
+
 			signInfos.push({
 				verificationMethodId: signInput.verificationMethodId,
-				signature: toString(await signInput.signer(signBytes), 'base64pad'),
+				signature: toString(base64ToBytes(signature), 'base64pad')
 			});
 		}
 
