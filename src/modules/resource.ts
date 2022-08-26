@@ -18,7 +18,7 @@ export function isMsgCreateResourceEncodeObject(obj: EncodeObject): obj is MsgCr
 	return obj.typeUrl === typeUrlMsgCreateResource
 }
 
-export class ResourcesModule extends AbstractCheqdSDKModule {
+export class ResourceModule extends AbstractCheqdSDKModule {
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
 		[typeUrlMsgCreateResource, MsgCreateResource],
 		[typeUrlMsgCreateResourceResponse, MsgCreateResourceResponse]
@@ -93,4 +93,4 @@ export class ResourcesModule extends AbstractCheqdSDKModule {
 	}
 }
 
-export type MinimalImportableResourcesModule = MinimalImportableCheqdSDKModule<ResourcesModule>
+export type MinimalImportableResourcesModule = MinimalImportableCheqdSDKModule<ResourceModule>
