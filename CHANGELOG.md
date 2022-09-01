@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/cheqd/sdk/compare/1.2.10...1.3.0) (2022-09-01)
+
+
+### Features
+
+* Resources support [DEV-1616] ([#18](https://github.com/cheqd/sdk/issues/18)) ([40bb485](https://github.com/cheqd/sdk/commit/40bb485399b1ce83997350d450432100d05b10a2))
+
 ## [1.2.10](https://github.com/cheqd/sdk/compare/1.2.9...1.2.10) (2022-08-19)
 
 ## [1.2.9](https://github.com/cheqd/sdk/compare/1.2.8...1.2.9) (2022-08-19)
