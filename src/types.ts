@@ -1,6 +1,6 @@
 import { CheqdSDK } from "."
-import { EdDSASigner, Signer } from 'did-jwt'
 import { Coin } from "@cosmjs/proto-signing"
+import { Signer } from "did-jwt"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
@@ -33,6 +33,7 @@ export type TSignerAlgo = {
 
 export interface ISignInputs {
     verificationMethodId: string
+    keyType?: 'Ed25519' | 'Secp256k1' | 'P256'
     privateKeyHex: string
 }
 

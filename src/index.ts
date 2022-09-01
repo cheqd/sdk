@@ -1,6 +1,6 @@
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
 import { DIDModule, MinimalImportableDIDModule } from './modules/did'
-import { MinimalImportableResourcesModule, ResourcesModule } from './modules/resources'
+import { MinimalImportableResourcesModule, ResourceModule } from './modules/resource'
 import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, } from './modules/_'
 import { createDefaultCheqdRegistry } from './registry'
 import { CheqdSigningStargateClient } from './signer'
@@ -101,7 +101,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 	return await (new CheqdSDK(options)).build()
 }
 
-export { DIDModule, ResourcesModule }
+export { DIDModule, ResourceModule }
 export { createSignInputsFromImportableEd25519Key }
 export {
 	createKeyPairRaw, 

@@ -1,5 +1,5 @@
 import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing'
-import { createCheqdSDK, DIDModule, ICheqdSDKOptions } from '../src/index'
+import { createCheqdSDK, DIDModule, ICheqdSDKOptions, ResourceModule } from '../src/index'
 import { exampleCheqdNetwork, faucet } from './testutils.test'
 import { AbstractCheqdSDKModule } from '../src/modules/_'
 import { CheqdSigningStargateClient } from '../src/signer'
@@ -73,6 +73,21 @@ describe(
 
                 const didRegistryTypes = DIDModule.registryTypes
                 const cheqdRegistry = createDefaultCheqdRegistry(didRegistryTypes)
+
+                expect(cheqdSDK.signer.registry).toStrictEqual(cheqdRegistry)
+            })
+
+            it('should instantiate registry from multiple passed modules', async () => {
+                const options = {
+                    modules: [DIDModule as unknown as AbstractCheqdSDKModule, ResourceModule as unknown as AbstractCheqdSDKModule],
+                    rpcUrl: exampleCheqdNetwork.rpcUrl,
+                    wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
+                } as ICheqdSDKOptions
+                const cheqdSDK = await createCheqdSDK(options)
+
+                const didRegistryTypes = DIDModule.registryTypes
+                const resourceRegistryTypes = ResourceModule.registryTypes
+                const cheqdRegistry = createDefaultCheqdRegistry([...didRegistryTypes, ...resourceRegistryTypes])
 
                 expect(cheqdSDK.signer.registry).toStrictEqual(cheqdRegistry)
             })
