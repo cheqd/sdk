@@ -26,6 +26,9 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
+		this.methods = {
+			createResourceTx: this.createResourceTx.bind(this)
+		}
 	}
 
 	public getRegistryTypes(): Iterable<[string, GeneratedType]> {
