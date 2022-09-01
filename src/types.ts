@@ -33,7 +33,7 @@ export type TSignerAlgo = {
 
 export interface ISignInputs {
     verificationMethodId: string
-    keyType?: "ed25519" | "secp256k1" | "p256"
+    keyType?: 'Ed25519' | 'Secp256k1' | 'P256'
     privateKeyHex: string
 }
 

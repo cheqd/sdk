@@ -239,13 +239,13 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			let signature: string;
 
 			switch (signInput.keyType) {
-				case 'ed25519':
+				case 'Ed25519':
 					signature = (await EdDSASigner(hexToBytes(signInput.privateKeyHex))(signBytes)) as string;
 					break;
-				case 'secp256k1':
+				case 'Secp256k1':
 					signature = (await ES256KSigner(hexToBytes(signInput.privateKeyHex))(signBytes)) as string;
 					break;
-				case 'p256':
+				case 'P256':
 					signature = (await ES256Signer(hexToBytes(signInput.privateKeyHex))(signBytes)) as string;
 					break;
 				default:
