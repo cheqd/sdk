@@ -85,7 +85,7 @@ describe('ResourceModule', () => {
             const resourceSignInputs: ISignInputs[] = [
                 {
                     verificationMethodId: didPayload.verificationMethod[0].id,
-                    keyType: 'ed25519',
+                    keyType: 'Ed25519',
                     privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex')
                 }
             ]
