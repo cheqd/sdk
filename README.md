@@ -23,7 +23,7 @@ With this SDK, developers are able to:
 
 * ✅ Create a `did:cheqd` method DID
 * ✅ Update a `did:cheqd` method DID
-* 🚧 Create Resource within a `did:cheqd` method DID
+* ✅ Create Resource within a `did:cheqd` method DID
 
 ### 🧰 Tooling
 
