@@ -1,10 +1,12 @@
-import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
+import { AbstractCheqdSDKModule, CheqdExtension, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { DidStdFee, IContext, ISignInputs } from '../types';
 import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/resource/v1/tx"
-import { DeliverTxResponse } from "@cosmjs/stargate"
+import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
 import { Writer } from "protobufjs"
+import { QueryClientImpl, QueryGetCollectionResourcesRequest, QueryGetResourceRequest } from '@cheqd/ts-proto/resource/v1/query'
+import { Resource, ResourceHeader } from '@cheqd/ts-proto/resource/v1/resource'
 
 export const typeUrlMsgCreateResource = `/${protobufPackage}.MsgCreateResource`
 export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.MsgCreateResourceResponse`
@@ -94,6 +96,49 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			memo
 		)
 	}
+
+	async getResourceTx(collectionId: string, id: string, context?: IContext) {
+		if (!this._querier) {
+			this._querier = context!.sdk.querier!
+		}
+
+		return await this._querier.resource.resource(collectionId, id)
+	}
+
+	async getAllResourcesTx(collectionId: string, id: string, context: IContext) {
+		if (!this._querier) {
+			this._querier = context!.sdk.querier!
+		}
+
+		return await this._querier.resource.allResources(collectionId)
+	}
 }
 
 export type MinimalImportableResourcesModule = MinimalImportableCheqdSDKModule<ResourceModule>
+
+export interface ResourcesExtension extends CheqdExtension<string, {}> {
+	readonly resource: {
+		readonly resource: (collectionId: string, id: string)=> Promise<Resource | undefined>;
+		readonly allResources: (collectionId: string)=> Promise<ResourceHeader[] | undefined>;
+	}
+}
+
+export const setupResourcesExtension = (base: QueryClient): ResourcesExtension => {
+	const rpc = createProtobufRpcClient(base)
+
+	const queryService = new QueryClientImpl(rpc)
+
+	return {
+		resource: {
+			resource: async (collectionId: string, id: string) => {
+				const queryResourceRequest = QueryGetResourceRequest.fromPartial({collectionId, id})
+				return (await queryService.Resource(queryResourceRequest)).resource
+			},
+			allResources: async (collectionId: string) => {
+				// TODO: add pagination support
+				const queryAllResourcesRequest = QueryGetCollectionResourcesRequest.fromPartial({collectionId})
+				return (await queryService.CollectionResources(queryAllResourcesRequest)).resources
+			}
+		}
+	}
+}

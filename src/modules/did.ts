@@ -6,6 +6,9 @@ import { DidStdFee, IContext, ISignInputs } from "../types"
 import { MsgCreateDid, MsgCreateDidPayload, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidPayload, MsgUpdateDidResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/v1/tx"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 
+import { QueryClientImpl, QueryGetDidRequest } from '@cheqd/ts-proto/cheqd/v1/query'
+import { Did } from '@cheqd/ts-proto/cheqd/v1/did'
+
 export const typeUrlMsgCreateDid = `/${protobufPackage}.MsgCreateDid`
 export const typeUrlMsgCreateDidResponse = `/${protobufPackage}.MsgCreateDidResponse`
 export const typeUrlMsgUpdateDid = `/${protobufPackage}.MsgUpdateDid`
@@ -118,22 +121,35 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			memo
 		)
 	}
+
+	async getDidTx(did: string, context?: IContext) {
+		if (!this._querier) {
+			this._querier = context!.sdk.querier!
+		}
+
+		return await this._querier.did.did(did)
+	}
 }
 
 export type MinimalImportableDIDModule = MinimalImportableCheqdSDKModule<DIDModule>
 
 export interface DidExtension extends CheqdExtension<string, {}> {
-	did: {}
+	readonly did: {
+		readonly did: (did: string) => Promise<Did | undefined>
+	}
 }
 
 export const setupDidExtension = (base: QueryClient): DidExtension => {
 	const rpc = createProtobufRpcClient(base)
-
-	/* const queryService = new QueryClientImpl(rpc) */
-
+	const queryService = new QueryClientImpl(rpc)
 	return {
 		did: {
-			//...
+			did: async (did: string) => {
+				const queryDidRequest = QueryGetDidRequest.fromPartial({id: did})
+				const response = await queryService.Did(queryDidRequest)
+				// TODO: add contexts
+				return response.did
+			}
 		}
 	}
 }

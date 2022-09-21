@@ -1,7 +1,9 @@
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
+import { QueryClient } from '@cosmjs/stargate'
+import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 import { DIDModule, MinimalImportableDIDModule } from './modules/did'
 import { MinimalImportableResourcesModule, ResourceModule } from './modules/resource'
-import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, } from './modules/_'
+import { AbstractCheqdSDKModule, applyMixins, CheqdExtensions, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, setupCheqdExtensions, } from './modules/_'
 import { createDefaultCheqdRegistry } from './registry'
 import { CheqdSigningStargateClient } from './signer'
 import { CheqdNetwork, IContext, IModuleMethodMap } from './types'
@@ -23,6 +25,7 @@ export class CheqdSDK {
 	methods: IModuleMethodMap
 	signer: CheqdSigningStargateClient
 	options: ICheqdSDKOptions
+	querier?: QueryClient & CheqdExtensions
 	private protectedMethods: string[] = ['constructor', 'build', 'loadModules', 'loadRegistry']
 
 	constructor(options: ICheqdSDKOptions) {
@@ -79,6 +82,12 @@ export class CheqdSDK {
             {
                 registry,
             }
+		)
+
+		const tmclient = await Tendermint34Client.connect(this.options.rpcUrl)
+		this.querier = QueryClient.withExtensions(
+			tmclient,
+			setupCheqdExtensions
 		)
 
 		return this.loadModules(this.options.modules)

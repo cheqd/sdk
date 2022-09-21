@@ -2,10 +2,12 @@ import { GeneratedType, Registry } from "@cosmjs/proto-signing"
 import { QueryClient } from "@cosmjs/stargate"
 import { CheqdSigningStargateClient } from '../signer'
 import { IModuleMethodMap } from "../types"
-import { DIDModule, setupDidExtension } from './did'
+import { DidExtension, DIDModule, setupDidExtension } from './did'
+import { ResourcesExtension, setupResourcesExtension } from "./resource"
 
 export abstract class AbstractCheqdSDKModule {
 	_signer: CheqdSigningStargateClient
+	_querier: QueryClient & CheqdExtensions | undefined
 	methods: IModuleMethodMap = {}
 	readonly _protectedMethods: string[] = ['constructor', 'getRegistryTypes']
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = []
@@ -22,7 +24,7 @@ export abstract class AbstractCheqdSDKModule {
 
 type ProtectedMethods<T extends AbstractCheqdSDKModule, K extends keyof T> = T[K] extends string[] ? T[K][number] : T[K]
 
-export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_protectedMethods' | 'registryTypes' | 'getRegistryTypes'>
+export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_querier' | '_protectedMethods' | 'registryTypes' | 'getRegistryTypes'>
 
 export function instantiateCheqdSDKModule<T extends new (...args: any[]) => T>(module: T, ...args: ConstructorParameters<T>): T {
 	return new module(...args)
@@ -53,11 +55,11 @@ export type CheqdExtension<K extends string, V = any> = {
 	: never
 }[K]
 
-export type CheqdExtensions = CheqdExtension<'did' | 'resources', any>
+export type CheqdExtensions = DidExtension & ResourcesExtension
 
 export const setupCheqdExtensions = (base: QueryClient): CheqdExtensions => {
 	return {
 		...setupDidExtension(base),
-		/** setupResourcesExtension(base) */
+		...setupResourcesExtension(base)
 	}
 }
