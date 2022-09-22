@@ -18,6 +18,8 @@ import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
 import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
 
+const MULTIBASE_BASE58BTC_HEADER = 'z'
+const MULTICODEC_ED25519_PUB_HEADER = new Uint8Array([0xed, 0x01]);
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -30,6 +32,16 @@ export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePa
     return Object.entries(object).map(([key, value]) => ({ key, value }))
 }
 
+// encode a multibase base58-btc multicodec key
+function _encodeMbKey(header: Uint8Array, key: Uint8Array): string {
+  const mbKey = new Uint8Array(header.length + key.length);
+
+  mbKey.set(header);
+  mbKey.set(key, header.length);
+
+  return MULTIBASE_BASE58BTC_HEADER + toString(mbKey, 'hex');
+}
+
 export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519Key, verificationMethod: VerificationMethod[]): ISignInputs {
     if (verificationMethod?.length === 0) throw new Error('No verification methods provided')
 
@@ -38,7 +50,7 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
     for(const method of verificationMethod) {
         switch (method?.type) {
             case VerificationMethods.Base58:
-                const publicKeyMultibase = bases['base58btc'].encode(publicKey)
+                const publicKeyMultibase = _encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, publicKey)
                 if (method.publicKeyMultibase === publicKeyMultibase) {
                     return {
                         verificationMethodId: method.id,
@@ -89,7 +101,7 @@ export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificId
     let didUrl: IVerificationKeys['didUrl']
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:
-            methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
+            methodSpecificId = _encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, base64ToBytes(keyPair.publicKey))
             didUrl = `did:cheqd:${network}:${methodSpecificId.substring(0, length)}`
             return {
                 methodSpecificId,
@@ -151,6 +163,7 @@ export function createDidPayload(verificationMethods: VerificationMethod[], veri
             id: did,
             controller: verificationKeys.map(key => key.didUrl),
             verificationMethod: verificationMethods,
+            assertionMethod: verificationKeys.map(key => key.keyId),
             authentication: verificationKeys.map(key => key.keyId)
         }
     )
