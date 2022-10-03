@@ -16,8 +16,7 @@ import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
 import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
-import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-
+import { MsgCreateDidPayload, MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -186,5 +185,35 @@ export function convertKeyPairtoTImportableEd25519Key(keyPair: IKeyPair) : TImpo
         privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
         kid: 'kid',
         publicKeyHex: toString(fromString(keyPair.publicKey, 'base64'), 'hex')
+    }
+}
+
+export async function createUpdateDidPayloadWithSignInputs(didDocument: Partial<MsgUpdateDidPayload>, keys: IKeyPair[]) {
+    const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
+    const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, didDocument.verificationMethod!))
+    return { didDocument, signInputs }
+}
+
+export enum DidDocumentOperation {
+    Set = 'setDidDocument',
+    Add = 'addToDidDocument',
+    Remove = 'removeFromDidDocument'
+}
+
+export function jsonConcat(o1: any, o2:any) {
+    for (var key in o2) {
+    if(Array.isArray(o1[key])) {
+        o1[key].push(...o2[key])
+    } else {
+        o1[key] = o2[key]
+    }}
+    return o1
+}
+
+export function jsonSubtract(o1: any, o2: any) {
+    for (var key in o2) {
+        if(o2[key] == o1[key]) {
+            delete(o1[key])
+        }
     }
 }
