@@ -45,7 +45,7 @@
     "@cheqd/ts-proto": "^1.0.13",
     "@cosmjs/amino": "^0.28.11",
     "@cosmjs/encoding": "^0.29.2",
-    "@cosmjs/math": "^0.28.11",
+    "@cosmjs/math": "^0.29.2",
     "@cosmjs/proto-signing": "^0.28.10",
     "@cosmjs/stargate": "^0.28.13",
     "@cosmjs/tendermint-rpc": "^0.28.10",
