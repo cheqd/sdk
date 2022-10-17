@@ -1,6 +1,6 @@
 {
   "name": "@cheqd/sdk",
-  "version": "1.3.3",
+  "version": "1.3.5",
   "description": "A TypeScript SDK built with CosmJS to interact with cheqd network ledger",
   "license": "Apache-2.0",
   "author": "Cheqd Foundation Limited (https://github.com/cheqd)",
@@ -43,13 +43,13 @@
   },
   "dependencies": {
     "@cheqd/ts-proto": "^1.0.13",
-    "@cosmjs/amino": "^0.28.11",
+    "@cosmjs/amino": "^0.29.2",
     "@cosmjs/encoding": "^0.29.2",
     "@cosmjs/math": "^0.29.2",
     "@cosmjs/proto-signing": "^0.29.2",
     "@cosmjs/stargate": "^0.28.13",
     "@cosmjs/tendermint-rpc": "^0.28.10",
-    "@cosmjs/utils": "^0.28.11",
+    "@cosmjs/utils": "^0.29.2",
     "@stablelib/ed25519": "^1.0.3",
     "cosmjs-types": "^0.5.1",
     "did-jwt": "^6.8.0",
