@@ -54,7 +54,7 @@
     "cosmjs-types": "^0.5.2",
     "did-jwt": "^6.9.0",
     "multiformats": "^9.9.0",
-    "uint8arrays": "^3.1.1",
+    "uint8arrays": "^4.0.2",
     "uuid": "^9.0.0"
   },
   "publishConfig": {
