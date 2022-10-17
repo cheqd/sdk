@@ -30,6 +30,10 @@ export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePa
     return Object.entries(object).map(([key, value]) => ({ key, value }))
 }
 
+export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
+    return kv1.every((item, index) => item.key === kv2[index].key && item.value === kv2[index].value)
+}
+
 export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519Key, verificationMethod: VerificationMethod[]): ISignInputs {
     if (verificationMethod?.length === 0) throw new Error('No verification methods provided')
 
@@ -52,7 +56,7 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
                     kty: 'OKP',
                     x: toString( publicKey, 'base64url' )
                 })
-                if (method.publicKeyJwk === publicKeyJWK) {
+                if (isEqualKeyValuePair(method.publicKeyJwk, publicKeyJWK)) {
                     return {
                         verificationMethodId: method.id,
                         privateKeyHex: key.privateKeyHex
