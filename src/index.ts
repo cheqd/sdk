@@ -111,5 +111,5 @@ export {
 	createDidVerificationMethod,
 	createDidPayload,
 	createDidPayloadWithSignInputs,
-	createUpdateDidPayloadWithSignInputs
+	createSignInputsFromKeyPair
 } from './utils'

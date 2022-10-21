@@ -25,6 +25,8 @@ export type TImportableEd25519Key = {
     type: "Ed25519"
 }
 
+export type IdentifierPayload = Partial<MsgCreateDidPayload> | Partial<MsgUpdateDidPayload>
+
 export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePair[] {
     return Object.entries(object).map(([key, value]) => ({ key, value }))
 }
@@ -188,10 +190,10 @@ export function convertKeyPairtoTImportableEd25519Key(keyPair: IKeyPair) : TImpo
     }
 }
 
-export async function createUpdateDidPayloadWithSignInputs(didDocument: Partial<MsgUpdateDidPayload>, keys: IKeyPair[]) {
+export function createSignInputsFromKeyPair(didDocument: IdentifierPayload, keys: IKeyPair[]) {
     const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
     const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, didDocument.verificationMethod!))
-    return { didDocument, signInputs }
+    return signInputs
 }
 
 export enum DidDocumentOperation {
