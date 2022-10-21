@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.3.7](https://github.com/cheqd/sdk/compare/1.3.6...1.3.7) (2022-10-17)
+
+## [1.3.6](https://github.com/cheqd/sdk/compare/1.3.5...1.3.6) (2022-10-17)
+
+## [1.3.5](https://github.com/cheqd/sdk/compare/1.3.4...1.3.5) (2022-10-17)
+
+## [1.3.4](https://github.com/cheqd/sdk/compare/1.3.3...1.3.4) (2022-10-17)
+
+## [1.3.3](https://github.com/cheqd/sdk/compare/1.3.2...1.3.3) (2022-10-16)
+
+## [1.3.2](https://github.com/cheqd/sdk/compare/1.3.1...1.3.2) (2022-10-16)
+
+
+### Bug Fixes
+
+* **keys:** Added deep equality lambda ([edcc15f](https://github.com/cheqd/sdk/commit/edcc15f5ece115893cd5f3e876cf4927379b0a55))
+
+## [1.3.1](https://github.com/cheqd/sdk/compare/1.3.0...1.3.1) (2022-10-03)
+
 ## [1.3.0](https://github.com/cheqd/sdk/compare/1.2.10...1.3.0) (2022-09-01)
 
 
