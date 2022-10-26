@@ -14,10 +14,9 @@ import {
 import { fromString, toString } from 'uint8arrays'
 import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
-import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
+import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
-import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
-
+import { MsgCreateDidPayload, MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -25,6 +24,8 @@ export type TImportableEd25519Key = {
     kid: string
     type: "Ed25519"
 }
+
+export type IdentifierPayload = Partial<MsgCreateDidPayload> | Partial<MsgUpdateDidPayload>
 
 export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePair[] {
     return Object.entries(object).map(([key, value]) => ({ key, value }))
@@ -68,20 +69,20 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
     throw new Error('No verification method type provided')
 }
 
-export function createKeyPairRaw(): KeyPair {
-    return generateKeyPair()
+export function createKeyPairRaw(seed?: string): KeyPair {
+    return seed ? generateKeyPairFromSeed(Buffer.from(seed)) : generateKeyPair()
 }
 
-export function createKeyPairBase64(): IKeyPair {
-    const keyPair = generateKeyPair()
+export function createKeyPairBase64(seed?: string): IKeyPair {
+    const keyPair = seed ? generateKeyPairFromSeed(Buffer.from(seed)) : generateKeyPair()
     return {
         publicKey: toString(keyPair.publicKey, 'base64'),
         privateKey: toString(keyPair.secretKey, 'base64'),
     }
 }
 
-export function createKeyPairHex(): IKeyPair {
-    const keyPair = generateKeyPair()
+export function createKeyPairHex(seed?: string): IKeyPair {
+    const keyPair = seed ? generateKeyPairFromSeed(Buffer.from(seed)) : generateKeyPair()
     return {
         publicKey: toString(keyPair.publicKey, 'hex'),
         privateKey: toString(keyPair.secretKey, 'hex'),
@@ -158,4 +159,67 @@ export function createDidPayload(verificationMethods: VerificationMethod[], veri
             authentication: verificationKeys.map(key => key.keyId)
         }
     )
+}
+
+export function createDidPayloadWithSignInputs(seed?: string, keys?: IKeyPair[]) {
+    if(seed && keys) throw new Error ('Only one of seed or keys should be passed as an argument')
+    
+    if(!keys) {
+        keys = [seed ? createKeyPairBase64(seed) : createKeyPairBase64()]
+    }
+
+    const verificationMethodTypes = keys.map((key) => !key.algo || key.algo == MethodSpecificIdAlgo.Base58 ? VerificationMethods.Base58 : VerificationMethods.JWK)
+    const verificationKeys = keys.map((key, i) => createVerificationKeys(key, key.algo || MethodSpecificIdAlgo.Base58, `key-${i}`))
+    const verificationMethod = createDidVerificationMethod(verificationMethodTypes, verificationKeys)
+    
+    let payload : Partial<MsgCreateDidPayload> = {
+        id: verificationKeys[0].didUrl,
+        controller: verificationKeys.map(key => key.didUrl),
+        verificationMethod: verificationMethod,
+        authentication: verificationKeys.map(key => key.keyId),
+    }
+
+    const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
+    const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, verificationMethod))
+
+    return { didPayload: MsgCreateDidPayload.fromPartial(payload), keys, signInputs }
+}
+
+export function convertKeyPairtoTImportableEd25519Key(keyPair: IKeyPair) : TImportableEd25519Key {
+    return {
+        type: 'Ed25519',
+        privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+        kid: 'kid',
+        publicKeyHex: toString(fromString(keyPair.publicKey, 'base64'), 'hex')
+    }
+}
+
+export function createSignInputsFromKeyPair(didDocument: IdentifierPayload, keys: IKeyPair[]) {
+    const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
+    const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, didDocument.verificationMethod!))
+    return signInputs
+}
+
+export enum DidDocumentOperation {
+    Set = 'setDidDocument',
+    Add = 'addToDidDocument',
+    Remove = 'removeFromDidDocument'
+}
+
+export function jsonConcat(o1: any, o2:any) {
+    for (var key in o2) {
+    if(Array.isArray(o1[key])) {
+        o1[key].push(...o2[key])
+    } else {
+        o1[key] = o2[key]
+    }}
+    return o1
+}
+
+export function jsonSubtract(o1: any, o2: any) {
+    for (var key in o2) {
+        if(o2[key] == o1[key]) {
+            delete(o1[key])
+        }
+    }
 }
