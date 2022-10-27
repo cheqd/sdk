@@ -7,7 +7,7 @@ import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@cheqd/ts-pr
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
 import { VerificationMethod } from '@cheqd/ts-proto/cheqd/v1/did'
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
-import { toString } from 'uint8arrays/to-string'
+import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
 import { Int53 } from '@cosmjs/math'

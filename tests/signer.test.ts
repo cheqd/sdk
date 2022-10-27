@@ -5,8 +5,7 @@ import { base64ToBytes, EdDSASigner } from "did-jwt"
 import { typeUrlMsgCreateDid } from '../src/modules/did'
 import { CheqdSigningStargateClient } from "../src/signer"
 import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../src/types"
-import { fromString } from 'uint8arrays/from-string'
-import { toString } from 'uint8arrays/to-string'
+import { fromString, toString } from 'uint8arrays'
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "./testutils.test"
 import { verify } from "@stablelib/ed25519"
 

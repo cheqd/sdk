@@ -1,15 +1,14 @@
 import { MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { fromString } from 'uint8arrays/from-string'
-import { toString } from 'uint8arrays/to-string'
+import { fromString, toString } from 'uint8arrays'
 import { DIDModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
-const defaultAsyncTxTimeout = 20000
+const defaultAsyncTxTimeout = 30000
 
 describe('DIDModule', () => {
     describe('constructor', () => {

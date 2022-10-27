@@ -11,8 +11,7 @@ import {
     CheqdNetwork, 
     IVerificationKeys 
 } from "./types"
-import { fromString } from 'uint8arrays/from-string'
-import { toString } from 'uint8arrays/to-string'
+import { fromString, toString } from 'uint8arrays'
 import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'

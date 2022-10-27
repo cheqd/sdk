@@ -1,7 +1,6 @@
 import { DirectSecp256k1HdWallet, GeneratedType } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { fromString } from 'uint8arrays/from-string'
-import { toString } from 'uint8arrays/to-string'
+import { fromString, toString } from 'uint8arrays'
 import { DIDModule, ResourceModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
@@ -10,7 +9,7 @@ import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, cre
 import { MsgCreateResourcePayload } from '@cheqd/ts-proto/resource/v1/tx';
 import { randomUUID } from "crypto"
 
-const defaultAsyncTxTimeout = 20000
+const defaultAsyncTxTimeout = 30000
 
 describe('ResourceModule', () => {
     describe('constructor', () => {
