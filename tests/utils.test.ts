@@ -1,6 +1,6 @@
 import { TImportableEd25519Key, createSignInputsFromImportableEd25519Key } from '../src/utils'
 import { createDidVerificationMethod, createVerificationKeys, createKeyPairRaw } from './testutils.test'
-import { toString } from 'uint8arrays'
+import { toString } from 'uint8arrays/to-string'
 import { IKeyPair, MethodSpecificIdAlgo, VerificationMethods } from '../src/types'
 
 describe('createSignInputsFromImportableEd25519Key', () => {

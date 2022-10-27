@@ -1,7 +1,7 @@
 import { DirectSecp256k1HdWallet, GeneratedType } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { sign } from "@stablelib/ed25519"
-import { fromString, toString } from 'uint8arrays'
+import { fromString } from 'uint8arrays/from-string'
+import { toString } from 'uint8arrays/to-string'
 import { DIDModule, ResourceModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
