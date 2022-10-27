@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.9](https://github.com/cheqd/sdk/compare/1.3.8...1.3.9) (2022-10-26)
+
+## [1.3.8](https://github.com/cheqd/sdk/compare/1.3.7...1.3.8) (2022-10-25)
+
+## [1.3.7](https://github.com/cheqd/sdk/compare/1.3.6...1.3.7) (2022-10-17)
+
+## [1.3.6](https://github.com/cheqd/sdk/compare/1.3.5...1.3.6) (2022-10-17)
+
+## [1.3.5](https://github.com/cheqd/sdk/compare/1.3.4...1.3.5) (2022-10-17)
+
+## [1.3.4](https://github.com/cheqd/sdk/compare/1.3.3...1.3.4) (2022-10-17)
+
+## [1.3.3](https://github.com/cheqd/sdk/compare/1.3.2...1.3.3) (2022-10-16)
+
 ## [1.3.2](https://github.com/cheqd/sdk/compare/1.3.1...1.3.2) (2022-10-16)
 
 
