@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.10](https://github.com/cheqd/sdk/compare/1.3.9...1.3.10) (2022-10-27)
+
+
+### Bug Fixes
+
+* **deps:** Downgraded `uint8arrays` due to export config clash ([2e30906](https://github.com/cheqd/sdk/commit/2e3090624e505b666b038828f3453753fd887b58))
+* **deps:** Fixed imports deriving from bumps ([2cccc75](https://github.com/cheqd/sdk/commit/2cccc75090543fec8aff222ba3b19db9afc14b6a))
+
 ## [1.3.9](https://github.com/cheqd/sdk/compare/1.3.8...1.3.9) (2022-10-26)
 
 ## [1.3.8](https://github.com/cheqd/sdk/compare/1.3.7...1.3.8) (2022-10-25)
