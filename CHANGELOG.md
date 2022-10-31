@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.3.11](https://github.com/cheqd/sdk/compare/1.3.10...1.3.11) (2022-10-31)
+
 ## [1.3.10](https://github.com/cheqd/sdk/compare/1.3.9...1.3.10) (2022-10-27)
 
 
