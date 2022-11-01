@@ -1,11 +1,16 @@
 # Changelog
 
-## [1.4.0-develop.1](https://github.com/cheqd/sdk/compare/1.3.9...1.4.0-develop.1) (2022-10-26)
+## [1.3.12](https://github.com/cheqd/sdk/compare/1.3.11...1.3.12) (2022-10-31)
+
+## [1.3.11](https://github.com/cheqd/sdk/compare/1.3.10...1.3.11) (2022-10-31)
+
+## [1.3.10](https://github.com/cheqd/sdk/compare/1.3.9...1.3.10) (2022-10-27)
 
 
-### Features
+### Bug Fixes
 
-* Add createDidPayloadWithSignInputs util [DEV-1587] ([#49](https://github.com/cheqd/sdk/issues/49)) ([e332f56](https://github.com/cheqd/sdk/commit/e332f56a49111d26a1b9537f73a7eb228db0c61a))
+* **deps:** Downgraded `uint8arrays` due to export config clash ([2e30906](https://github.com/cheqd/sdk/commit/2e3090624e505b666b038828f3453753fd887b58))
+* **deps:** Fixed imports deriving from bumps ([2cccc75](https://github.com/cheqd/sdk/commit/2cccc75090543fec8aff222ba3b19db9afc14b6a))
 
 ## [1.3.9](https://github.com/cheqd/sdk/compare/1.3.8...1.3.9) (2022-10-26)
 
