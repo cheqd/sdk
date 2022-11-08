@@ -8,7 +8,7 @@ import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
-const defaultAsyncTxTimeout = 20000
+const defaultAsyncTxTimeout = 30000
 
 describe('DIDModule', () => {
     describe('constructor', () => {
