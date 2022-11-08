@@ -25,25 +25,8 @@
     "url": "https://github.com/cheqd/sdk/issues"
   },
   "homepage": "https://github.com/cheqd/sdk#readme",
-  "devDependencies": {
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/commit-analyzer": "^9.0.2",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^8.0.6",
-    "@semantic-release/npm": "^9.0.1",
-    "@semantic-release/release-notes-generator": "^10.0.3",
-    "@types/jest": "^29.2.0",
-    "@types/node": "^18.11.8",
-    "@types/uuid": "^8.3.4",
-    "conventional-changelog-conventionalcommits": "^5.0.0",
-    "jest": "^29.2.2",
-    "ts-jest": "^29.0.3",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.8.4",
-    "uint8arrays": "^3.1.1"
-  },
   "dependencies": {
-    "@cheqd/ts-proto": "^1.0.14",
+    "@cheqd/ts-proto": "^1.0.15",
     "@cosmjs/amino": "^0.29.3",
     "@cosmjs/encoding": "^0.29.3",
     "@cosmjs/math": "^0.29.3",
@@ -56,6 +39,23 @@
     "did-jwt": "^6.9.0",
     "multiformats": "^9.9.0",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.6",
+    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "@types/jest": "^29.2.2",
+    "@types/node": "^18.11.9",
+    "@types/uuid": "^8.3.4",
+    "conventional-changelog-conventionalcommits": "^5.0.0",
+    "jest": "^29.3.0",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "uint8arrays": "^3.1.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
