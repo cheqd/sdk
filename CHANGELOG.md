@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0-develop.4](https://github.com/cheqd/sdk/compare/1.4.0-develop.3...1.4.0-develop.4) (2022-11-11)
+
+
+### Features
+
+* Resolve review suggestions ([b984ef4](https://github.com/cheqd/sdk/commit/b984ef46e1815ffc2f11ab426359d81776f271a8))
+
 ## [1.4.0-develop.3](https://github.com/cheqd/sdk/compare/1.4.0-develop.2...1.4.0-develop.3) (2022-11-08)
 
 ## [1.4.0-develop.2](https://github.com/cheqd/sdk/compare/1.4.0-develop.1...1.4.0-develop.2) (2022-11-01)
