@@ -70,11 +70,11 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
 }
 
 export function createKeyPairRaw(seed?: string): KeyPair {
-    return seed ? generateKeyPairFromSeed(Buffer.from(seed)) : generateKeyPair()
+    return seed ? generateKeyPairFromSeed(fromString(seed)) : generateKeyPair()
 }
 
 export function createKeyPairBase64(seed?: string): IKeyPair {
-    const keyPair = seed ? generateKeyPairFromSeed(Buffer.from(seed)) : generateKeyPair()
+    const keyPair = seed ? generateKeyPairFromSeed(fromString(seed)) : generateKeyPair()
     return {
         publicKey: toString(keyPair.publicKey, 'base64'),
         privateKey: toString(keyPair.secretKey, 'base64'),
@@ -82,7 +82,7 @@ export function createKeyPairBase64(seed?: string): IKeyPair {
 }
 
 export function createKeyPairHex(seed?: string): IKeyPair {
-    const keyPair = seed ? generateKeyPairFromSeed(Buffer.from(seed)) : generateKeyPair()
+    const keyPair = createKeyPairRaw(seed)
     return {
         publicKey: toString(keyPair.publicKey, 'hex'),
         privateKey: toString(keyPair.secretKey, 'hex'),
@@ -198,28 +198,4 @@ export function createSignInputsFromKeyPair(didDocument: IdentifierPayload, keys
     const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
     const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, didDocument.verificationMethod!))
     return signInputs
-}
-
-export enum DidDocumentOperation {
-    Set = 'setDidDocument',
-    Add = 'addToDidDocument',
-    Remove = 'removeFromDidDocument'
-}
-
-export function jsonConcat(o1: any, o2:any) {
-    for (var key in o2) {
-    if(Array.isArray(o1[key])) {
-        o1[key].push(...o2[key])
-    } else {
-        o1[key] = o2[key]
-    }}
-    return o1
-}
-
-export function jsonSubtract(o1: any, o2: any) {
-    for (var key in o2) {
-        if(o2[key] == o1[key]) {
-            delete(o1[key])
-        }
-    }
 }
