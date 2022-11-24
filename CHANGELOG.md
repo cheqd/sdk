@@ -2,7 +2,6 @@
 
 ## [1.4.0-develop.4](https://github.com/cheqd/sdk/compare/1.4.0-develop.3...1.4.0-develop.4) (2022-11-11)
 
-
 ### Features
 
 * Resolve review suggestions ([b984ef4](https://github.com/cheqd/sdk/commit/b984ef46e1815ffc2f11ab426359d81776f271a8))
@@ -15,6 +14,8 @@
 
 * **deps:** Downgraded `uint8arrays` due to export config clash ([2e30906](https://github.com/cheqd/sdk/commit/2e3090624e505b666b038828f3453753fd887b58))
 * **deps:** Fixed imports deriving from bumps ([2cccc75](https://github.com/cheqd/sdk/commit/2cccc75090543fec8aff222ba3b19db9afc14b6a))
+
+## [1.3.14](https://github.com/cheqd/sdk/compare/1.3.13...1.3.14) (2022-11-15)
 
 ## [1.3.13](https://github.com/cheqd/sdk/compare/1.3.12...1.3.13) (2022-11-08)
 
