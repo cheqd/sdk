@@ -1,5 +1,7 @@
 # Changelog
 
+## [1.4.0-develop.5](https://github.com/cheqd/sdk/compare/1.4.0-develop.4...1.4.0-develop.5) (2022-11-24)
+
 ## [1.4.0-develop.4](https://github.com/cheqd/sdk/compare/1.4.0-develop.3...1.4.0-develop.4) (2022-11-11)
 
 ### Features
