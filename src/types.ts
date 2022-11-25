@@ -40,6 +40,7 @@ export interface ISignInputs {
 export interface IKeyPair {
     publicKey: string
     privateKey: string
+    algo?: MethodSpecificIdAlgo
 }
 
 export interface IKeyValuePair {
