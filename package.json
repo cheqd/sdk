@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/cheqd/sdk#readme",
   "dependencies": {
-    "@cheqd/ts-proto": "^1.0.15",
+    "@buf/grpc_web_cheqd_cheqd-proto": "c2db04eda037ecdf3d2eb95dfdfd8f7a2a3c97d7",
     "@cosmjs/amino": "^0.29.4",
     "@cosmjs/encoding": "^0.29.4",
     "@cosmjs/math": "^0.29.4",

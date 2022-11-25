@@ -1,4 +1,4 @@
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
+import { VerificationMethod } from "buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/did"
 import { 
     IKeyPair, 
     IKeyValuePair, 
@@ -16,7 +16,7 @@ import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
-import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { MsgCreateDidPayload } from "buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
 
 
 export type TImportableEd25519Key = {

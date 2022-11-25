@@ -1,9 +1,9 @@
 import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
-/* import { QueryClientImpl } from '@cheqd/ts-proto/cheqd/v1/query' */
+/* import { QueryClientImpl } from 'buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/query' */
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
-import { MsgCreateDid, MsgCreateDidPayload, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidPayload, MsgUpdateDidResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { MsgCreateDid, MsgCreateDidPayload, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidPayload, MsgUpdateDidResponse, protobufPackage } from "buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 
 export const typeUrlMsgCreateDid = `/${protobufPackage}.MsgCreateDid`
