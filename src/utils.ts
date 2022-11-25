@@ -1,4 +1,6 @@
-import { VerificationMethod } from "buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/did"
+import { VerificationMethod } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/did"
+import { MsgCreateDidPayload } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
+import { MsgUpdateDidPayload } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
 import { 
     IKeyPair, 
     IKeyValuePair, 
@@ -16,7 +18,7 @@ import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
 import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
-import { MsgCreateDidPayload } from "buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
+
 
 export type TImportableEd25519Key = {
     publicKeyHex: string

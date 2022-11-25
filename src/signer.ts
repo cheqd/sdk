@@ -3,9 +3,9 @@ import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBod
 import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
-import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from 'buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx';
+import { MsgCreateDidPayload, SignInfo, MsgUpdateDidPayload } from '@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx';
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
-import { VerificationMethod } from 'buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/did'
+import { VerificationMethod } from '@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/did'
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'

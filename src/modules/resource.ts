@@ -2,7 +2,7 @@ import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { DidStdFee, IContext, ISignInputs } from '../types';
-import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "buf/grpc_web_cheqd_cheqd-proto/resource/v1/tx"
+import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@buf/grpc_web_cheqd_cheqd-proto/resource/v1/tx"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { Writer } from "protobufjs"
 
