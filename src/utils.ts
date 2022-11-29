@@ -1,6 +1,8 @@
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v1/did"
-import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
-import { MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
+import { 
+    VerificationMethod,
+    MsgCreateDidPayload,
+    MsgUpdateDidPayload 
+} from "@cheqd/ts-proto/cheqd/did/v1/did"
 import { 
     IKeyPair, 
     IKeyValuePair, 

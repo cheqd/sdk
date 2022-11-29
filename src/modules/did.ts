@@ -1,5 +1,5 @@
 import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
-/* import { QueryClientImpl } from '@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/query' */
+/* import { QueryClientImpl } from '"@cheqd/ts-proto/cheqd/did/v1/query' */
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
