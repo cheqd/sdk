@@ -1,4 +1,4 @@
-import { MsgUpdateDidPayload } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
+import { MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { fromString, toString } from 'uint8arrays'

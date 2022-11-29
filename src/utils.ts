@@ -1,6 +1,6 @@
-import { VerificationMethod } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/did"
-import { MsgCreateDidPayload } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
-import { MsgUpdateDidPayload } from "@buf/grpc_web_cheqd_cheqd-proto/cheqd/v1/tx"
+import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v1/did"
+import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
+import { MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
 import { 
     IKeyPair, 
     IKeyValuePair, 
