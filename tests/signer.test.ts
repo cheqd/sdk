@@ -1,5 +1,5 @@
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v1/did"
-import { MsgCreateDid, MsgCreateDidPayload, SignInfo } from "@cheqd/ts-proto/cheqd/did/v1/tx"
+import { VerificationMethod } from "@cheqd/ts-proto/build/cheqd/did/v1/did"
+import { MsgCreateDid, MsgCreateDidPayload, SignInfo } from "@cheqd/ts-proto/build/cheqd/did/v1/tx"
 import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing"
 import { base64ToBytes, EdDSASigner } from "did-jwt"
 import { typeUrlMsgCreateDid } from '../src/modules/did'
