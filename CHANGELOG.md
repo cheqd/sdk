@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/cheqd/sdk/compare/1.3.14...1.4.0) (2022-11-25)
+
+
+### Features
+
+* Add createDidPayloadWithSignInputs util [DEV-1587] ([#49](https://github.com/cheqd/sdk/issues/49)) ([e332f56](https://github.com/cheqd/sdk/commit/e332f56a49111d26a1b9537f73a7eb228db0c61a))
+* Resolve review suggestions ([b984ef4](https://github.com/cheqd/sdk/commit/b984ef46e1815ffc2f11ab426359d81776f271a8))
+
 ## [1.4.0-develop.5](https://github.com/cheqd/sdk/compare/1.4.0-develop.4...1.4.0-develop.5) (2022-11-24)
 
 ## [1.4.0-develop.4](https://github.com/cheqd/sdk/compare/1.4.0-develop.3...1.4.0-develop.4) (2022-11-11)
