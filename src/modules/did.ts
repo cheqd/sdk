@@ -3,56 +3,56 @@ import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { DidStdFee, IContext, ISignInputs } from "../types"
-import { MsgCreateDid, MsgCreateDidPayload, MsgCreateDidResponse, MsgUpdateDid, MsgUpdateDidPayload, MsgUpdateDidResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/did/v1/tx"
+import { MsgCreateDidDoc, MsgCreateDidDocPayload, MsgCreateDidDocResponse, MsgUpdateDidDoc, MsgUpdateDidDocPayload, MsgUpdateDidDocResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/did/v2/tx"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 
-export const typeUrlMsgCreateDid = `/${protobufPackage}.MsgCreateDid`
-export const typeUrlMsgCreateDidResponse = `/${protobufPackage}.MsgCreateDidResponse`
-export const typeUrlMsgUpdateDid = `/${protobufPackage}.MsgUpdateDid`
-export const typeUrlMsgUpdateDidResponse = `/${protobufPackage}.MsgUpdateDidResponse`
+export const typeUrlMsgCreateDidDoc = `/${protobufPackage}.MsgCreateDidDoc`
+export const typeUrlMsgCreateDidDocResponse = `/${protobufPackage}.MsgCreateDidDocResponse`
+export const typeUrlMsgUpdateDidDoc = `/${protobufPackage}.MsgUpdateDidDoc`
+export const typeUrlMsgUpdateDidDocResponse = `/${protobufPackage}.MsgUpdateDidDocResponse`
 
-export interface MsgCreateDidEncodeObject extends EncodeObject {
-	readonly typeUrl: typeof typeUrlMsgCreateDid,
-	readonly value: Partial<MsgCreateDid>
+export interface MsgCreateDidDocEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgCreateDidDoc,
+	readonly value: Partial<MsgCreateDidDoc>
 }
 
-export function isMsgCreateDidEncodeObject(obj: EncodeObject): obj is MsgCreateDidEncodeObject {
-	return obj.typeUrl === typeUrlMsgCreateDid
+export function isMsgCreateDidDocEncodeObject(obj: EncodeObject): obj is MsgCreateDidDocEncodeObject {
+	return obj.typeUrl === typeUrlMsgCreateDidDoc
 }
 
-export interface MsgCreateDidResponseEncodeObject extends EncodeObject {
-	readonly typeUrl: typeof typeUrlMsgCreateDidResponse,
-	readonly value: Partial<MsgCreateDidResponse>
+export interface MsgCreateDidDocResponseEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgCreateDidDocResponse,
+	readonly value: Partial<MsgCreateDidDocResponse>
 }
 
-export function MsgCreateDidResponseEncodeObject(obj: EncodeObject): obj is MsgCreateDidResponseEncodeObject {
-	return obj.typeUrl === typeUrlMsgCreateDidResponse
+export function MsgCreateDidDocResponseEncodeObject(obj: EncodeObject): obj is MsgCreateDidDocResponseEncodeObject {
+	return obj.typeUrl === typeUrlMsgCreateDidDocResponse
 }
 
-export interface MsgUpdateDidEncodeObject extends EncodeObject {
-	readonly typeUrl: typeof typeUrlMsgUpdateDid,
-	readonly value: Partial<MsgUpdateDid>
+export interface MsgUpdateDidDocEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgUpdateDidDoc,
+	readonly value: Partial<MsgUpdateDidDoc>
 }
 
-export function MsgUpdateDidEncodeObject(obj: EncodeObject): obj is MsgUpdateDidEncodeObject {
-	return obj.typeUrl === typeUrlMsgUpdateDid
+export function MsgUpdateDidDocEncodeObject(obj: EncodeObject): obj is MsgUpdateDidDocEncodeObject {
+	return obj.typeUrl === typeUrlMsgUpdateDidDoc
 }
 
-export interface MsgUpdateDidResponseEncodeObject extends EncodeObject {
-	readonly typeUrl: typeof typeUrlMsgUpdateDidResponse,
-	readonly value: Partial<MsgUpdateDidResponse>
+export interface MsgUpdateDidDocResponseEncodeObject extends EncodeObject {
+	readonly typeUrl: typeof typeUrlMsgUpdateDidDocResponse,
+	readonly value: Partial<MsgUpdateDidDocResponse>
 }
 
-export function MsgUpdateDidResponseEncodeObject(obj: EncodeObject): obj is MsgUpdateDidResponseEncodeObject {
-	return obj.typeUrl === typeUrlMsgUpdateDidResponse
+export function MsgUpdateDidDocResponseEncodeObject(obj: EncodeObject): obj is MsgUpdateDidDocResponseEncodeObject {
+	return obj.typeUrl === typeUrlMsgUpdateDidDocResponse
 }
 
 export class DIDModule extends AbstractCheqdSDKModule {
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
-        [typeUrlMsgCreateDid, MsgCreateDid],
-        [typeUrlMsgCreateDidResponse, MsgCreateDidResponse],
-        [typeUrlMsgUpdateDid, MsgUpdateDid],
-        [typeUrlMsgUpdateDidResponse, MsgUpdateDidResponse],
+        [typeUrlMsgCreateDidDoc, MsgCreateDidDoc],
+        [typeUrlMsgCreateDidDocResponse, MsgCreateDidDocResponse],
+        [typeUrlMsgUpdateDidDoc, MsgUpdateDidDoc],
+        [typeUrlMsgUpdateDidDocResponse, MsgUpdateDidDocResponse],
     ]
 
 	constructor(signer: CheqdSigningStargateClient) {
@@ -67,21 +67,21 @@ export class DIDModule extends AbstractCheqdSDKModule {
         return DIDModule.registryTypes
     }
 
-	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidDocPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
-		const payload = MsgCreateDidPayload.fromPartial(didPayload)
+		const payload = MsgCreateDidDocPayload.fromPartial(didPayload)
 		const signatures = await this._signer.signCreateDidTx(signInputs, payload)
 
-		const value: MsgCreateDid = {
+		const value: MsgCreateDidDoc = {
 			payload,
 			signatures
 		}
 
-		const createDidMsg: MsgCreateDidEncodeObject = {
-			typeUrl: typeUrlMsgCreateDid,
+		const createDidMsg: MsgCreateDidDocEncodeObject = {
+			typeUrl: typeUrlMsgCreateDidDoc,
 			value
 		}
 
@@ -93,21 +93,21 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidDocPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
-		const payload = MsgUpdateDidPayload.fromPartial(didPayload)
+		const payload = MsgUpdateDidDocPayload.fromPartial(didPayload)
 		const signatures = await this._signer.signUpdateDidTx(signInputs, payload)
 
-		const value: MsgUpdateDid = {
+		const value: MsgUpdateDidDoc = {
 			payload,
 			signatures
 		}
 
-		const updateDidMsg: MsgUpdateDidEncodeObject = {
-			typeUrl: typeUrlMsgUpdateDid,
+		const updateDidMsg: MsgUpdateDidDocEncodeObject = {
+			typeUrl: typeUrlMsgUpdateDidDoc,
 			value
 		}
 
