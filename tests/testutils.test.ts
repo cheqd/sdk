@@ -1,4 +1,4 @@
-import { MsgCreateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
+import { MsgCreateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2/tx"
 import { CheqdNetwork, IKeyPair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
 import { base64ToBytes } from "did-jwt"
@@ -6,7 +6,7 @@ import { fromString, toString } from 'uint8arrays'
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { GasPrice } from "@cosmjs/stargate"
 import { v4 } from 'uuid'
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v1/did"
+import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2/diddoc"
 import { parseToKeyValuePair } from '../src/utils'
 
 export const faucet = {
@@ -100,8 +100,10 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
                     id: verificationKeys[_].keyId,
                     type: type,
                     controller: verificationKeys[_].didUrl,
-                    publicKeyMultibase: verificationKeys[_].methodSpecificId,
-                    publicKeyJwk: []
+                    verificationMaterial: JSON.stringify({
+                        publicKeyMultibase: verificationKeys[_].methodSpecificId,
+                        publicKeyJwk: []
+                    })
                 }
 
             case VerificationMethods.JWK:
@@ -109,14 +111,16 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
                     id: verificationKeys[_].keyId,
                     type: type,
                     controller: verificationKeys[_].didUrl,
-                    publicKeyJwk: parseToKeyValuePair(
-                        {
-                            crv: 'Ed25519',
-                            kty: 'OKP',
-                            x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
-                        }
-                    ),
-                    publicKeyMultibase: ''
+                    verificationMaterial: JSON.stringify({
+                        publicKeyJwk: parseToKeyValuePair(
+                            {
+                                crv: 'Ed25519',
+                                kty: 'OKP',
+                                x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
+                            }
+                        ),
+                        publicKeyMultibase: ''
+                    })
                 }
         }
     }) ?? []
@@ -127,14 +131,14 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
  *? Used for testing purposes.
  ** NOTE: The following utils are stable but subject to change at any given moment.
  */
-export function createDidPayload(verificationMethods: VerificationMethod[], verificationKeys: IVerificationKeys[]): MsgCreateDidPayload {
+export function createDidPayload(verificationMethods: VerificationMethod[], verificationKeys: IVerificationKeys[]): MsgCreateDidDocPayload {
     if (!verificationMethods || verificationMethods.length === 0)
         throw new Error('No verification methods provided')
     if (!verificationKeys || verificationKeys.length === 0)
         throw new Error('No verification keys provided')
 
     const did = verificationKeys[0].didUrl
-    return MsgCreateDidPayload.fromPartial(
+    return MsgCreateDidDocPayload.fromPartial(
         {
             id: did,
             controller: verificationKeys.map(key => key.didUrl),

@@ -5,7 +5,7 @@ import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload } from '@cheqd/ts-proto/cheqd/did/v2/tx';
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
-import { VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v1/did'
+import { VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2/diddoc'
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'

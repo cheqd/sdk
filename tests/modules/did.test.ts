@@ -1,4 +1,4 @@
-import { MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/did/v1/tx"
+import { MsgUpdateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2/tx"
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { fromString, toString } from 'uint8arrays'
@@ -139,7 +139,7 @@ describe('DIDModule', () => {
             expect(didTx.code).toBe(0)
 
             // Update the DID
-            const updateDidPayload = MsgUpdateDidPayload.fromPartial({
+            const updateDidPayload = MsgUpdateDidDocPayload.fromPartial({
                 context: didPayload.context,
                 id: didPayload.id,
                 controller: didPayload.controller,
