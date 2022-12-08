@@ -1,4 +1,4 @@
-import { MsgUpdateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2/tx"
+import { MsgUpdateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2"
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { fromString, toString } from 'uint8arrays'

@@ -6,7 +6,7 @@ import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../../src/types';
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
-import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2/tx';
+import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
 import { randomUUID } from "crypto"
 
 const defaultAsyncTxTimeout = 30000

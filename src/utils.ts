@@ -1,8 +1,8 @@
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2/diddoc"
 import {
     MsgCreateDidDocPayload,
-    MsgUpdateDidDocPayload 
-} from "@cheqd/ts-proto/cheqd/did/v2/tx"
+    MsgUpdateDidDocPayload,
+    VerificationMethod 
+} from "@cheqd/ts-proto/cheqd/did/v2"
 import { 
     IKeyPair, 
     IKeyValuePair, 

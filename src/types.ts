@@ -1,8 +1,7 @@
 import { CheqdSDK } from "."
 import { Coin } from "@cosmjs/proto-signing"
 import { Signer } from "did-jwt"
-import { MsgDeactivateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2/tx"
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2/diddoc"
+import { MsgDeactivateDidDocPayload, VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
