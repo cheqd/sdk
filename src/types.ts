@@ -1,6 +1,8 @@
 import { CheqdSDK } from "."
 import { Coin } from "@cosmjs/proto-signing"
 import { Signer } from "did-jwt"
+import { MsgDeactivateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2/tx"
+import { VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2/diddoc"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
@@ -66,4 +68,8 @@ export interface DidStdFee {
     readonly gas: string
     payer?: string
     granter?: string
+}
+
+export interface MsgDeactivateDidPayload extends MsgDeactivateDidDocPayload {
+    verificationMethod: VerificationMethod[]
 }

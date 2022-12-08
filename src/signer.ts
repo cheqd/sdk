@@ -3,11 +3,9 @@ import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBod
 import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
-import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload } from '@cheqd/ts-proto/cheqd/did/v2/tx';
+import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload, MsgDeactivateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2';
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
-import { VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2/diddoc'
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
-import { toString } from 'uint8arrays'
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
 import { Int53 } from '@cosmjs/math'
@@ -222,6 +220,21 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
 				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+			}
+		}))
+
+		return signInfos
+	}
+
+	async signDeactivateDidTx(signInputs: ISignInputs[], payload: MsgDeactivateDidDocPayload, verificationMethod: VerificationMethod[]): Promise<SignInfo[]> {
+		await this.checkDidSigners(verificationMethod)
+
+		const signBytes = MsgDeactivateDidDocPayload.encode(payload).finish()
+		const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
+			return {
+				verificationMethodId: signInput.verificationMethodId,
+				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
+				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
