@@ -15,6 +15,7 @@ import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
 import { Any } from 'cosmjs-types/google/protobuf/any'
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import Long from 'long'
+import { fromString } from 'uint8arrays'
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice)
@@ -204,7 +205,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
-				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+				signature: fromString((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
@@ -219,7 +220,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
-				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+				signature: fromString((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
@@ -234,7 +235,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
-				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+				signature: fromString((await (await this.getDidSigner(signInput.verificationMethodId, verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
@@ -267,7 +268,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 
 			signInfos.push({
 				verificationMethodId: signInput.verificationMethodId,
-				signature: base64ToBytes(signature)
+				signature: fromString(signature)
 			});
 		}
 

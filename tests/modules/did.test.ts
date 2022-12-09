@@ -41,7 +41,7 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000'
+                        amount: '5000000000'
                     }
                 ],
                 gas: '100000',
@@ -79,7 +79,7 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000'
+                        amount: '5000000000'
                     }
                 ],
                 gas: '100000',
@@ -120,7 +120,7 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000'
+                        amount: '5000000000'
                     }
                 ],
                 gas: '100000',

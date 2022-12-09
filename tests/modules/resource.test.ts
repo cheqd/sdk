@@ -48,7 +48,7 @@ describe('ResourceModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '50000000'
+                        amount: '2500000000'
                     }
                 ],
                 gas: '1000000',
