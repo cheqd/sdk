@@ -31,10 +31,6 @@ export type TImportableEd25519Key = {
 
 export type IdentifierPayload = Partial<MsgCreateDidDocPayload> | Partial<MsgUpdateDidDocPayload>
 
-export function parseToKeyValuePair(object: { [key: string]: any }): IKeyValuePair[] {
-    return Object.entries(object).map(([key, value]) => ({ key, value }))
-}
-
 export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
     return kv1.every((item, index) => item.key === kv2[index].key && item.value === kv2[index].value)
 }
@@ -56,12 +52,12 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
                 }
 
             case VerificationMethods.JWK:
-                const publicKeyJWK = parseToKeyValuePair({
+                const publicKeyJWK = {
                     crv: 'Ed25519',
                     kty: 'OKP',
                     x: toString( publicKey, 'base64url' )
-                })
-                if (isEqualKeyValuePair((JSON.parse(method.verificationMaterial)).publicKeyJwk, publicKeyJWK)) {
+                }
+                if ((JSON.parse(method.verificationMaterial)).publicKeyJwk, publicKeyJWK) {
                     return {
                         verificationMethodId: method.id,
                         privateKeyHex: key.privateKeyHex
@@ -138,13 +134,11 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
                     type: type,
                     controller: verificationKeys[_].didUrl,
                     verificationMaterial: JSON.stringify({
-                        publicKeyJwk: parseToKeyValuePair(
-                            {
-                                crv: 'Ed25519',
-                                kty: 'OKP',
-                                x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
-                            }
-                        ),
+                        publicKeyJwk: {
+                            crv: 'Ed25519',
+                            kty: 'OKP',
+                            x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
+                        },
                         publicKeyMultibase: ''
                     })
                 }

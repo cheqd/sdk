@@ -205,7 +205,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
-				signature: fromString((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
@@ -220,7 +220,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
-				signature: fromString((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
@@ -235,7 +235,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
 				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
-				signature: fromString((await (await this.getDidSigner(signInput.verificationMethodId, verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
+				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
 
@@ -268,7 +268,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 
 			signInfos.push({
 				verificationMethodId: signInput.verificationMethodId,
-				signature: fromString(signature)
+				signature: base64ToBytes(signature)
 			});
 		}
 
