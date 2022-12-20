@@ -1,12 +1,13 @@
 import { MsgCreateDidDocPayload, VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
 import { CheqdNetwork, IKeyPair, IVerificationKeys, MethodSpecificIdAlgo, TMethodSpecificId, TVerificationKey, TVerificationKeyPrefix, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
-import { base64ToBytes } from "did-jwt"
+import { base58ToBytes, base64ToBytes } from "did-jwt"
 import { fromString, toString } from 'uint8arrays'
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { GasPrice } from "@cosmjs/stargate"
 import { v4 } from 'uuid'
-import { parseToKeyValuePair } from '../src/utils'
+import { createHash } from 'crypto'
+import { convertKeyPairtoTImportableEd25519Key } from "../src/utils"
 
 export const faucet = {
     prefix: 'cheqd',
@@ -18,7 +19,7 @@ export const faucet = {
 export const exampleCheqdNetwork = {
     network: 'testnet',
     rpcUrl: 'https://rpc.cheqd.network',
-    gasPrice: GasPrice.fromString( `25${faucet.minimalDenom}` )
+    gasPrice: GasPrice.fromString( `50${faucet.minimalDenom}` )
 }
 
 /**
@@ -67,7 +68,7 @@ export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificId
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:
             methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
-            didUrl = `did:cheqd:${network}:${methodSpecificId.substring(0, length)}`
+            didUrl = `did:cheqd:${network}:${(bases['base58btc'].encode((fromString(sha256(keyPair.publicKey))).slice(0,16))).slice(1)}`
             return {
                 methodSpecificId,
                 didUrl,
@@ -111,13 +112,11 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
                     type: type,
                     controller: verificationKeys[_].didUrl,
                     verificationMaterial: JSON.stringify({
-                        publicKeyJwk: parseToKeyValuePair(
-                            {
-                                crv: 'Ed25519',
-                                kty: 'OKP',
-                                x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
-                            }
-                        ),
+                        publicKeyJwk: {
+                            crv: 'Ed25519',
+                            kty: 'OKP',
+                            x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
+                        },
                         publicKeyMultibase: ''
                     })
                 }
@@ -135,14 +134,18 @@ export function createDidPayload(verificationMethods: VerificationMethod[], veri
         throw new Error('No verification methods provided')
     if (!verificationKeys || verificationKeys.length === 0)
         throw new Error('No verification keys provided')
-
     const did = verificationKeys[0].didUrl
     return MsgCreateDidDocPayload.fromPartial(
         {
             id: did,
             controller: verificationKeys.map(key => key.didUrl),
             verificationMethod: verificationMethods,
-            authentication: verificationKeys.map(key => key.keyId)
+            authentication: verificationKeys.map(key => key.keyId),
+            versionId: v4()
         }
     )
 }
+
+function sha256(message: string) {
+    return createHash('sha256').update(message).digest('hex')
+  }

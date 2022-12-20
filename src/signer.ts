@@ -15,7 +15,6 @@ import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
 import { Any } from 'cosmjs-types/google/protobuf/any'
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import Long from 'long'
-import { fromString } from 'uint8arrays'
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice)

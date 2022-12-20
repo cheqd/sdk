@@ -4,7 +4,6 @@ import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { DidStdFee, IContext, ISignInputs } from '../types';
 import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { Writer } from "protobufjs"
 
 export const typeUrlMsgCreateResource = `/${protobufPackage}.MsgCreateResource`
 export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.MsgCreateResourceResponse`

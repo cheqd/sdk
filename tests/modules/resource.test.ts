@@ -51,7 +51,7 @@ describe('ResourceModule', () => {
                         amount: '2500000000'
                     }
                 ],
-                gas: '1000000',
+                gas: '200000',
                 payer: (await wallet.getAccounts())[0].address
             } 
             

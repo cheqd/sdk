@@ -20,7 +20,7 @@ import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
 import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
-
+import { createHash } from 'crypto'
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -95,7 +95,7 @@ export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificId
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:
             methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
-            didUrl = `did:cheqd:${network}:${methodSpecificId.substring(0, length)}`
+            didUrl = `did:cheqd:${network}:${(bases['base58btc'].encode((fromString(sha256(keyPair.publicKey))).slice(0,16))).slice(1)}`
             return {
                 methodSpecificId,
                 didUrl,
@@ -158,7 +158,8 @@ export function createDidPayload(verificationMethods: VerificationMethod[], veri
             id: did,
             controller: verificationKeys.map(key => key.didUrl),
             verificationMethod: verificationMethods,
-            authentication: verificationKeys.map(key => key.keyId)
+            authentication: verificationKeys.map(key => key.keyId),
+            versionId: v4()
         }
     )
 }
@@ -201,3 +202,7 @@ export function createSignInputsFromKeyPair(didDocument: IdentifierPayload, keys
     const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, didDocument.verificationMethod!))
     return signInputs
 }
+
+function sha256(message: string) {
+    return createHash('sha256').update(message).digest('hex')
+  }
