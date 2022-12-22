@@ -1,8 +1,7 @@
-import { VerificationMethod } from "@cheqd/ts-proto/cheqd/v1/did"
-import { MsgCreateDid, MsgCreateDidPayload, SignInfo } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { MsgCreateDidDoc, MsgCreateDidDocPayload, VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
 import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing"
-import { base64ToBytes, EdDSASigner } from "did-jwt"
-import { typeUrlMsgCreateDid } from '../src/modules/did'
+import { EdDSASigner } from "did-jwt"
+import { typeUrlMsgCreateDidDoc } from '../src/modules/did'
 import { CheqdSigningStargateClient } from "../src/signer"
 import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../src/types"
 import { fromString, toString } from 'uint8arrays'
@@ -42,9 +41,9 @@ describe('CheqdSigningStargateClient', () => {
         it('can be constructed with cheqd custom registry', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const registry = new Registry()
-            registry.register(typeUrlMsgCreateDid, MsgCreateDid)
+            registry.register(typeUrlMsgCreateDidDoc, MsgCreateDidDoc)
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet, { registry })
-            expect(signer.registry.lookupType(typeUrlMsgCreateDid)).toBe(MsgCreateDid)
+            expect(signer.registry.lookupType(typeUrlMsgCreateDidDoc)).toBe(MsgCreateDidDoc)
         })
     })
 
@@ -116,7 +115,7 @@ describe('CheqdSigningStargateClient', () => {
                 id: nonExistingKeyId,
                 type: nonExistingVerificationMethod,
                 controller: nonExistingDid,
-                publicKeyMultibase: nonExistingPublicKeyMultibase
+                verificationMaterial: JSON.stringify({publicKeyMultibase: nonExistingPublicKeyMultibase})
             }
 
             await expect(signer.checkDidSigners([VerificationMethod.fromPartial(verificationMethod)])).rejects.toThrow()
@@ -139,12 +138,12 @@ describe('CheqdSigningStargateClient', () => {
             ]
             const signInfos = await signer.signCreateDidTx(signInputs, didPayload)
             const publicKeyRaw = fromString(keyPair.publicKey, 'base64')
-            const messageRaw = MsgCreateDidPayload.encode(didPayload).finish()
-            const signatureRaw = base64ToBytes(signInfos[0].signature)
+            const messageRaw = MsgCreateDidDocPayload.encode(didPayload).finish()
+
             const verified = verify(
                 publicKeyRaw,
                 messageRaw,
-                signatureRaw
+                signInfos[0].signature
             )
 
             expect(verified).toBe(true)

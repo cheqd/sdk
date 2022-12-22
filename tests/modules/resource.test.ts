@@ -6,7 +6,7 @@ import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../../src/types';
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
-import { MsgCreateResourcePayload } from '@cheqd/ts-proto/resource/v1/tx';
+import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
 import { randomUUID } from "crypto"
 
 const defaultAsyncTxTimeout = 30000
@@ -48,10 +48,10 @@ describe('ResourceModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '50000000'
+                        amount: '2500000000'
                     }
                 ],
-                gas: '1000000',
+                gas: '200000',
                 payer: (await wallet.getAccounts())[0].address
             } 
             
@@ -74,6 +74,8 @@ describe('ResourceModule', () => {
             const resourcePayload: MsgCreateResourcePayload = {
                 collectionId: didPayload.id.split(":").reverse()[0],
                 id: randomUUID(),
+                version: "1.0",
+                alsoKnownAs: [],
                 name: 'Test Resource',
                 resourceType: 'test-resource-type',
                 data: new TextEncoder().encode("{ \"message\": \"hello world\"}")

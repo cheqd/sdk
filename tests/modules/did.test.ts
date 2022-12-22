@@ -1,7 +1,8 @@
-import { MsgUpdateDidPayload } from "@cheqd/ts-proto/cheqd/v1/tx"
+import { MsgUpdateDidDocPayload } from "@cheqd/ts-proto/cheqd/did/v2"
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { fromString, toString } from 'uint8arrays'
+import { v4 } from "uuid"
 import { DIDModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
@@ -41,10 +42,10 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000'
+                        amount: '5000000000'
                     }
                 ],
-                gas: '100000',
+                gas: '200000',
                 payer: (await wallet.getAccounts())[0].address
             } 
             const didTx: DeliverTxResponse = await didModule.createDidTx(
@@ -69,6 +70,7 @@ describe('DIDModule', () => {
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Uuid, 'key-1', 16)
             const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
+            didPayload.versionId = v4()
             const signInputs: ISignInputs[] = [
                 {
                     verificationMethodId: didPayload.verificationMethod[0].id,
@@ -79,10 +81,10 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000'
+                        amount: '5000000000'
                     }
                 ],
-                gas: '100000',
+                gas: '200000',
                 payer: (await wallet.getAccounts())[0].address
             } 
             const didTx: DeliverTxResponse = await didModule.createDidTx(
@@ -120,10 +122,10 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000'
+                        amount: '5000000000'
                     }
                 ],
-                gas: '100000',
+                gas: '200000',
                 payer: (await wallet.getAccounts())[0].address
             } 
             const didTx: DeliverTxResponse = await didModule.createDidTx(
@@ -139,7 +141,7 @@ describe('DIDModule', () => {
             expect(didTx.code).toBe(0)
 
             // Update the DID
-            const updateDidPayload = MsgUpdateDidPayload.fromPartial({
+            const updateDidPayload = MsgUpdateDidDocPayload.fromPartial({
                 context: didPayload.context,
                 id: didPayload.id,
                 controller: didPayload.controller,
