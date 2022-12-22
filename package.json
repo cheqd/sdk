@@ -48,7 +48,7 @@
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^29.2.3",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.10",
     "@types/uuid": "^8.3.4",
     "conventional-changelog-conventionalcommits": "^5.0.0",
     "jest": "^29.3.1",
