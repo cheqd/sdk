@@ -29,6 +29,9 @@ export type TImportableEd25519Key = {
     type: "Ed25519"
 }
 
+// multicodec ed25519-pub header as varint
+const MULTICODEC_ED25519_PUB_HEADER = new Uint8Array([0xed, 0x01]);
+
 export type IdentifierPayload = Partial<MsgCreateDidDocPayload> | Partial<MsgUpdateDidDocPayload>
 
 export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
@@ -205,4 +208,15 @@ export function createSignInputsFromKeyPair(didDocument: IdentifierPayload, keys
 
 function sha256(message: string) {
     return createHash('sha256').update(message).digest('hex')
-  }
+}
+
+// encode a multibase base58-btc multicodec key
+// function _encodeMbKey(header: any, key: any) {
+//     const mbKey = new Uint8Array(header.length + key.length);
+  
+//     mbKey.set(header);
+//     mbKey.set(key, header.length);
+  
+//     return bases['base58btc'].encode(mbKey);
+//   }
+  
