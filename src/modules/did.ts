@@ -2,7 +2,7 @@ import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs
 /* import { QueryClientImpl } from '@cheqd/ts-proto/cheqd/did/v1/query' */
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
-import { DidStdFee, IContext, ISignInputs, MsgDeactivateDidPayload } from "../types"
+import { DidStdFee, IContext, ISignInputs, MsgCreateDidPayload, MsgDeactivateDidPayload, MsgUpdateDidPayload } from "../types"
 import { 
 	MsgCreateDidDoc, 
 	MsgCreateDidDocPayload, 
@@ -99,12 +99,12 @@ export class DIDModule extends AbstractCheqdSDKModule {
         return DIDModule.registryTypes
     }
 
-	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidDocPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
-		const payload = MsgCreateDidDocPayload.fromPartial(didPayload)
+		const payload = MsgCreateDidDocPayload.fromPartial(MsgCreateDidPayload.transformPayload(didPayload))
 		const signatures = await this._signer.signCreateDidTx(signInputs, payload)
 
 		const value: MsgCreateDidDoc = {
@@ -125,12 +125,12 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidDocPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
-		const payload = MsgUpdateDidDocPayload.fromPartial(didPayload)
+		const payload = MsgUpdateDidDocPayload.fromPartial(MsgCreateDidPayload.transformPayload(didPayload))
 		const signatures = await this._signer.signUpdateDidTx(signInputs, payload)
 
 		const value: MsgUpdateDidDoc = {
