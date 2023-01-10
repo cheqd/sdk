@@ -18,7 +18,7 @@ describe('createSignInputsFromImportableEd25519Key', () => {
         }
 
         const verificationKeys = createVerificationKeys(keyPairBase64, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-        const verificationMethod = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+        const verificationMethod = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
         const signInput = createSignInputsFromImportableEd25519Key(importableEd25519Key, verificationMethod)
 
         expect(signInput).toEqual({ verificationMethodId: verificationKeys.keyId, privateKeyHex: importableEd25519Key.privateKeyHex })

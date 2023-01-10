@@ -81,7 +81,7 @@ export interface MsgCreateDidPayload extends Omit<MsgCreateDidDocPayload, 'verif
 }
 
 export const MsgCreateDidPayload = {
-    transformPayload<I extends Exact<DeepPartial<MsgCreateDidPayload>, I>>(message: I): Partial<MsgCreateDidDocPayload> {
+    transformPayload<I extends Exact<DeepPartial<MsgCreateDidPayload>, I>>(message: I): MsgCreateDidDocPayload {
         const obj: any = {};
         if (message.context) {
           obj.context = message.context
@@ -117,7 +117,7 @@ export const MsgCreateDidPayload = {
           obj.service = message.service.map((e) => e ? {id: e.id, serviceEndpoint: e.serviceEndpoint, serviceType: e.type} as Service : undefined);
         }
         message.versionId !== undefined && (obj.versionId = message.versionId);
-        return obj;
+        return MsgCreateDidDocPayload.fromPartial(obj);
       },
 
     fromPartial<I extends Exact<DeepPartial<MsgCreateDidPayload>, I>>(object: I): MsgCreateDidPayload {

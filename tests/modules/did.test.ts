@@ -6,7 +6,7 @@ import { v4 } from "uuid"
 import { DIDModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
-import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
+import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, MsgCreateDidPayload, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
 const defaultAsyncTxTimeout = 30000
@@ -29,7 +29,7 @@ describe('DIDModule', () => {
             const didModule = new DIDModule(signer)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
 
             const signInputs: ISignInputs[] = [
@@ -68,7 +68,7 @@ describe('DIDModule', () => {
             const didModule = new DIDModule(signer)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Uuid, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             didPayload.versionId = v4()
             const signInputs: ISignInputs[] = [
@@ -110,7 +110,7 @@ describe('DIDModule', () => {
             
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             const signInputs: ISignInputs[] = [
                 {
@@ -141,7 +141,7 @@ describe('DIDModule', () => {
             expect(didTx.code).toBe(0)
 
             // Update the DID
-            const updateDidPayload = MsgUpdateDidDocPayload.fromPartial({
+            const updateDidPayload = MsgCreateDidPayload.fromPartial({
                 context: didPayload.context,
                 id: didPayload.id,
                 controller: didPayload.controller,

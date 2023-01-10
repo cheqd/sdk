@@ -104,7 +104,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			this._signer = context!.sdk!.signer
 		}
 
-		const payload = MsgCreateDidDocPayload.fromPartial(MsgCreateDidPayload.transformPayload(didPayload))
+		const payload = MsgCreateDidPayload.transformPayload(didPayload)
 		const signatures = await this._signer.signCreateDidTx(signInputs, payload)
 
 		const value: MsgCreateDidDoc = {
@@ -130,7 +130,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			this._signer = context!.sdk!.signer
 		}
 
-		const payload = MsgUpdateDidDocPayload.fromPartial(MsgCreateDidPayload.transformPayload(didPayload))
+		const payload = MsgCreateDidPayload.transformPayload(didPayload)
 		const signatures = await this._signer.signUpdateDidTx(signInputs, payload)
 
 		const value: MsgUpdateDidDoc = {

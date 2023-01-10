@@ -3,7 +3,7 @@ import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing"
 import { EdDSASigner } from "did-jwt"
 import { typeUrlMsgCreateDidDoc } from '../src/modules/did'
 import { CheqdSigningStargateClient } from "../src/signer"
-import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../src/types"
+import { ISignInputs, MethodSpecificIdAlgo, MsgCreateDidPayload, VerificationMethods } from "../src/types"
 import { fromString, toString } from 'uint8arrays'
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "./testutils.test"
 import { verify } from "@stablelib/ed25519"
@@ -53,7 +53,7 @@ describe('CheqdSigningStargateClient', () => {
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             const didSigner = await signer.getDidSigner(didPayload.verificationMethod[0].id, didPayload.verificationMethod)
 
@@ -72,7 +72,7 @@ describe('CheqdSigningStargateClient', () => {
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
             await expect(signer.getDidSigner(nonExistingKeyId, didPayload.verificationMethod)).rejects.toThrow()
         })
@@ -84,12 +84,12 @@ describe('CheqdSigningStargateClient', () => {
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
-            expect(didSigners[VerificationMethods.Base58]).toBe(EdDSASigner)
+            expect(didSigners[VerificationMethods.Ed255192020]).toBe(EdDSASigner)
         })
 
         it('should instantiate multiple signers for a did with multiple verification methods', async () => {
@@ -99,12 +99,12 @@ describe('CheqdSigningStargateClient', () => {
             const keyPair2 = createKeyPairBase64()
             const verificationKeys1 = createVerificationKeys(keyPair1, MethodSpecificIdAlgo.Base58, 'key-1', 16)
             const verificationKeys2 = createVerificationKeys(keyPair2, MethodSpecificIdAlgo.Base58, 'key-2', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58, VerificationMethods.JWK], [verificationKeys1, verificationKeys2])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020, VerificationMethods.JWK], [verificationKeys1, verificationKeys2])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys1, verificationKeys2])
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
-            expect(didSigners[VerificationMethods.Base58]).toBe(EdDSASigner)
+            expect(didSigners[VerificationMethods.Ed255192020]).toBe(EdDSASigner)
             expect(didSigners[VerificationMethods.JWK]).toBe(EdDSASigner)
         })
 
@@ -113,7 +113,7 @@ describe('CheqdSigningStargateClient', () => {
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const verificationMethod: Partial<VerificationMethod> = {
                 id: nonExistingKeyId,
-                type: nonExistingVerificationMethod,
+                verificationMethodType: nonExistingVerificationMethod,
                 controller: nonExistingDid,
                 verificationMaterial: JSON.stringify({publicKeyMultibase: nonExistingPublicKeyMultibase})
             }
@@ -128,8 +128,8 @@ describe('CheqdSigningStargateClient', () => {
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Base58], [verificationKeys])
-            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
+            const didPayload = MsgCreateDidPayload.transformPayload(MsgCreateDidPayload.fromPartial(createDidPayload(verificationMethods, [verificationKeys])))
             const signInputs: ISignInputs[] = [
                 {
                     verificationMethodId: didPayload.verificationMethod[0].id,
