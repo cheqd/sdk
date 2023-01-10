@@ -4,7 +4,7 @@ import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargate
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload, MsgDeactivateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
+import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethodPayload, VerificationMethods } from './types';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'

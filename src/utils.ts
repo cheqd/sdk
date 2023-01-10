@@ -72,11 +72,13 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
                     kty: 'OKP',
                     x: toString( publicKey, 'base64url' )
                 }
-                if (method.publicKeyJWK! === publicKeyJWK) {
+                if (JSON.stringify(method.publicKeyJWK) === JSON.stringify(publicKeyJWK)) {
                     return {
                         verificationMethodId: method.id,
                         privateKeyHex: key.privateKeyHex
                     }
+                } else {
+                    throw new Error(`JWK not matching ${method.publicKeyJWK}, ${publicKeyJWK}`)
                 }
         }
     }
@@ -153,12 +155,11 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
                     id: verificationKeys[_].keyId,
                     type,
                     controller: verificationKeys[_].didUrl,
-                    publicKeyJWK: JSON.stringify({
-                            crv: 'Ed25519',
-                            kty: 'OKP',
-                            x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
-                        }
-                    )
+                    publicKeyJWK: {
+                        crv: 'Ed25519',
+                        kty: 'OKP',
+                        x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
+                    }
                 }
         }
     }) ?? []

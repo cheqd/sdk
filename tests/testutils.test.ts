@@ -119,12 +119,11 @@ export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificId
                     id: verificationKeys[_].keyId,
                     type,
                     controller: verificationKeys[_].didUrl,
-                    publicKeyJWK: JSON.stringify({
-                            crv: 'Ed25519',
-                            kty: 'OKP',
-                            x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
-                        }
-                    )
+                    publicKeyJWK: {
+                        crv: 'Ed25519',
+                        kty: 'OKP',
+                        x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
+                    }
                 }
         }
     }) ?? []

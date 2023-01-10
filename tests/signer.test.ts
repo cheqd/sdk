@@ -54,7 +54,7 @@ describe('CheqdSigningStargateClient', () => {
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
             const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
-            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
+            const didPayload = MsgCreateDidPayload.transformPayload(createDidPayload(verificationMethods, [verificationKeys]))
             const didSigner = await signer.getDidSigner(didPayload.verificationMethod[0].id, didPayload.verificationMethod)
 
             expect(didSigner).toBe(EdDSASigner)
@@ -85,7 +85,7 @@ describe('CheqdSigningStargateClient', () => {
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
             const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
-            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
+            const didPayload = MsgCreateDidPayload.transformPayload(createDidPayload(verificationMethods, [verificationKeys]))
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
@@ -100,7 +100,7 @@ describe('CheqdSigningStargateClient', () => {
             const verificationKeys1 = createVerificationKeys(keyPair1, MethodSpecificIdAlgo.Base58, 'key-1', 16)
             const verificationKeys2 = createVerificationKeys(keyPair2, MethodSpecificIdAlgo.Base58, 'key-2', 16)
             const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020, VerificationMethods.JWK], [verificationKeys1, verificationKeys2])
-            const didPayload = createDidPayload(verificationMethods, [verificationKeys1, verificationKeys2])
+            const didPayload = MsgCreateDidPayload.transformPayload(createDidPayload(verificationMethods, [verificationKeys1, verificationKeys2]))
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
