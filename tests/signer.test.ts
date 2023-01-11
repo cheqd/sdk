@@ -97,15 +97,18 @@ describe('CheqdSigningStargateClient', () => {
             const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet)
             const keyPair1 = createKeyPairBase64()
             const keyPair2 = createKeyPairBase64()
+            const keyPair3 = createKeyPairBase64()
             const verificationKeys1 = createVerificationKeys(keyPair1, MethodSpecificIdAlgo.Base58, 'key-1', 16)
             const verificationKeys2 = createVerificationKeys(keyPair2, MethodSpecificIdAlgo.Base58, 'key-2', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020, VerificationMethods.JWK], [verificationKeys1, verificationKeys2])
-            const didPayload = MsgCreateDidPayload.transformPayload(createDidPayload(verificationMethods, [verificationKeys1, verificationKeys2]))
+            const verificationKeys3 = createVerificationKeys(keyPair3, MethodSpecificIdAlgo.Base58, 'key-3', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020, VerificationMethods.JWK, VerificationMethods.Ed255192018], [verificationKeys1, verificationKeys2, verificationKeys3])
+            const didPayload = MsgCreateDidPayload.transformPayload(createDidPayload(verificationMethods, [verificationKeys1, verificationKeys2, verificationKeys3]))
 
             const didSigners = await signer.checkDidSigners(didPayload.verificationMethod)
 
             expect(didSigners[VerificationMethods.Ed255192020]).toBe(EdDSASigner)
             expect(didSigners[VerificationMethods.JWK]).toBe(EdDSASigner)
+            expect(didSigners[VerificationMethods.Ed255192018]).toBe(EdDSASigner)
         })
 
         it('should throw for non-supported verification method', async () => {

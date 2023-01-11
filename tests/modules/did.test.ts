@@ -29,7 +29,7 @@ describe('DIDModule', () => {
             const didModule = new DIDModule(signer)
             const keyPair = createKeyPairBase64()
             const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
-            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys])
             const didPayload = createDidPayload(verificationMethods, [verificationKeys])
 
             const signInputs: ISignInputs[] = [
