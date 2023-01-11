@@ -72,7 +72,7 @@ export interface DidStdFee {
 }
 
 export interface MsgDeactivateDidPayload extends MsgDeactivateDidDocPayload {
-    verificationMethod: VerificationMethod[]
+    verificationMethod: VerificationMethodPayload[]
 }
 
 export interface MsgCreateDidPayload extends Omit<MsgCreateDidDocPayload, 'verificationMethod' | 'service'> {
@@ -93,7 +93,7 @@ export const MsgCreateDidPayload = {
           obj.controller = message.controller
         }
         if (message.verificationMethod) {
-          obj.verificationMethod = message.verificationMethod.map((e) => e ? {id: e.id, controller: e.controller, verificationMethodType: e.type, verificationMaterial: e.publicKeyBase58 || e.publicKeyMultibase || JSON.stringify(e.publicKeyJWK) } as VerificationMethod : undefined);
+          obj.verificationMethod = message.verificationMethod.map((e) => e ? VerificationMethodPayload.transformPayload(e) : undefined);
         }
         if (message.authentication) {
           obj.authentication = message.authentication
@@ -176,6 +176,15 @@ export const VerificationMethodPayload = {
         message.publicKeyJWK = object.publicKeyJWK ?? {};
         return message;
       },
+    
+    transformPayload<I extends Exact<DeepPartial<VerificationMethodPayload>, I>>(payload: I): VerificationMethod {
+      return {
+        id: payload.id ?? "", 
+        controller: payload.controller ?? "", 
+        verificationMethodType: payload.type ?? "", 
+        verificationMaterial: payload.publicKeyBase58 || payload.publicKeyMultibase || JSON.stringify(payload.publicKeyJWK) || ""
+      } as VerificationMethod
+    }
 }
 
 function createBaseVerificationMethod(): VerificationMethodPayload {

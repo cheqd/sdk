@@ -6,7 +6,7 @@ import { v4 } from "uuid"
 import { DIDModule } from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
-import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, MsgCreateDidPayload, VerificationMethods } from "../../src/types"
+import { DidStdFee, ISignInputs, MethodSpecificIdAlgo, MsgCreateDidPayload, MsgDeactivateDidPayload, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, exampleCheqdNetwork, faucet } from "../testutils.test"
 
 const defaultAsyncTxTimeout = 30000
@@ -42,7 +42,7 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000000'
+                        amount: '5000000'
                     }
                 ],
                 gas: '200000',
@@ -81,7 +81,7 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000000'
+                        amount: '5000000'
                     }
                 ],
                 gas: '200000',
@@ -122,7 +122,7 @@ describe('DIDModule', () => {
                 amount: [
                     {
                         denom: 'ncheq',
-                        amount: '5000000000'
+                        amount: '5000000'
                     }
                 ],
                 gas: '200000',
@@ -160,6 +160,64 @@ describe('DIDModule', () => {
 
             console.warn(updateDidTx)
             expect(updateDidTx.code).toBe(0)
+        }, defaultAsyncTxTimeout)
+    })
+
+    describe('deactivateDidTx', () => {
+        it('should deactivate a DID', async () => {
+            const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
+            const registry = createDefaultCheqdRegistry(DIDModule.registryTypes)
+            const signer = await CheqdSigningStargateClient.connectWithSigner(exampleCheqdNetwork.rpcUrl, wallet, { registry })
+            const didModule = new DIDModule(signer)
+            
+            const keyPair = createKeyPairBase64()
+            const verificationKeys = createVerificationKeys(keyPair, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
+            const signInputs: ISignInputs[] = [
+                {
+                    verificationMethodId: didPayload.verificationMethod[0].id,
+                    privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex')
+                }
+            ]
+            const fee: DidStdFee = {
+                amount: [
+                    {
+                        denom: 'ncheq',
+                        amount: '5000000'
+                    }
+                ],
+                gas: '200000',
+                payer: (await wallet.getAccounts())[0].address
+            } 
+            const didTx: DeliverTxResponse = await didModule.createDidTx(
+                signInputs,
+                didPayload,
+                (await wallet.getAccounts())[0].address,
+                fee
+            )
+
+            console.warn(`Using payload: ${JSON.stringify(didPayload)}`)
+            console.warn(`DID Tx: ${JSON.stringify(didTx)}`)
+
+            expect(didTx.code).toBe(0)
+
+            // Update the DID
+            const deactivateDidPayload: MsgDeactivateDidPayload = {
+                id: didPayload.id,
+                verificationMethod: didPayload.verificationMethod,
+                versionId: v4()
+            }
+
+            const deactivateDidTx: DeliverTxResponse = await didModule.deactivateDidTx(
+                signInputs,
+                deactivateDidPayload,
+                (await wallet.getAccounts())[0].address,
+                fee
+            )
+
+            console.warn(deactivateDidTx)
+            expect(deactivateDidTx.code).toBe(0)
         }, defaultAsyncTxTimeout)
     })
 })

@@ -2,16 +2,14 @@ import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs
 /* import { QueryClientImpl } from '@cheqd/ts-proto/cheqd/did/v1/query' */
 import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
-import { DidStdFee, IContext, ISignInputs, MsgCreateDidPayload, MsgDeactivateDidPayload, MsgUpdateDidPayload } from "../types"
+import { DidStdFee, IContext, ISignInputs, MsgCreateDidPayload, MsgDeactivateDidPayload, MsgUpdateDidPayload, VerificationMethodPayload } from "../types"
 import { 
 	MsgCreateDidDoc, 
-	MsgCreateDidDocPayload, 
 	MsgCreateDidDocResponse, 
 	MsgDeactivateDidDoc, 
 	MsgDeactivateDidDocPayload, 
 	MsgDeactivateDidDocResponse, 
 	MsgUpdateDidDoc, 
-	MsgUpdateDidDocPayload, 
 	MsgUpdateDidDocResponse, 
 	protobufPackage 
 } from "@cheqd/ts-proto/cheqd/did/v2"
@@ -84,6 +82,8 @@ export class DIDModule extends AbstractCheqdSDKModule {
         [typeUrlMsgCreateDidDocResponse, MsgCreateDidDocResponse],
         [typeUrlMsgUpdateDidDoc, MsgUpdateDidDoc],
         [typeUrlMsgUpdateDidDocResponse, MsgUpdateDidDocResponse],
+		[typeUrlMsgDeactivateDidDoc, MsgDeactivateDidDoc],
+		[typeUrlMsgDeactivateDidDocResponse, MsgDeactivateDidDocResponse],
     ]
 
 	constructor(signer: CheqdSigningStargateClient) {
@@ -157,7 +157,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		}
 
 		const payload = MsgDeactivateDidDocPayload.fromPartial({id: didPayload.id, versionId: didPayload.versionId})
-		const signatures = await this._signer.signDeactivateDidTx(signInputs, payload, didPayload.verificationMethod)
+		const signatures = await this._signer.signDeactivateDidTx(signInputs, payload, didPayload.verificationMethod.map((e)=>VerificationMethodPayload.transformPayload(e)))
 
 		const value: MsgDeactivateDidDoc = {
 			payload,
