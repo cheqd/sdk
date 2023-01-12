@@ -204,7 +204,7 @@ export function createDidPayloadWithSignInputs(seed?: string, keys?: IKeyPair[])
     const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
     const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, verificationMethod))
 
-    return { didPayload: MsgCreateDidDocPayload.fromPartial(payload), keys, signInputs }
+    return { didPayload: MsgCreateDidPayload.fromPartial(payload), keys, signInputs }
 }
 
 export function convertKeyPairtoTImportableEd25519Key(keyPair: IKeyPair) : TImportableEd25519Key {
