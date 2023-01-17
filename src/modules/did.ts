@@ -11,7 +11,8 @@ import {
 	MsgDeactivateDidDocResponse, 
 	MsgUpdateDidDoc, 
 	MsgUpdateDidDocResponse, 
-	protobufPackage 
+	protobufPackage, 
+	SignInfo
 } from "@cheqd/ts-proto/cheqd/did/v2"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 
@@ -99,13 +100,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
         return DIDModule.registryTypes
     }
 
-	async createDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: Partial<MsgCreateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
 		const payload = MsgCreateDidPayload.transformPayload(didPayload)
-		const signatures = await this._signer.signCreateDidTx(signInputs, payload)
+		let signatures: SignInfo[]
+		if(ISignInputs.isSignInput(signInputs)) {
+			signatures = await this._signer.signCreateDidTx(signInputs, payload)
+		} else {
+			signatures = signInputs
+		}
 
 		const value: MsgCreateDidDoc = {
 			payload,
@@ -125,13 +131,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	async updateDidTx(signInputs: ISignInputs[], didPayload: Partial<MsgUpdateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async updateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: Partial<MsgUpdateDidPayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
 		const payload = MsgCreateDidPayload.transformPayload(didPayload)
-		const signatures = await this._signer.signUpdateDidTx(signInputs, payload)
+		let signatures: SignInfo[]
+		if(ISignInputs.isSignInput(signInputs)) {
+			signatures = await this._signer.signUpdateDidTx(signInputs, payload)
+		} else {
+			signatures = signInputs
+		}
 
 		const value: MsgUpdateDidDoc = {
 			payload,
@@ -151,13 +162,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	async deactivateDidTx(signInputs: ISignInputs[], didPayload: MsgDeactivateDidPayload, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async deactivateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: MsgDeactivateDidPayload, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
 
 		const payload = MsgDeactivateDidDocPayload.fromPartial({id: didPayload.id, versionId: didPayload.versionId})
-		const signatures = await this._signer.signDeactivateDidTx(signInputs, payload, didPayload.verificationMethod.map((e)=>VerificationMethodPayload.transformPayload(e)))
+		let signatures: SignInfo[]
+		if(ISignInputs.isSignInput(signInputs)) {
+			signatures = await this._signer.signDeactivateDidTx(signInputs, payload, didPayload.verificationMethod.map((e)=>VerificationMethodPayload.transformPayload(e)))
+		} else {
+			signatures = signInputs
+		}
 
 		const value: MsgDeactivateDidDoc = {
 			payload,

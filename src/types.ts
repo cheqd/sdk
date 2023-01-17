@@ -40,6 +40,12 @@ export interface ISignInputs {
     privateKeyHex: string
 }
 
+export const ISignInputs = {
+  isSignInput(object: any): object is ISignInputs[] {
+		return true;
+	}
+}
+
 export interface IKeyPair {
     publicKey: string
     privateKey: string
