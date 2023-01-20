@@ -4,6 +4,7 @@ import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { DidStdFee, IContext, ISignInputs } from '../types';
 import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
 import { DeliverTxResponse } from "@cosmjs/stargate"
+import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
 
 export const typeUrlMsgCreateResource = `/${protobufPackage}.MsgCreateResource`
 export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.MsgCreateResourceResponse`
@@ -34,9 +35,14 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		return []
 	}
 
-	static async signPayload(payload: MsgCreateResourcePayload, signInputs: ISignInputs[]): Promise<MsgCreateResource> {
+	static async signPayload(payload: MsgCreateResourcePayload, signInputs: ISignInputs[] | SignInfo[]): Promise<MsgCreateResource> {
 		const signBytes = MsgCreateResourcePayload.encode(payload).finish()
-		const signatures = await CheqdSigningStargateClient.signIdentityTx(signBytes, signInputs)
+		let signatures: SignInfo[]
+		if(ISignInputs.isSignInput(signInputs)) {
+			signatures = await CheqdSigningStargateClient.signIdentityTx(signBytes, signInputs)
+		} else {
+			signatures = signInputs
+		}
 		
 		return {
 			payload,
@@ -44,7 +50,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 	}
 
-	async createResourceTx(signInputs: ISignInputs[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createResourceTx(signInputs: ISignInputs[] | SignInfo[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
