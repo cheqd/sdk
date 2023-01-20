@@ -41,8 +41,8 @@ export interface ISignInputs {
 }
 
 export const ISignInputs = {
-  isSignInput(object: any): object is ISignInputs[] {
-		return true;
+  isSignInput(object: Object[]): object is ISignInputs[] {
+		return object.some((x)=> 'privateKeyHex' in x)
 	}
 }
 
@@ -177,9 +177,13 @@ export const VerificationMethodPayload = {
         message.id = object.id ?? "";
         message.type = object.type ?? "";
         message.controller = object.controller ?? "";
-        message.publicKeyMultibase = object.publicKeyMultibase ?? "";
-        message.publicKeyBase58 = object.publicKeyBase58 ?? "";
-        message.publicKeyJWK = object.publicKeyJWK ?? {};
+        if(object.publicKeyMultibase) {
+          message.publicKeyMultibase = object.publicKeyMultibase;
+        } else if (object.publicKeyBase58) {
+          message.publicKeyBase58 = object.publicKeyBase58;
+        } else if (object.publicKeyJWK) {
+          message.publicKeyJWK = object.publicKeyJWK;
+        }
         return message;
       },
     
