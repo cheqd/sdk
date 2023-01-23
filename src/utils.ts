@@ -1,8 +1,3 @@
-import {
-    MsgCreateDidDocPayload,
-    MsgUpdateDidDocPayload,
-    VerificationMethod 
-} from "@cheqd/ts-proto/cheqd/did/v2"
 import { 
     IKeyPair, 
     IKeyValuePair, 
@@ -106,30 +101,34 @@ export function createKeyPairHex(seed?: string): IKeyPair {
     }
 }
 
-export function createVerificationKeys(keyPair: IKeyPair, algo: MethodSpecificIdAlgo, key: TVerificationKey<TVerificationKeyPrefix, number>, length: number = 32, network: CheqdNetwork = CheqdNetwork.Testnet): IVerificationKeys {
+export function createVerificationKeys(publicKey: string, algo: MethodSpecificIdAlgo, key: TVerificationKey<TVerificationKeyPrefix, number>, network: CheqdNetwork = CheqdNetwork.Testnet): IVerificationKeys {
     let methodSpecificId: TMethodSpecificId
     let didUrl: IVerificationKeys['didUrl']
+    
+    publicKey = isBase64(publicKey) ? publicKey : toString(fromString(publicKey, 'hex'), 'base64')
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:
-            methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
-            didUrl = `did:cheqd:${network}:${(bases['base58btc'].encode((fromString(sha256(keyPair.publicKey))).slice(0,16))).slice(1)}`
+            methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey))
+            didUrl = `did:cheqd:${network}:${(bases['base58btc'].encode((fromString(sha256(publicKey))).slice(0,16))).slice(1)}`
             return {
                 methodSpecificId,
                 didUrl,
                 keyId: `${didUrl}#${key}`,
-                publicKey: keyPair.publicKey,
+                publicKey,
             }
         case MethodSpecificIdAlgo.Uuid:
-            methodSpecificId = bases['base58btc'].encode(base64ToBytes(keyPair.publicKey))
+            methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey))
             didUrl = `did:cheqd:${network}:${v4()}`
             return {
                 methodSpecificId,
                 didUrl,
                 keyId: `${didUrl}#${key}`,
-                publicKey: keyPair.publicKey,
+                publicKey,
             }
     }
 }
+
+const isBase64 = (value: string) => /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(value);
 
 export function createDidVerificationMethod(verificationMethodTypes: VerificationMethods[], verificationKeys: IVerificationKeys[]): VerificationMethodPayload[] {
     return verificationMethodTypes.map((type, _) => {
@@ -183,45 +182,6 @@ export function createDidPayload(verificationMethods: VerificationMethodPayload[
     )
 }
 
-export function createDidPayloadWithSignInputs(seed?: string, keys?: IKeyPair[]) {
-    if(seed && keys) throw new Error ('Only one of seed or keys should be passed as an argument')
-    
-    if(!keys) {
-        keys = [seed ? createKeyPairBase64(seed) : createKeyPairBase64()]
-    }
-
-    const verificationMethodTypes = keys.map((key) => !key.algo || key.algo == MethodSpecificIdAlgo.Base58 ? VerificationMethods.Ed255192020 : VerificationMethods.JWK)
-    const verificationKeys = keys.map((key, i) => createVerificationKeys(key, key.algo || MethodSpecificIdAlgo.Base58, `key-${i}`))
-    const verificationMethod = createDidVerificationMethod(verificationMethodTypes, verificationKeys)
-    
-    let payload : Partial<MsgCreateDidPayload> = {
-        id: verificationKeys[0].didUrl,
-        controller: verificationKeys.map(key => key.didUrl),
-        verificationMethod: verificationMethod,
-        authentication: verificationKeys.map(key => key.keyId),
-    }
-
-    const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
-    const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, verificationMethod))
-
-    return { didPayload: MsgCreateDidPayload.fromPartial(payload), keys, signInputs }
-}
-
-export function convertKeyPairtoTImportableEd25519Key(keyPair: IKeyPair) : TImportableEd25519Key {
-    return {
-        type: 'Ed25519',
-        privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
-        kid: 'kid',
-        publicKeyHex: toString(fromString(keyPair.publicKey, 'base64'), 'hex')
-    }
-}
-
-export function createSignInputsFromKeyPair(didDocument: IdentifierPayload, keys: IKeyPair[]) {
-    const keyHexs = keys.map((key)=>convertKeyPairtoTImportableEd25519Key(key))
-    const signInputs = keyHexs.map((key)=>createSignInputsFromImportableEd25519Key(key, didDocument.verificationMethod || []))
-    return signInputs
-}
-
 function sha256(message: string) {
     return createHash('sha256').update(message).digest('hex')
 }
@@ -234,5 +194,5 @@ function _encodeMbKey(header: any, key: Uint8Array) {
     mbKey.set(key, header.length);
   
     return bases['base58btc'].encode(mbKey);
-  }
+}
   
