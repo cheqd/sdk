@@ -1,13 +1,11 @@
-import { MsgCreateDidDocPayload, VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
 import { CheqdNetwork, IKeyPair, IVerificationKeys, MethodSpecificIdAlgo, MsgCreateDidPayload, TMethodSpecificId, TVerificationKey, TVerificationKeyPrefix, VerificationMethodPayload, VerificationMethods } from "../src/types"
 import { bases } from 'multiformats/basics'
-import { base58ToBytes, base64ToBytes } from "did-jwt"
+import { base64ToBytes } from "did-jwt"
 import { fromString, toString } from 'uint8arrays'
 import { generateKeyPair, KeyPair } from '@stablelib/ed25519'
 import { GasPrice } from "@cosmjs/stargate"
 import { v4 } from 'uuid'
 import { createHash } from 'crypto'
-import { convertKeyPairtoTImportableEd25519Key } from "../src/utils"
 
 export const faucet = {
     prefix: 'cheqd',

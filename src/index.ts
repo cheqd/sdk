@@ -109,7 +109,5 @@ export {
 	createKeyPairHex,
 	createVerificationKeys,
 	createDidVerificationMethod,
-	createDidPayload,
-	createDidPayloadWithSignInputs,
-	createSignInputsFromKeyPair
+	createDidPayload
 } from './utils'
