@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0-develop.2](https://github.com/cheqd/sdk/compare/1.5.0-develop.1...1.5.0-develop.2) (2023-01-24)
+
+
+### Features
+
+* Update proto && Accept did core spec input [DEV-2113] ([#111](https://github.com/cheqd/sdk/issues/111)) ([f2f710a](https://github.com/cheqd/sdk/commit/f2f710adcaa245af6ae83e89f8e0b695d0751fcd)), closes [#114](https://github.com/cheqd/sdk/issues/114)
+
 ## [1.5.0-develop.1](https://github.com/cheqd/sdk/compare/1.4.0...1.5.0-develop.1) (2023-01-03)
 
 
