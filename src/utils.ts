@@ -105,7 +105,7 @@ export function createVerificationKeys(publicKey: string, algo: MethodSpecificId
     let methodSpecificId: TMethodSpecificId
     let didUrl: IVerificationKeys['didUrl']
     
-    publicKey = isBase64(publicKey) ? publicKey : toString(fromString(publicKey, 'hex'), 'base64')
+    publicKey = publicKey.length == 43 ? publicKey : toString(fromString(publicKey, 'hex'), 'base64')
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:
             methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey))
@@ -127,8 +127,6 @@ export function createVerificationKeys(publicKey: string, algo: MethodSpecificId
             }
     }
 }
-
-const isBase64 = (value: string) => /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/.test(value);
 
 export function createDidVerificationMethod(verificationMethodTypes: VerificationMethods[], verificationKeys: IVerificationKeys[]): VerificationMethodPayload[] {
     return verificationMethodTypes.map((type, _) => {
