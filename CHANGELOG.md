@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0-develop.3](https://github.com/cheqd/sdk/compare/1.5.0-develop.2...1.5.0-develop.3) (2023-01-24)
+
+
+### Bug Fixes
+
+* Minor issue ([e060576](https://github.com/cheqd/sdk/commit/e060576034693dba70f7f4a7576f5a72f967045a))
+
 ## [1.5.0-develop.2](https://github.com/cheqd/sdk/compare/1.5.0-develop.1...1.5.0-develop.2) (2023-01-24)
 
 
