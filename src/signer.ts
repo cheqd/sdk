@@ -4,7 +4,7 @@ import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargate
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload, MsgDeactivateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
+import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethodPayload, VerificationMethods } from './types';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
@@ -176,11 +176,11 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		}
 
 		verificationMethods.forEach((verificationMethod) => {
-			if (!(Object.values(VerificationMethods) as string[]).includes(verificationMethod.type ?? '')) {
-				throw new Error(`Unsupported verification method type: ${verificationMethod.type}`)
+			if (!(Object.values(VerificationMethods) as string[]).includes(verificationMethod.verificationMethodType ?? '')) {
+				throw new Error(`Unsupported verification method type: ${verificationMethod.verificationMethodType}`)
 			}
-			if (!this.didSigners[verificationMethod.type ?? '']) {
-				this.didSigners[verificationMethod.type ?? ''] = EdDSASigner
+			if (!this.didSigners[verificationMethod.verificationMethodType ?? '']) {
+				this.didSigners[verificationMethod.verificationMethodType ?? ''] = EdDSASigner
 			}
 		})
 
@@ -189,7 +189,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 
 	async getDidSigner(verificationMethodId: string, verificationMethods: Partial<VerificationMethod>[]): Promise<(secretKey: Uint8Array) => Signer> {
 		await this.checkDidSigners(verificationMethods)
-		const verificationMethod = verificationMethods.find(method => method.id === verificationMethodId)?.type
+		const verificationMethod = verificationMethods.find(method => method.id === verificationMethodId)?.verificationMethodType
 		if (!verificationMethod) {
 			throw new Error(`Verification method for ${verificationMethodId} not found`)
 		}
