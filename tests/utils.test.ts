@@ -1,5 +1,5 @@
 import { TImportableEd25519Key, createSignInputsFromImportableEd25519Key } from '../src/utils'
-import { createDidVerificationMethod, createVerificationKeys, createKeyPairRaw } from './testutils.test'
+import { createDidVerificationMethod, createVerificationKeys, createKeyPairRaw } from '../src/utils'
 import { toString } from 'uint8arrays'
 import { IKeyPair, MethodSpecificIdAlgo, VerificationMethods } from '../src/types'
 
@@ -17,7 +17,7 @@ describe('createSignInputsFromImportableEd25519Key', () => {
             privateKey: toString(keyPair.secretKey, 'base64'),
         }
 
-        const verificationKeys = createVerificationKeys(keyPairBase64, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+        const verificationKeys = createVerificationKeys(keyPairBase64.publicKey, MethodSpecificIdAlgo.Base58, 'key-1')
         const verificationMethod = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
         const signInput = createSignInputsFromImportableEd25519Key(importableEd25519Key, verificationMethod)
 
@@ -37,7 +37,7 @@ describe('createSignInputsFromImportableEd25519Key', () => {
             privateKey: toString(keyPair.secretKey, 'base64'),
         }
 
-        const verificationKeys = createVerificationKeys(keyPairBase64, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+        const verificationKeys = createVerificationKeys(keyPairBase64.publicKey, MethodSpecificIdAlgo.Base58, 'key-1')
         const verificationMethod = createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys])
         const signInput = createSignInputsFromImportableEd25519Key(importableEd25519Key, verificationMethod)
 
@@ -57,7 +57,7 @@ describe('createSignInputsFromImportableEd25519Key', () => {
             privateKey: toString(keyPair.secretKey, 'base64'),
         }
 
-        const verificationKeys = createVerificationKeys(keyPairBase64, MethodSpecificIdAlgo.Base58, 'key-1', 16)
+        const verificationKeys = createVerificationKeys(keyPairBase64.publicKey, MethodSpecificIdAlgo.Base58, 'key-1')
         const verificationMethod = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys])
         const signInput = createSignInputsFromImportableEd25519Key(importableEd25519Key, verificationMethod)
 
