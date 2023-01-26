@@ -1,10 +1,10 @@
 import { CheqdExtensions } from './modules/_'
 import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc } from "@cosmjs/proto-signing"
-import { DeliverTxResponse, GasPrice, HttpEndpoint, QueryClient, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
+import { DeliverTxResponse, GasPrice, HttpEndpoint, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
 import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload, MsgDeactivateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethodPayload, VerificationMethods } from './types';
+import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { assert, assertDefined } from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
@@ -50,8 +50,6 @@ export function makeDidAuthInfoBytes(
 			payer: feePayer
 		}
 	}
-	//* There is a `Long` type incompatibility in the protobuf library that causes the following line to throw an error. No actual type mismatch is ever encountered.
-	// @ts-ignore
 	return AuthInfo.encode(AuthInfo.fromPartial(authInfo)).finish()
 }
 
@@ -78,11 +76,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		super(tmClient, signer, options)
 		this._signer = signer
 		if (options.gasPrice) this._gasPrice = options.gasPrice
-		/** GRPC Connection */
-
-		/* if (tmClient) {
-			this.cheqdExtensions = QueryClient.withExtensions(tmClient, setupCheqdExtensions)
-		} */
 	}
 
 	async signAndBroadcast(
@@ -129,11 +122,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		}
 
 		return this._signDirect(signerAddress, messages, fee, memo, signerData)
-
-		// TODO: override signAmino as well
-		/* return isOfflineDirectSigner(this._signer)
-			? this._signDirect(signerAddress, messages, fee, memo, signerData)
-			: this._signAmino(signerAddress, messages, fee, memo, signerData) */
 	}
 
 	private async _signDirect(
@@ -203,7 +191,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
-				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
 				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
@@ -218,7 +205,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
-				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
 				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))
@@ -233,7 +219,6 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		const signInfos: SignInfo[] = await Promise.all(signInputs.map(async (signInput) => {
 			return {
 				verificationMethodId: signInput.verificationMethodId,
-				// TODO: We can't rely on `payload.verificationMethod` here because `CreateResourceTx` doesn't have it
 				signature: base64ToBytes((await (await this.getDidSigner(signInput.verificationMethodId, verificationMethod))(hexToBytes(signInput.privateKeyHex))(signBytes)) as string)
 			}
 		}))

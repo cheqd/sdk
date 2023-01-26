@@ -8,10 +8,11 @@ import {
     TVerificationKey, 
     TVerificationKeyPrefix, 
     CheqdNetwork, 
-    IVerificationKeys, 
-    MsgCreateDidPayload,
-    VerificationMethodPayload,
-    MsgUpdateDidPayload
+    IVerificationKeys,
+    VerificationMethod,
+    DIDDocument,
+    SpecValidationResult,
+    JsonWebKey,
 } from "./types"
 import { fromString, toString } from 'uint8arrays'
 import { bases } from "multiformats/basics"
@@ -19,6 +20,10 @@ import { base64ToBytes } from "did-jwt"
 import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
 import { v4 } from 'uuid'
 import { createHash } from 'crypto'
+import {
+    VerificationMethod as ProtoVerificationMethod,
+    Service as ProtoService,
+} from "@cheqd/ts-proto/cheqd/did/v2"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -27,16 +32,13 @@ export type TImportableEd25519Key = {
     type: "Ed25519"
 }
 
-// multicodec ed25519-pub header as varint
-const MULTICODEC_ED25519_PUB_HEADER = new Uint8Array([0xed, 0x01]);
-
-export type IdentifierPayload = Partial<MsgCreateDidPayload> | Partial<MsgUpdateDidPayload>
+const MULTICODEC_ED25519_HEADER = new Uint8Array([0xed, 0x01]);
 
 export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
     return kv1.every((item, index) => item.key === kv2[index].key && item.value === kv2[index].value)
 }
 
-export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519Key, verificationMethod: VerificationMethodPayload[]): ISignInputs {
+export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519Key, verificationMethod: VerificationMethod[]): ISignInputs {
     if (verificationMethod?.length === 0) throw new Error('No verification methods provided')
 
     const publicKey = fromString(key.publicKeyHex, 'hex')
@@ -44,14 +46,13 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
     for(const method of verificationMethod) {
         switch (method?.type) {
             case VerificationMethods.Ed255192020:
-                const publicKeyMultibase = _encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, publicKey)
+                const publicKeyMultibase = toMultibaseRaw(publicKey)
                 if (method.publicKeyMultibase === publicKeyMultibase) {
                     return {
                         verificationMethodId: method.id,
                         privateKeyHex: key.privateKeyHex
                     }
                 }
-            
             case VerificationMethods.Ed255192018:
                 const publicKeyBase58 = bases['base58btc'].encode(publicKey).slice(1)
                 if (method.publicKeyBase58 === publicKeyBase58) {
@@ -60,20 +61,17 @@ export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519
                         privateKeyHex: key.privateKeyHex
                     }
                 }
-
             case VerificationMethods.JWK:
-                const publicKeyJWK: any = {
+                const publicKeyJwk: JsonWebKey = {
                     crv: 'Ed25519',
                     kty: 'OKP',
                     x: toString( publicKey, 'base64url' )
                 }
-                if (JSON.stringify(method.publicKeyJWK) === JSON.stringify(publicKeyJWK)) {
+                if (JSON.stringify(method.publicKeyJwk) === JSON.stringify(publicKeyJwk)) {
                     return {
                         verificationMethodId: method.id,
                         privateKeyHex: key.privateKeyHex
                     }
-                } else {
-                    throw new Error(`JWK not matching ${method.publicKeyJWK}, ${publicKeyJWK}`)
                 }
         }
     }
@@ -128,7 +126,7 @@ export function createVerificationKeys(publicKey: string, algo: MethodSpecificId
     }
 }
 
-export function createDidVerificationMethod(verificationMethodTypes: VerificationMethods[], verificationKeys: IVerificationKeys[]): VerificationMethodPayload[] {
+export function createDidVerificationMethod(verificationMethodTypes: VerificationMethods[], verificationKeys: IVerificationKeys[]): VerificationMethod[] {
     return verificationMethodTypes.map((type, _) => {
         switch (type) {
             case VerificationMethods.Ed255192020:
@@ -136,61 +134,110 @@ export function createDidVerificationMethod(verificationMethodTypes: Verificatio
                     id: verificationKeys[_].keyId,
                     type,
                     controller: verificationKeys[_].didUrl,
-                    publicKeyMultibase: _encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, base64ToBytes(verificationKeys[_].publicKey))
-                }
-            
+                    publicKeyMultibase: toMultibaseRaw(base64ToBytes(verificationKeys[_].publicKey))
+                } as VerificationMethod
             case VerificationMethods.Ed255192018:
                 return {
                     id: verificationKeys[_].keyId,
                     type,
                     controller: verificationKeys[_].didUrl,
                     publicKeyBase58: verificationKeys[_].methodSpecificId.slice(1)
-                }
-
+                } as VerificationMethod
             case VerificationMethods.JWK:
                 return {
                     id: verificationKeys[_].keyId,
                     type,
                     controller: verificationKeys[_].didUrl,
-                    publicKeyJWK: {
+                    publicKeyJwk: {
                         crv: 'Ed25519',
                         kty: 'OKP',
                         x: toString( fromString( verificationKeys[_].publicKey, 'base64pad' ), 'base64url' )
                     }
-                }
+                } as VerificationMethod
         }
     }) ?? []
 }
 
-export function createDidPayload(verificationMethods: VerificationMethodPayload[], verificationKeys: IVerificationKeys[]): MsgCreateDidPayload {
+export function createDidPayload(verificationMethods: VerificationMethod[], verificationKeys: IVerificationKeys[]): DIDDocument {
     if (!verificationMethods || verificationMethods.length === 0)
         throw new Error('No verification methods provided')
     if (!verificationKeys || verificationKeys.length === 0)
         throw new Error('No verification keys provided')
 
     const did = verificationKeys[0].didUrl
-    return MsgCreateDidPayload.fromPartial(
-        {
+    return {
             id: did,
             controller: verificationKeys.map(key => key.didUrl),
             verificationMethod: verificationMethods,
             authentication: verificationKeys.map(key => key.keyId),
-            versionId: v4()
+    } as DIDDocument
+}
+
+export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecValidationResult {
+    // id is required, validated on both compile and runtime
+    if (!didDocument?.id) return { valid: false, error: 'id is required' }
+
+    // verificationMethod is required
+    if (!didDocument?.verificationMethod) return { valid: false, error: 'verificationMethod is required' }
+
+    // verificationMethod must be an array
+    if (!Array.isArray(didDocument?.verificationMethod)) return { valid: false, error: 'verificationMethod must be an array' }
+
+    // verificationMethod types must be supported
+    const protoVerificationMethod = didDocument.verificationMethod.map((vm) => {
+        switch (vm?.type) {
+            case VerificationMethods.Ed255192020:
+                if (!vm.publicKeyMultibase) throw new Error('publicKeyMultibase is required')
+
+                return ProtoVerificationMethod.fromPartial({
+                    id: vm.id,
+                    controller: vm.controller,
+                    verificationMethodType: VerificationMethods.Ed255192020,
+                    verificationMaterial: vm.publicKeyMultibase,
+                })
+            case VerificationMethods.JWK:
+                if (!vm.publicKeyJwk) throw new Error('publicKeyJwk is required')
+
+                return ProtoVerificationMethod.fromPartial({
+                    id: vm.id,
+                    controller: vm.controller,
+                    verificationMethodType: VerificationMethods.JWK,
+                    verificationMaterial: JSON.stringify(vm.publicKeyJwk),
+                })
+            case VerificationMethods.Ed255192018:
+                if (!vm.publicKeyBase58) throw new Error('publicKeyBase58 is required')
+
+                return ProtoVerificationMethod.fromPartial({
+                    id: vm.id,
+                    controller: vm.controller,
+                    verificationMethodType: VerificationMethods.Ed255192018,
+                    verificationMaterial: vm.publicKeyBase58,
+                })
+            default:
+                throw new Error(`Unsupported verificationMethod type: ${vm?.type}`)
         }
-    )
+    })
+
+    const protoService = didDocument?.service?.map((s) => {
+        return ProtoService.fromPartial({
+            id: s?.id,
+            serviceType: s?.type,
+            serviceEndpoint: <string[]>s?.serviceEndpoint,
+        })
+    })
+
+    return { valid: true, protobufVerificationMethod: protoVerificationMethod, protobufService: protoService }
 }
 
 function sha256(message: string) {
     return createHash('sha256').update(message).digest('hex')
 }
 
-// encode a multibase base58-btc multicodec key
-function _encodeMbKey(header: any, key: Uint8Array) {
-    const mbKey = new Uint8Array(header.length + key.length);
-  
-    mbKey.set(header);
-    mbKey.set(key, header.length);
-  
-    return bases['base58btc'].encode(mbKey);
+function toMultibaseRaw(key: Uint8Array) {
+    const multibase = new Uint8Array(MULTICODEC_ED25519_HEADER.length + key.length);
+
+    multibase.set(MULTICODEC_ED25519_HEADER);
+    multibase.set(key, MULTICODEC_ED25519_HEADER.length);
+
+    return bases['base58btc'].encode(multibase);
 }
-  

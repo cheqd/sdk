@@ -1,6 +1,6 @@
 import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing'
 import { createCheqdSDK, DIDModule, ICheqdSDKOptions, ResourceModule } from '../src/index'
-import { exampleCheqdNetwork, faucet } from './testutils.test'
+import { localnet, faucet } from './testutils.test'
 import { AbstractCheqdSDKModule } from '../src/modules/_'
 import { CheqdSigningStargateClient } from '../src/signer'
 import { createDefaultCheqdRegistry } from '../src/registry'
@@ -11,7 +11,7 @@ describe(
             it('can be instantiated with modules', async () => {
                 const options = {
                     modules: [DIDModule as unknown as AbstractCheqdSDKModule],
-                    rpcUrl: exampleCheqdNetwork.rpcUrl,
+                    rpcUrl: localnet.rpcUrl,
                     wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
                 } as ICheqdSDKOptions
                 const cheqdSDK = await createCheqdSDK(options)
@@ -26,7 +26,7 @@ describe(
             })
 
             it('should use module methods', async () => {
-                const rpcUrl = exampleCheqdNetwork.rpcUrl
+                const rpcUrl = localnet.rpcUrl
                 const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
 
                 class TestModule extends AbstractCheqdSDKModule {
@@ -56,7 +56,6 @@ describe(
                 const doSomething = await cheqdSDK.doSomething()
                 expect(doSomething).toBe('did something')
 
-                //@ts-ignore
                 const spy = jest.spyOn(cheqdSDK.methods, 'doSomething')
                 //@ts-ignore
                 await cheqdSDK.doSomething()
@@ -66,7 +65,7 @@ describe(
             it('should instantiate registry from passed modules', async () => {
                 const options = {
                     modules: [DIDModule as unknown as AbstractCheqdSDKModule],
-                    rpcUrl: exampleCheqdNetwork.rpcUrl,
+                    rpcUrl: localnet.rpcUrl,
                     wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
                 } as ICheqdSDKOptions
                 const cheqdSDK = await createCheqdSDK(options)
@@ -80,7 +79,7 @@ describe(
             it('should instantiate registry from multiple passed modules', async () => {
                 const options = {
                     modules: [DIDModule as unknown as AbstractCheqdSDKModule, ResourceModule as unknown as AbstractCheqdSDKModule],
-                    rpcUrl: exampleCheqdNetwork.rpcUrl,
+                    rpcUrl: localnet.rpcUrl,
                     wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
                 } as ICheqdSDKOptions
                 const cheqdSDK = await createCheqdSDK(options)

@@ -6,12 +6,14 @@ import { createDefaultCheqdRegistry } from './registry'
 import { CheqdSigningStargateClient } from './signer'
 import { CheqdNetwork, IContext, IModuleMethodMap } from './types'
 import { createSignInputsFromImportableEd25519Key } from './utils'
+import { GasPrice } from '@cosmjs/stargate'
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[]
-	authorizedMethods?: string[]
-	network?: CheqdNetwork
 	rpcUrl: string
+	network?: CheqdNetwork
+	gasPrice?: GasPrice
+	authorizedMethods?: string[]
 	readonly wallet: OfflineSigner
 }
 
@@ -78,6 +80,7 @@ export class CheqdSDK {
 			this.options.wallet,
             {
                 registry,
+				gasPrice: this.options?.gasPrice,
             }
 		)
 

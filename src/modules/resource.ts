@@ -6,8 +6,13 @@ import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse,
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
 
-export const typeUrlMsgCreateResource = `/${protobufPackage}.MsgCreateResource`
-export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.MsgCreateResourceResponse`
+export const protobufLiterals = {
+	MsgCreateResource: 'MsgCreateResource',
+	MsgCreateResourceResponse: 'MsgCreateResourceResponse'
+} as const
+
+export const typeUrlMsgCreateResource = `/${protobufPackage}.${protobufLiterals.MsgCreateResource}`
+export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.${protobufLiterals.MsgCreateResourceResponse}`
 
 export interface MsgCreateResourceEncodeObject extends EncodeObject {
 	readonly typeUrl: typeof typeUrlMsgCreateResource,
@@ -23,6 +28,14 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		[typeUrlMsgCreateResource, MsgCreateResource],
 		[typeUrlMsgCreateResourceResponse, MsgCreateResourceResponse]
 	]
+
+	static readonly baseMinimalDenom = 'ncheq' as const
+
+	static readonly fees = {
+		DefaultCreateResourceImageFee: { amount: '10000000000', denom: ResourceModule.baseMinimalDenom } as const,
+		DefaultCreateResourceJsonFee: { amount: '2500000000', denom: ResourceModule.baseMinimalDenom } as const,
+		DefaultCreateResourceDefaultFee: { amount: '5000000000', denom: ResourceModule.baseMinimalDenom } as const,
+	} as const
 
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
@@ -70,6 +83,39 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			fee,
 			memo
 		)
+	}
+
+	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+		return {
+			amount: [
+				ResourceModule.fees.DefaultCreateResourceImageFee
+			],
+			gas: '360000',
+			payer: feePayer,
+			granter: granter
+		} as DidStdFee
+	}
+
+	static async generateCreateResourceJsonFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+		return {
+			amount: [
+				ResourceModule.fees.DefaultCreateResourceJsonFee
+			],
+			gas: '360000',
+			payer: feePayer,
+			granter: granter
+		} as DidStdFee
+	}
+
+	static async generateCreateResourceDefaultFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+		return {
+			amount: [
+				ResourceModule.fees.DefaultCreateResourceDefaultFee
+			],
+			gas: '360000',
+			payer: feePayer,
+			granter: granter
+		} as DidStdFee
 	}
 }
 
