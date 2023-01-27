@@ -5,6 +5,7 @@ import { DidStdFee, IContext, ISignInputs } from '../types';
 import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
+import { fileTypeFromBuffer } from "file-type";
 
 export const protobufLiterals = {
 	MsgCreateResource: 'MsgCreateResource',
@@ -63,7 +64,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 	}
 
-	async createResourceTx(signInputs: ISignInputs[] | SignInfo[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createResourceTx(signInputs: ISignInputs[] | SignInfo[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -77,12 +78,36 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			value: msg
 		}
 
+		if (!fee) {
+			if (payload.data.length === 0) {
+				throw new Error('Linked resource data is empty')
+			}
+
+			fee = await async function() {
+				const mimeType = await ResourceModule.readMimeType(payload.data)
+
+				if (mimeType.startsWith('image/')) {
+					return await ResourceModule.generateCreateResourceImageFees(address)
+				}
+
+				if (mimeType.startsWith('application/json')) {
+					return await ResourceModule.generateCreateResourceJsonFees(address)
+				}
+
+				return await ResourceModule.generateCreateResourceDefaultFees(address)
+			}()
+		}
+
 		return this._signer.signAndBroadcast(
 			address,
 			[encObj],
-			fee,
+			fee!,
 			memo
 		)
+	}
+
+	static async readMimeType(content: Uint8Array): Promise<string> {
+		return (await fileTypeFromBuffer(content))?.mime ?? 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
