@@ -5,7 +5,7 @@ import { DidStdFee, IContext, ISignInputs } from '../types';
 import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
 import { DeliverTxResponse } from "@cosmjs/stargate"
 import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
-import { fileTypeFromBuffer } from "file-type";
+import { fromBuffer } from "file-type";
 
 export const protobufLiterals = {
 	MsgCreateResource: 'MsgCreateResource',
@@ -107,7 +107,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
-		return (await fileTypeFromBuffer(content))?.mime ?? 'application/octet-stream'
+		return (await fromBuffer(content))?.mime ?? 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
