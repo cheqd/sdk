@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.0.0](https://github.com/cheqd/sdk/compare/1.4.0...2.0.0) (2023-01-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* On track with v1 on-ledger release (#115)
+
+### Features
+
+* Add localnet in test workflow ([e498193](https://github.com/cheqd/sdk/commit/e498193b52be8440c1b654ea72f0f8293e22f330))
+* Integrate V2 protos ([7fe20bd](https://github.com/cheqd/sdk/commit/7fe20bd6c6c8f521cb7348cc43b65e4191c658bc))
+* On track with v1 on-ledger release ([#115](https://github.com/cheqd/sdk/issues/115)) ([1ef3a07](https://github.com/cheqd/sdk/commit/1ef3a07c27fa63c9ab2695cda8369c259ef94c04))
+* Remove amino encoding workaround in resource ([2754a97](https://github.com/cheqd/sdk/commit/2754a9784d7f82e9e1bbfd2f98d5f82825f16a1f))
+* Update indyStyle identifier ([e12226d](https://github.com/cheqd/sdk/commit/e12226d57afdb0ce76dce5d3a85d76d17e8dc7f5))
+* Update proto && Accept did core spec input [DEV-2113] ([#111](https://github.com/cheqd/sdk/issues/111)) ([f2f710a](https://github.com/cheqd/sdk/commit/f2f710adcaa245af6ae83e89f8e0b695d0751fcd)), closes [#114](https://github.com/cheqd/sdk/issues/114)
+* Update signature conversion ([2824bcb](https://github.com/cheqd/sdk/commit/2824bcbbbbb35521d5372d6a9592b31ad5085ad5))
+* Update test rpcUrl ([3903c62](https://github.com/cheqd/sdk/commit/3903c62cdcff574c02a643773c6f370e59e9f187))
+* Update tests ([242e82f](https://github.com/cheqd/sdk/commit/242e82f924d15ad49d15f9735cbf0694234df172))
+* Update tests and utils ([6075594](https://github.com/cheqd/sdk/commit/6075594240dbbc1e36fb159acae1391332b1e250))
+* Upgrade ts-proto && Support Deactivate DID ([46a57ea](https://github.com/cheqd/sdk/commit/46a57ea575c5de8b5e8f1be7d40558acaceebdd9))
+
+
+### Bug Fixes
+
+* Client determined MIME type auto fee generation ([#117](https://github.com/cheqd/sdk/issues/117)) ([3ba673d](https://github.com/cheqd/sdk/commit/3ba673d9b6c61f82d38b49e60a4231196dd357cc))
+* Minor issue ([e060576](https://github.com/cheqd/sdk/commit/e060576034693dba70f7f4a7576f5a72f967045a))
+* typo ([463ac62](https://github.com/cheqd/sdk/commit/463ac6208e79c1564c2ed6eeed0a44b06a065d4f))
+
 ## [2.0.0-develop.3](https://github.com/cheqd/sdk/compare/2.0.0-develop.2...2.0.0-develop.3) (2023-01-27)
 
 ## [2.0.0-develop.2](https://github.com/cheqd/sdk/compare/2.0.0-develop.1...2.0.0-develop.2) (2023-01-27)
