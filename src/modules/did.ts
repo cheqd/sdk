@@ -20,8 +20,6 @@ import {
 } from "@cheqd/ts-proto/cheqd/did/v2"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { v4 } from "uuid"
-import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
-import { Int53 } from "@cosmjs/math";
 
 export const protobufLiterals = {
 	MsgCreateDidDoc: "MsgCreateDidDoc",
