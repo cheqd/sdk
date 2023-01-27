@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-develop.2](https://github.com/cheqd/sdk/compare/2.0.0-develop.1...2.0.0-develop.2) (2023-01-27)
+
+
+### Bug Fixes
+
+* Client determined MIME type auto fee generation ([#117](https://github.com/cheqd/sdk/issues/117)) ([3ba673d](https://github.com/cheqd/sdk/commit/3ba673d9b6c61f82d38b49e60a4231196dd357cc))
+
 ## [2.0.0-develop.1](https://github.com/cheqd/sdk/compare/1.5.0-develop.3...2.0.0-develop.1) (2023-01-26)
 
 
