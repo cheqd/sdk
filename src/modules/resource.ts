@@ -2,12 +2,18 @@ import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
 import { CheqdSigningStargateClient } from "../signer"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { DidStdFee, IContext, ISignInputs } from '../types';
-import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/resource/v1/tx"
+import { MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { Writer } from "protobufjs"
+import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
+import { fromBuffer } from "file-type";
 
-export const typeUrlMsgCreateResource = `/${protobufPackage}.MsgCreateResource`
-export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.MsgCreateResourceResponse`
+export const protobufLiterals = {
+	MsgCreateResource: 'MsgCreateResource',
+	MsgCreateResourceResponse: 'MsgCreateResourceResponse'
+} as const
+
+export const typeUrlMsgCreateResource = `/${protobufPackage}.${protobufLiterals.MsgCreateResource}`
+export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.${protobufLiterals.MsgCreateResourceResponse}`
 
 export interface MsgCreateResourceEncodeObject extends EncodeObject {
 	readonly typeUrl: typeof typeUrlMsgCreateResource,
@@ -24,6 +30,14 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		[typeUrlMsgCreateResourceResponse, MsgCreateResourceResponse]
 	]
 
+	static readonly baseMinimalDenom = 'ncheq' as const
+
+	static readonly fees = {
+		DefaultCreateResourceImageFee: { amount: '10000000000', denom: ResourceModule.baseMinimalDenom } as const,
+		DefaultCreateResourceJsonFee: { amount: '2500000000', denom: ResourceModule.baseMinimalDenom } as const,
+		DefaultCreateResourceDefaultFee: { amount: '5000000000', denom: ResourceModule.baseMinimalDenom } as const,
+	} as const
+
 	constructor(signer: CheqdSigningStargateClient) {
 		super(signer)
 		this.methods = {
@@ -35,37 +49,14 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		return []
 	}
 
-	// We need this workagound because amino encoding is used in cheqd-node to derive sign bytes for identity messages.
-	// In most cases it works the same way as protobuf encoding, but in the MsgCreateResourcePayload
-	// we use non-default property indexes so we need this separate encoding function.
-	// TODO: Remove this workaround when cheqd-node will use protobuf encoding.
-	static getMsgCreateResourcePayloadAminoSignBytes(message: MsgCreateResourcePayload): Uint8Array {
-		const writer = new Writer();
-
-		if (message.collectionId !== "") {
-			writer.uint32(10).string(message.collectionId);
+	static async signPayload(payload: MsgCreateResourcePayload, signInputs: ISignInputs[] | SignInfo[]): Promise<MsgCreateResource> {
+		const signBytes = MsgCreateResourcePayload.encode(payload).finish()
+		let signatures: SignInfo[]
+		if(ISignInputs.isSignInput(signInputs)) {
+			signatures = await CheqdSigningStargateClient.signIdentityTx(signBytes, signInputs)
+		} else {
+			signatures = signInputs
 		}
-		if (message.id !== "") {
-			writer.uint32(18).string(message.id);
-		}
-		if (message.name !== "") {
-			writer.uint32(26).string(message.name);
-		}
-		if (message.resourceType !== "") {
-			writer.uint32(34).string(message.resourceType);
-		}
-		if (message.data.length !== 0) {
-			// Animo coded assigns index 5 to this property. In proto definitions it's 6.
-			// Since we use amino on node + non default property indexing, we need to encode it manually.
-			writer.uint32(42).bytes(message.data);
-		}
-
-		return writer.finish();
-	}
-
-	static async signPayload(payload: MsgCreateResourcePayload, signInputs: ISignInputs[]): Promise<MsgCreateResource> {
-		const signBytes = ResourceModule.getMsgCreateResourcePayloadAminoSignBytes(payload)
-		const signatures = await CheqdSigningStargateClient.signIdentityTx(signBytes, signInputs)
 		
 		return {
 			payload,
@@ -73,7 +64,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 	}
 
-	async createResourceTx(signInputs: ISignInputs[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createResourceTx(signInputs: ISignInputs[] | SignInfo[], resourcePayload: Partial<MsgCreateResourcePayload>, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -87,12 +78,69 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			value: msg
 		}
 
+		if (!fee) {
+			if (payload.data.length === 0) {
+				throw new Error('Linked resource data is empty')
+			}
+
+			fee = await async function() {
+				const mimeType = await ResourceModule.readMimeType(payload.data)
+
+				if (mimeType.startsWith('image/')) {
+					return await ResourceModule.generateCreateResourceImageFees(address)
+				}
+
+				if (mimeType.startsWith('application/json')) {
+					return await ResourceModule.generateCreateResourceJsonFees(address)
+				}
+
+				return await ResourceModule.generateCreateResourceDefaultFees(address)
+			}()
+		}
+
 		return this._signer.signAndBroadcast(
 			address,
 			[encObj],
-			fee,
+			fee!,
 			memo
 		)
+	}
+
+	static async readMimeType(content: Uint8Array): Promise<string> {
+		return (await fromBuffer(content))?.mime ?? 'application/octet-stream'
+	}
+
+	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+		return {
+			amount: [
+				ResourceModule.fees.DefaultCreateResourceImageFee
+			],
+			gas: '360000',
+			payer: feePayer,
+			granter: granter
+		} as DidStdFee
+	}
+
+	static async generateCreateResourceJsonFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+		return {
+			amount: [
+				ResourceModule.fees.DefaultCreateResourceJsonFee
+			],
+			gas: '360000',
+			payer: feePayer,
+			granter: granter
+		} as DidStdFee
+	}
+
+	static async generateCreateResourceDefaultFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+		return {
+			amount: [
+				ResourceModule.fees.DefaultCreateResourceDefaultFee
+			],
+			gas: '360000',
+			payer: feePayer,
+			granter: granter
+		} as DidStdFee
 	}
 }
 

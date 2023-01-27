@@ -1,6 +1,8 @@
+import { Service as ProtobufService, VerificationMethod as ProtobufVerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
 import { CheqdSDK } from "."
 import { Coin } from "@cosmjs/proto-signing"
 import { Signer } from "did-jwt"
+export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from "did-resolver"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
@@ -17,8 +19,16 @@ export interface IContext {
     sdk: CheqdSDK
 }
 
+export type SpecValidationResult = {
+    valid: boolean
+    error?: string
+    protobufVerificationMethod?: ProtobufVerificationMethod[]
+    protobufService?: ProtobufService[]
+}
+
 export enum VerificationMethods {
-    Base58 = 'Ed25519VerificationKey2020',
+    Ed255192020 = 'Ed25519VerificationKey2020',
+    Ed255192018 = 'Ed25519VerificationKey2018',
     JWK = 'JsonWebKey2020',
 }
 
@@ -66,4 +76,10 @@ export interface DidStdFee {
     readonly gas: string
     payer?: string
     granter?: string
+}
+
+export const ISignInputs = {
+  isSignInput(object: Object[]): object is ISignInputs[] {
+		return object.some((x)=> 'privateKeyHex' in x)
+	}
 }
