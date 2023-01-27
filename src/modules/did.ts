@@ -123,7 +123,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
         return DIDModule.registryTypes
     }
 
-	async createDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async createDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -170,15 +170,19 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			value
 		}
 
+		if (!fee) {
+			fee = await DIDModule.generateCreateDidDocFees(address)
+		}
+
 		return this._signer.signAndBroadcast(
 			address,
 			[createDidMsg],
-			fee,
+			fee!,
 			memo
 		)
 	}
 
-	async updateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async updateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -224,15 +228,19 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			value
 		}
 
+		if (!fee) {
+			fee = await DIDModule.generateUpdateDidDocFees(address)
+		}
+
 		return this._signer.signAndBroadcast(
 			address,
 			[updateDidMsg],
-			fee,
+			fee!,
 			memo
 		)
 	}
 
-	async deactivateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async deactivateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -269,10 +277,14 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			value
 		}
 
+		if (!fee) {
+			fee = await DIDModule.generateDeactivateDidDocFees(address)
+		}
+
 		return this._signer.signAndBroadcast(
 			address,
 			[deactivateDidMsg],
-			fee,
+			fee!,
 			memo
 		)
 	}
