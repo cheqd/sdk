@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0-develop.1](https://github.com/cheqd/sdk/compare/1.5.0-develop.3...2.0.0-develop.1) (2023-01-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* On track with v1 on-ledger release (#115)
+
+### Features
+
+* On track with v1 on-ledger release ([#115](https://github.com/cheqd/sdk/issues/115)) ([1ef3a07](https://github.com/cheqd/sdk/commit/1ef3a07c27fa63c9ab2695cda8369c259ef94c04))
+
 ## [1.5.0-develop.3](https://github.com/cheqd/sdk/compare/1.5.0-develop.2...1.5.0-develop.3) (2023-01-24)
 
 
