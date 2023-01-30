@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1-develop.1](https://github.com/cheqd/sdk/compare/2.0.0...2.0.1-develop.1) (2023-01-30)
+
+
+### Performance Improvements
+
+* Update validateSpecCompliantDID as non-async ([#119](https://github.com/cheqd/sdk/issues/119)) ([e70e1b5](https://github.com/cheqd/sdk/commit/e70e1b5a90f2f892c00de49e17901b4c2fab75cf))
+
 ## [2.0.0](https://github.com/cheqd/sdk/compare/1.4.0...2.0.0) (2023-01-27)
 
 
