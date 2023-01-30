@@ -130,7 +130,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			versionId = v4()
 		}
 
-		const { valid, error, protobufVerificationMethod, protobufService } = await DIDModule.validateSpecCompliantPayload(didPayload)
+		const { valid, error, protobufVerificationMethod, protobufService } = DIDModule.validateSpecCompliantPayload(didPayload)
 
 		if (!valid) {
 			throw new Error(`DID payload is not spec compliant: ${error}`)
@@ -189,7 +189,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			versionId = v4()
 		}
 
-		const { valid, error, protobufVerificationMethod, protobufService } = await DIDModule.validateSpecCompliantPayload(didPayload)
+		const { valid, error, protobufVerificationMethod, protobufService } = DIDModule.validateSpecCompliantPayload(didPayload)
 
 		if (!valid) {
 			throw new Error(`DID payload is not spec compliant: ${error}`)
@@ -247,7 +247,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			versionId = v4()
 		}
 
-		const { valid, error, protobufVerificationMethod } = await DIDModule.validateSpecCompliantPayload(didPayload)
+		const { valid, error, protobufVerificationMethod } = DIDModule.validateSpecCompliantPayload(didPayload)
 
 		if (!valid) {
 			throw new Error(`DID payload is not spec compliant: ${error}`)
@@ -287,7 +287,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	static async validateSpecCompliantPayload(didDocument: DIDDocument): Promise<SpecValidationResult> {
+	static validateSpecCompliantPayload(didDocument: DIDDocument): SpecValidationResult {
 		// id is required, validated on both compile and runtime
 		if (!didDocument?.id) return { valid: false, error: 'id is required' }
 
