@@ -1,5 +1,7 @@
 # Changelog
 
+## [2.0.2-develop.1](https://github.com/cheqd/sdk/compare/2.0.1...2.0.2-develop.1) (2023-02-06)
+
 ## [2.0.1](https://github.com/cheqd/sdk/compare/2.0.0...2.0.1) (2023-02-06)
 
 
