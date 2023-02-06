@@ -79,7 +79,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 
 		if (address === '') {
-			address =  (await context!.sdk!.options.wallet.getAccounts())[0].address
+			address = (await context!.sdk!.options.wallet.getAccounts())[0].address
 		}
 
 		if (!fee) {
