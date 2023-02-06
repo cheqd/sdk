@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/cheqd/sdk/compare/2.0.0...2.0.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* Handle empty address condition ([#125](https://github.com/cheqd/sdk/issues/125)) ([6c1080b](https://github.com/cheqd/sdk/commit/6c1080b19416ddbd583af8619586b2f14bf417ac))
+
 ## [2.0.1-develop.1](https://github.com/cheqd/sdk/compare/2.0.0...2.0.1-develop.1) (2023-02-06)
 
 
