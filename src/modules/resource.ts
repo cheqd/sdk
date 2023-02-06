@@ -78,6 +78,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			value: msg
 		}
 
+		if (address === '') {
+			address =  (await context!.sdk!.options.wallet.getAccounts())[0].address
+		}
+
 		if (!fee) {
 			if (payload.data.length === 0) {
 				throw new Error('Linked resource data is empty')

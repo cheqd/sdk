@@ -168,6 +168,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			value
 		}
 
+		if (address === '') {
+			address =  (await context!.sdk!.options.wallet.getAccounts())[0].address
+		}
+
 		if (!fee) {
 			fee = await DIDModule.generateCreateDidDocFees(address)
 		}
@@ -226,6 +230,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			value
 		}
 
+		if (address === '') {
+			address =  (await context!.sdk!.options.wallet.getAccounts())[0].address
+		}
+
 		if (!fee) {
 			fee = await DIDModule.generateUpdateDidDocFees(address)
 		}
@@ -273,6 +281,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		const deactivateDidMsg: MsgDeactivateDidDocEncodeObject = {
 			typeUrl: typeUrlMsgDeactivateDidDoc,
 			value
+		}
+
+		if (address === '') {
+			address =  (await context!.sdk!.options.wallet.getAccounts())[0].address
 		}
 
 		if (!fee) {
