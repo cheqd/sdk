@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0-develop.1](https://github.com/cheqd/sdk/compare/2.0.2-develop.1...2.1.0-develop.1) (2023-02-08)
+
+
+### Features
+
+* Added querier as service capability ([#129](https://github.com/cheqd/sdk/issues/129)) ([71faac7](https://github.com/cheqd/sdk/commit/71faac7c7d9d9d854b89ef862bca1434b45b4905))
+
 ## [2.0.2-develop.1](https://github.com/cheqd/sdk/compare/2.0.1...2.0.2-develop.1) (2023-02-06)
 
 ## [2.0.1](https://github.com/cheqd/sdk/compare/2.0.0...2.0.1) (2023-02-06)
