@@ -1,4 +1,3 @@
-import { CheqdExtensions } from './modules/_'
 import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc } from "@cosmjs/proto-signing"
 import { DeliverTxResponse, GasPrice, HttpEndpoint, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
@@ -53,9 +52,7 @@ export function makeDidAuthInfoBytes(
 	return AuthInfo.encode(AuthInfo.fromPartial(authInfo)).finish()
 }
 
-
 export class CheqdSigningStargateClient extends SigningStargateClient {
-	public readonly cheqdExtensions: CheqdExtensions | undefined
 	private didSigners: TSignerAlgo = {}
 	private readonly _gasPrice: GasPrice | undefined
 	private readonly _signer: OfflineSigner
@@ -184,7 +181,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this.didSigners[verificationMethod]!
 	}
 
-	async signCreateDidTx(signInputs: ISignInputs[], payload: MsgCreateDidDocPayload): Promise<SignInfo[]> {
+	async signcreateDidDocTx(signInputs: ISignInputs[], payload: MsgCreateDidDocPayload): Promise<SignInfo[]> {
 		await this.checkDidSigners(payload?.verificationMethod)
 
 		const signBytes = MsgCreateDidDocPayload.encode(payload).finish()
@@ -198,7 +195,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return signInfos
 	}
 
-	async signUpdateDidTx(signInputs: ISignInputs[], payload: MsgUpdateDidDocPayload): Promise<SignInfo[]> {
+	async signupdateDidDocTx(signInputs: ISignInputs[], payload: MsgUpdateDidDocPayload): Promise<SignInfo[]> {
 		await this.checkDidSigners(payload?.verificationMethod)
 
 		const signBytes = MsgUpdateDidDocPayload.encode(payload).finish()
@@ -212,7 +209,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return signInfos
 	}
 
-	async signDeactivateDidTx(signInputs: ISignInputs[], payload: MsgDeactivateDidDocPayload, verificationMethod: VerificationMethod[]): Promise<SignInfo[]> {
+	async signdeactivateDidDocTx(signInputs: ISignInputs[], payload: MsgDeactivateDidDocPayload, verificationMethod: VerificationMethod[]): Promise<SignInfo[]> {
 		await this.checkDidSigners(verificationMethod)
 
 		const signBytes = MsgDeactivateDidDocPayload.encode(payload).finish()

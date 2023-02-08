@@ -1,15 +1,18 @@
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
-import { DIDModule, MinimalImportableDIDModule } from './modules/did'
-import { MinimalImportableResourcesModule, ResourceModule } from './modules/resource'
-import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, } from './modules/_'
+import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did';
+import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource';
+import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, instantiateCheqdSDKModuleQuerierExtensionSetup } from './modules/_';
 import { createDefaultCheqdRegistry } from './registry'
 import { CheqdSigningStargateClient } from './signer'
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types'
+import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
 import { createSignInputsFromImportableEd25519Key } from './utils'
-import { GasPrice } from '@cosmjs/stargate'
+import { GasPrice, QueryClient } from '@cosmjs/stargate'
+import { CheqdQuerier } from './querier'
+import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[]
+	querierExtensions?: Record<string, any>[] 
 	rpcUrl: string
 	network?: CheqdNetwork
 	gasPrice?: GasPrice
@@ -17,13 +20,14 @@ export interface ICheqdSDKOptions {
 	readonly wallet: OfflineSigner
 }
 
-export type DefaultCheqdSDKModules = MinimalImportableDIDModule & MinimalImportableResourcesModule
+export type DefaultCheqdSDKModules = MinimalImportableDIDModule & MinimalImportableResourceModule
 
-export interface CheqdSDK extends DefaultCheqdSDKModules { }
+export interface CheqdSDK extends DefaultCheqdSDKModules {}
 
 export class CheqdSDK {
 	methods: IModuleMethodMap
 	signer: CheqdSigningStargateClient
+	querier: CheqdQuerier & DidExtension & ResourceExtension
 	options: ICheqdSDKOptions
 	private protectedMethods: string[] = ['constructor', 'build', 'loadModules', 'loadRegistry']
 
@@ -40,6 +44,7 @@ export class CheqdSDK {
 
 		this.methods = {}
 		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, {})
+		this.querier = <any> new QueryClient({} as unknown as Tendermint34Client)
 	}
 
 	async execute<P = any, R = any>(method: string, ...params: P[]): Promise<R> {
@@ -49,8 +54,8 @@ export class CheqdSDK {
 		return await this.methods[method](...params, { sdk: this } as IContext)
 	}
 
-	private loadModules(modules: AbstractCheqdSDKModule[]): CheqdSDK {
-		this.options.modules = this.options.modules.map((module: any) => instantiateCheqdSDKModule(module, this.signer, { sdk: this } as IContext) as unknown as AbstractCheqdSDKModule)
+	private async loadModules(modules: AbstractCheqdSDKModule[]): Promise<CheqdSDK> {
+		this.options.modules = this.options.modules.map((module: any) => instantiateCheqdSDKModule(module, this.signer, this.querier, { sdk: this } as IContext) as unknown as AbstractCheqdSDKModule)
 
 		const methods = applyMixins(this, modules)
 		this.methods = { ...this.methods, ...filterUnauthorizedMethods(methods, this.options.authorizedMethods || [], this.protectedMethods) }
@@ -72,9 +77,16 @@ export class CheqdSDK {
         return createDefaultCheqdRegistry(registryTypes)
     }
 
+	private async loadQuerierExtensions(): Promise<CheqdQuerier & DidExtension & ResourceExtension> {
+		const querierExtensions = this.options.modules.map((module: any) => instantiateCheqdSDKModuleQuerierExtensionSetup(module))
+		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, ...querierExtensions)
+		return <CheqdQuerier & DidExtension & ResourceExtension>querier
+	}
+
 	async build(): Promise<CheqdSDK> {
         const registry = this.loadRegistry()
 
+		this.querier = await this.loadQuerierExtensions()
 		this.signer = await CheqdSigningStargateClient.connectWithSigner(
 			this.options.rpcUrl,
 			this.options.wallet,
@@ -84,7 +96,7 @@ export class CheqdSDK {
             }
 		)
 
-		return this.loadModules(this.options.modules)
+		return await this.loadModules(this.options.modules)
 	}
 }
 
