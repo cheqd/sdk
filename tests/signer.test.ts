@@ -133,7 +133,7 @@ describe('CheqdSigningStargateClient', () => {
         })
     })
 
-    describe('signCreateDidTx', () => {
+    describe('signcreateDidDocTx', () => {
         it('should sign a did tx with valid signature', async () => {
             const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic)
             const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet)
@@ -163,7 +163,7 @@ describe('CheqdSigningStargateClient', () => {
                 alsoKnownAs: <string[]>didPayload.alsoKnownAs,
                 versionId: versionId
             })
-            const signInfos = await signer.signCreateDidTx(signInputs, payload)
+            const signInfos = await signer.signcreateDidDocTx(signInputs, payload)
             const publicKeyRaw = fromString(keyPair.publicKey, 'base64')
             const messageRaw = MsgCreateDidDocPayload.encode(payload).finish()
 

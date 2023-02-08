@@ -2,12 +2,26 @@ import { Service as ProtobufService, VerificationMethod as ProtobufVerificationM
 import { CheqdSDK } from "."
 import { Coin } from "@cosmjs/proto-signing"
 import { Signer } from "did-jwt"
+import { QueryClient } from "@cosmjs/stargate"
+import { DIDResolutionResult } from "did-resolver"
+import { DidExtension } from "./modules/did"
+import { ResourceExtension } from './modules/resource';
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from "did-resolver"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
     Testnet = 'testnet',
 }
+
+export type QueryExtensionSetup<T> = (base: QueryClient) => T
+
+export type CheqdExtension<K extends string, V = any> = {
+	[P in K]: (Record<P, V> & Partial<Record<Exclude<K, P>, never>>) extends infer O
+	? { [Q in keyof O]: O[Q] }
+	: never
+}[K]
+
+export type CheqdExtensions = DidExtension | ResourceExtension
 
 export interface IModuleMethod {
     (...args: any[]): Promise<any>
@@ -18,6 +32,8 @@ export interface IModuleMethodMap extends Record<string, IModuleMethod> {}
 export interface IContext {
     sdk: CheqdSDK
 }
+
+export type DIDDocumentWithMetadata = Pick<DIDResolutionResult, 'didDocument' | 'didDocumentMetadata'>
 
 export type SpecValidationResult = {
     valid: boolean
@@ -79,7 +95,7 @@ export interface DidStdFee {
 }
 
 export const ISignInputs = {
-  isSignInput(object: Object[]): object is ISignInputs[] {
+    isSignInput(object: Object[]): object is ISignInputs[] {
 		return object.some((x)=> 'privateKeyHex' in x)
 	}
 }

@@ -9,10 +9,16 @@ export const faucet = {
 
 export const localnet = {
     network: 'testnet',
-    rpcUrl: 'http://localhost:26657',
+    rpcUrl: 'https://rpc.cheqd.network:443',
     gasPrice: GasPrice.fromString( `50${faucet.minimalDenom}` )
 }
+
+export const json_content = "{\"message\": \"hello world\"}"
 
 export const image_content = 'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAAA1BMVEW10NBjBBbqAAAAH0lEQVRoge3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAvg0hAAABmmDh1QAAAABJRU5ErkJggg' as const
 
 export const default_content = '<p>Test file content</p>'
+
+export function containsAll<T>(array: T[], values: T[]): boolean {
+    return values.every(value => array.includes(value))
+}
