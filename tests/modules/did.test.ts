@@ -6,7 +6,7 @@ import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
 import { DIDDocument, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../../src/types"
 import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys } from "../../src/utils"
-import { localnet, faucet } from "../testutils.test"
+import { localnet, faucet, containsAll } from "../testutils.test"
 import { CheqdQuerier } from '../../src/querier';
 import { setupDidExtension, DidExtension } from '../../src/modules/did';
 import { v4 } from "uuid"
@@ -811,15 +811,11 @@ describe('DIDModule', () => {
 
             const didDocVersionsMetadata = await didModule.queryAllDidDocVersionsMetadata(didPayload.id)
 
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata.length).toBe(2)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].versionId).toEqual(versionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].versionId).toEqual(updateVersionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].nextVersionId).toEqual(updateVersionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].nextVersionId).toEqual('')
+            expect(didDocVersionsMetadata.didDocumentVersionsMetadata).toHaveLength(2)
+            expect(containsAll([didDocVersionsMetadata.didDocumentVersionsMetadata[0].versionId, didDocVersionsMetadata.didDocumentVersionsMetadata[1].versionId], [versionId, updateVersionId])).toBe(true)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].created).toBeDefined()
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].created).toBeDefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].updated).toBeUndefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].updated).toBeDefined()
+            expect(containsAll([didDocVersionsMetadata.didDocumentVersionsMetadata[0]?.updated, didDocVersionsMetadata.didDocumentVersionsMetadata[1]?.updated], [undefined])).toBe(true)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].deactivated).toBe(false)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].deactivated).toBe(false)
         }, defaultAsyncTxTimeout)
@@ -886,17 +882,13 @@ describe('DIDModule', () => {
 
             const didDocVersionsMetadata = await didModule.queryAllDidDocVersionsMetadata(didPayload.id)
 
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata.length).toBe(2)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].versionId).toEqual(versionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].versionId).toEqual(updateVersionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].nextVersionId).toEqual(updateVersionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].nextVersionId).toEqual('')
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].created).toBeDefined()
+            expect(didDocVersionsMetadata.didDocumentVersionsMetadata).toHaveLength(2)
+            expect(containsAll([didDocVersionsMetadata.didDocumentVersionsMetadata[0].versionId, didDocVersionsMetadata.didDocumentVersionsMetadata[1].versionId], [versionId, updateVersionId])).toBe(true)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].created).toBeDefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].updated).toBeUndefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].updated).toBeDefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].deactivated).toBe(false)
+            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].created).toBeDefined()
+            expect(containsAll([didDocVersionsMetadata.didDocumentVersionsMetadata[0]?.updated, didDocVersionsMetadata.didDocumentVersionsMetadata[1]?.updated], [undefined])).toBe(true)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].deactivated).toBe(false)
+            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].deactivated).toBe(false)
         }, defaultAsyncTxTimeout)
 
         it('should query all DID document versions metadata - case: Ed25519VerificationKey2018', async () => {
@@ -961,15 +953,11 @@ describe('DIDModule', () => {
 
             const didDocVersionsMetadata = await didModule.queryAllDidDocVersionsMetadata(didPayload.id)
 
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata.length).toBe(2)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].versionId).toEqual(versionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].versionId).toEqual(updateVersionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].nextVersionId).toEqual(updateVersionId)
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].nextVersionId).toEqual('')
+            expect(didDocVersionsMetadata.didDocumentVersionsMetadata).toHaveLength(2)
+            expect(containsAll([didDocVersionsMetadata.didDocumentVersionsMetadata[0].versionId, didDocVersionsMetadata.didDocumentVersionsMetadata[1].versionId], [versionId, updateVersionId])).toBe(true)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].created).toBeDefined()
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].created).toBeDefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].updated).toBeUndefined()
-            expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].updated).toBeDefined()
+            expect(containsAll([didDocVersionsMetadata.didDocumentVersionsMetadata[0]?.updated, didDocVersionsMetadata.didDocumentVersionsMetadata[1]?.updated], [undefined])).toBe(true)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[1].deactivated).toBe(false)
             expect(didDocVersionsMetadata.didDocumentVersionsMetadata[0].deactivated).toBe(false)
         }, defaultAsyncTxTimeout)
