@@ -8,7 +8,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
-    "test": "jest --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
+    "test": "jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
     "test:watch": "jest --passWithNoTests --watch",
     "build": "tsc"
   },

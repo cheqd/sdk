@@ -1,20 +1,23 @@
-import { GeneratedType, Registry } from "@cosmjs/proto-signing"
+import { GeneratedType } from "@cosmjs/proto-signing"
 import { QueryClient } from "@cosmjs/stargate"
 import { CheqdSigningStargateClient } from '../signer'
-import { IModuleMethodMap } from "../types"
-import { DIDModule, setupDidExtension } from './did'
+import { IModuleMethodMap, QueryExtensionSetup } from '../types';
+import { CheqdQuerier } from "../querier";
 
 export abstract class AbstractCheqdSDKModule {
 	_signer: CheqdSigningStargateClient
 	methods: IModuleMethodMap = {}
-	readonly _protectedMethods: string[] = ['constructor', 'getRegistryTypes']
+	readonly querier: CheqdQuerier
+	readonly _protectedMethods: string[] = ['constructor', 'getRegistryTypes', 'getQuerierExtensionSetup']
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = []
+	static readonly querierExtensionSetup: QueryExtensionSetup<any> = (base: QueryClient) => ({})
 
-	constructor(signer: CheqdSigningStargateClient) {
+	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier) {
 		if (!signer) {
 			throw new Error("signer is required")
 		}
 		this._signer = signer
+		this.querier = querier
 	}
 
     abstract getRegistryTypes(): Iterable<[string, GeneratedType]>
@@ -22,7 +25,7 @@ export abstract class AbstractCheqdSDKModule {
 
 type ProtectedMethods<T extends AbstractCheqdSDKModule, K extends keyof T> = T[K] extends string[] ? T[K][number] : T[K]
 
-export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_protectedMethods' | 'registryTypes' | 'getRegistryTypes'>
+export type MinimalImportableCheqdSDKModule<T extends AbstractCheqdSDKModule> = Omit<T, '_signer' | '_protectedMethods' | 'registryTypes' | 'querierExtensionSetup' | 'getRegistryTypes' | 'getQuerierExtensionSetup'>
 
 export function instantiateCheqdSDKModule<T extends new (...args: any[]) => T>(module: T, ...args: ConstructorParameters<T>): T {
 	return new module(...args)
@@ -30,6 +33,10 @@ export function instantiateCheqdSDKModule<T extends new (...args: any[]) => T>(m
 
 export function instantiateCheqdSDKModuleRegistryTypes(module: any): Iterable<[string, GeneratedType]> {
     return module.registryTypes ?? []
+}
+
+export function instantiateCheqdSDKModuleQuerierExtensionSetup(module: any): QueryExtensionSetup<any> {
+	return module.querierExtensionSetup ?? {}
 }
 
 export function applyMixins(derivedCtor: any, constructors: any[]): IModuleMethodMap {
@@ -45,19 +52,4 @@ export function applyMixins(derivedCtor: any, constructors: any[]): IModuleMetho
 	});
 
 	return methods
-}
-
-export type CheqdExtension<K extends string, V = any> = {
-	[P in K]: (Record<P, V> & Partial<Record<Exclude<K, P>, never>>) extends infer O
-	? { [Q in keyof O]: O[Q] }
-	: never
-}[K]
-
-export type CheqdExtensions = CheqdExtension<'did' | 'resources', any>
-
-export const setupCheqdExtensions = (base: QueryClient): CheqdExtensions => {
-	return {
-		...setupDidExtension(base),
-		/** setupResourcesExtension(base) */
-	}
 }

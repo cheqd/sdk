@@ -102,7 +102,7 @@ export function createKeyPairHex(seed?: string): IKeyPair {
 export function createVerificationKeys(publicKey: string, algo: MethodSpecificIdAlgo, key: TVerificationKey<TVerificationKeyPrefix, number>, network: CheqdNetwork = CheqdNetwork.Testnet): IVerificationKeys {
     let methodSpecificId: TMethodSpecificId
     let didUrl: IVerificationKeys['didUrl']
-    
+
     publicKey = publicKey.length == 43 ? publicKey : toString(fromString(publicKey, 'hex'), 'base64')
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:

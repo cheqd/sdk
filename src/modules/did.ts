@@ -1,25 +1,42 @@
-import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
-/* import { QueryClientImpl } from '@cheqd/ts-proto/cheqd/did/v1/query' */
-import { CheqdExtension, AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from "./_"
+import { createPagination, createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
+import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
 import { CheqdSigningStargateClient } from "../signer"
-import { DIDDocument, DidStdFee, IContext, ISignInputs, SpecValidationResult, VerificationMethods } from '../types';
+import { DIDDocument, DidStdFee, IContext, ISignInputs, QueryExtensionSetup, SpecValidationResult, VerificationMethods, DIDDocumentWithMetadata } from '../types';
 import { 
-	MsgCreateDidDoc, 
-	MsgCreateDidDocPayload, 
-	MsgCreateDidDocResponse, 
-	MsgDeactivateDidDoc, 
-	MsgDeactivateDidDocPayload, 
-	MsgDeactivateDidDocResponse, 
-	MsgUpdateDidDoc, 
-	MsgUpdateDidDocPayload, 
-	MsgUpdateDidDocResponse, 
-	protobufPackage, 
-	Service, 
+	MsgCreateDidDoc,
+	MsgCreateDidDocPayload,
+	MsgCreateDidDocResponse,
+	MsgDeactivateDidDoc,
+	MsgDeactivateDidDocPayload,
+	MsgDeactivateDidDocResponse,
+	MsgUpdateDidDoc,
+	MsgUpdateDidDocPayload,
+	MsgUpdateDidDocResponse,
+	protobufPackage,
+	QueryClientImpl,
+	Service,
 	SignInfo,
-	VerificationMethod
+	VerificationMethod,
+	QueryAllDidDocVersionsMetadataResponse,
+	DidDocWithMetadata,
+	DidDoc,
+	Metadata
 } from "@cheqd/ts-proto/cheqd/did/v2"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { v4 } from "uuid"
+import { assert } from "@cosmjs/utils";
+import { PageRequest } from "@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination";
+import { CheqdQuerier } from "../querier";
+import { DIDDocumentMetadata } from "did-resolver";
+
+export const defaultDidExtensionKey = "did" as const
+
+export const contexts = {
+	W3CDIDv1: "https://www.w3.org/ns/did/v1",
+	W3CSuiteEd255192020: "https://w3id.org/security/suites/ed25519-2020/v1",
+	W3CSuiteEd255192018: "https://w3id.org/security/suites/ed25519-2018/v1",
+	W3CSuiteJws2020: "https://w3id.org/security/suites/jws-2020/v1",
+} as const
 
 export const protobufLiterals = {
 	MsgCreateDidDoc: "MsgCreateDidDoc",
@@ -90,6 +107,42 @@ export function MsgDeactiveDidDocResponseEncodeObject(obj: EncodeObject): obj is
 	return obj.typeUrl === typeUrlMsgUpdateDidDocResponse
 }
 
+
+export type MinimalImportableDIDModule = MinimalImportableCheqdSDKModule<DIDModule>
+
+export type DidExtension = {
+	readonly [defaultDidExtensionKey]: {
+		readonly didDoc: (id: string) => Promise<DidDocWithMetadata>
+		readonly didDocVersion: (id: string, versionId: string) => Promise<DidDocWithMetadata>
+		readonly allDidDocVersionsMetadata: (id: string, paginationKey?: Uint8Array) => Promise<QueryAllDidDocVersionsMetadataResponse>
+	}
+}
+
+export const setupDidExtension = (base: QueryClient): DidExtension => {
+	const rpc = createProtobufRpcClient(base)
+
+	const queryService = new QueryClientImpl(rpc)
+
+	return {
+		[defaultDidExtensionKey]: {
+			didDoc: async (id: string) => {
+				const { value } = await queryService.DidDoc({ id })
+				assert(value)
+				return value
+			},
+			didDocVersion: async (id: string, versionId: string) => {
+				const { value } = await queryService.DidDocVersion({ id, version: versionId })
+				assert(value)
+				return value
+			},
+			allDidDocVersionsMetadata: async (id: string, paginationKey?: Uint8Array) => {
+				const response = await queryService.AllDidDocVersionsMetadata({ id, pagination: createPagination(paginationKey) as PageRequest | undefined })
+				return response
+			}
+		}
+	} as DidExtension
+}
+
 export class DIDModule extends AbstractCheqdSDKModule {
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
         [typeUrlMsgCreateDidDoc, MsgCreateDidDoc],
@@ -103,17 +156,25 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	static readonly baseMinimalDenom = 'ncheq' as const
 
 	static readonly fees = {
-		DefaultCreateDidFee: { amount: '50000000000', denom: DIDModule.baseMinimalDenom } as const,
-		DefaultUpdateDidFee: { amount: '25000000000', denom: DIDModule.baseMinimalDenom } as const,
-		DefaultDeactivateDidFee: { amount: '10000000000', denom: DIDModule.baseMinimalDenom } as const,
+		DefaultCreateDidDocFee: { amount: '50000000000', denom: DIDModule.baseMinimalDenom } as const,
+		DefaultUpdateDidDocFee: { amount: '25000000000', denom: DIDModule.baseMinimalDenom } as const,
+		DefaultDeactivateDidDocFee: { amount: '10000000000', denom: DIDModule.baseMinimalDenom } as const,
 	} as const
 
-	constructor(signer: CheqdSigningStargateClient) {
-		super(signer)
+	static readonly querierExtensionSetup: QueryExtensionSetup<DidExtension> = setupDidExtension
+
+	readonly querier: CheqdQuerier & DidExtension
+
+	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier & DidExtension) {
+		super(signer, querier)
+		this.querier = querier
 		this.methods = {
-			createDidTx: this.createDidTx.bind(this),
-			updateDidTx: this.updateDidTx.bind(this),
-			deactivateDidTx: this.deactivateDidTx.bind(this),
+			createDidDocTx: this.createDidDocTx.bind(this),
+			updateDidDocTx: this.updateDidDocTx.bind(this),
+			deactivateDidDocTx: this.deactivateDidDocTx.bind(this),
+			queryDidDoc: this.querier.did.didDoc.bind(this),
+			queryDidDocVersion: this.querier.did.didDocVersion.bind(this),
+			queryAllDidDocVersionsMetadata: this.querier.did.allDidDocVersionsMetadata.bind(this),
 		}
 	}
 
@@ -121,7 +182,11 @@ export class DIDModule extends AbstractCheqdSDKModule {
         return DIDModule.registryTypes
     }
 
-	async createDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
+	public getQuerierExtensionSetup(): QueryExtensionSetup<DidExtension> {
+		return DIDModule.querierExtensionSetup
+	}
+
+	async createDidDocTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -153,7 +218,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		let signatures: SignInfo[]
 		if(ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signCreateDidTx(signInputs, payload)
+			signatures = await this._signer.signcreateDidDocTx(signInputs, payload)
 		} else {
 			signatures = signInputs
 		}
@@ -184,7 +249,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	async updateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async updateDidDocTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -215,7 +280,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		})
 		let signatures: SignInfo[]
 		if(ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signUpdateDidTx(signInputs, payload)
+			signatures = await this._signer.signupdateDidDocTx(signInputs, payload)
 		} else {
 			signatures = signInputs
 		}
@@ -246,7 +311,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 	}
 
-	async deactivateDidTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
+	async deactivateDidDocTx(signInputs: ISignInputs[] | SignInfo[], didPayload: DIDDocument, address: string, fee?: DidStdFee | 'auto' | number, memo?: string, versionId?: string, context?: IContext): Promise<DeliverTxResponse> {
 		if (!this._signer) {
 			this._signer = context!.sdk!.signer
 		}
@@ -268,7 +333,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		let signatures: SignInfo[]
 		if(ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signDeactivateDidTx(signInputs, payload, protobufVerificationMethod!)
+			signatures = await this._signer.signdeactivateDidDocTx(signInputs, payload, protobufVerificationMethod!)
 		} else {
 			signatures = signInputs
 		}
@@ -297,6 +362,30 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			fee!,
 			memo
 		)
+	}
+
+	async queryDidDoc(id: string, context?: IContext): Promise<DIDDocumentWithMetadata> {
+		const { didDoc, metadata } = await this.querier[defaultDidExtensionKey].didDoc(id)
+		return {
+			didDocument: await DIDModule.toSpecCompliantPayload(didDoc!),
+			didDocumentMetadata: await DIDModule.toSpecCompliantMetadata(metadata!)
+		} as DIDDocumentWithMetadata
+	}
+
+	async queryDidDocVersion(id: string, versionId: string, context?: IContext): Promise<DIDDocumentWithMetadata> {
+		const { didDoc, metadata } = await this.querier[defaultDidExtensionKey].didDocVersion(id, versionId)
+		return {
+			didDocument: await DIDModule.toSpecCompliantPayload(didDoc!),
+			didDocumentMetadata: await DIDModule.toSpecCompliantMetadata(metadata!)
+		} as DIDDocumentWithMetadata
+	}
+
+	async queryAllDidDocVersionsMetadata(id: string, context?: IContext): Promise<{ didDocumentVersionsMetadata: DIDDocumentMetadata[], pagination: QueryAllDidDocVersionsMetadataResponse['pagination']}> {
+		const { versions, pagination } = await this.querier[defaultDidExtensionKey].allDidDocVersionsMetadata(id)
+		return {
+			didDocumentVersionsMetadata: await Promise.all(versions.map(async (m) => await DIDModule.toSpecCompliantMetadata(m))),
+			pagination
+		}
 	}
 
 	static async validateSpecCompliantPayload(didDocument: DIDDocument): Promise<SpecValidationResult> {
@@ -355,10 +444,95 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		return { valid: true, protobufVerificationMethod: protoVerificationMethod, protobufService: protoService } as SpecValidationResult
 	}
 
+	static async toSpecCompliantPayload(protobufDidDocument: DidDoc): Promise<DIDDocument> {
+		const verificationMethod = protobufDidDocument.verificationMethod.map((vm) => {
+			switch (vm.verificationMethodType) {
+				case VerificationMethods.Ed255192020:
+					if (!protobufDidDocument.context.includes(contexts.W3CSuiteEd255192020)) 
+						protobufDidDocument.context = [...protobufDidDocument.context, contexts.W3CSuiteEd255192020]
+					return {
+						id: vm.id,
+						type: vm.verificationMethodType,
+						controller: vm.controller,
+						publicKeyMultibase: vm.verificationMaterial,
+					}
+				case VerificationMethods.JWK:
+					if (!protobufDidDocument.context.includes(contexts.W3CSuiteJws2020)) 
+						protobufDidDocument.context = [...protobufDidDocument.context, contexts.W3CSuiteJws2020]
+					return {
+						id: vm.id,
+						type: vm.verificationMethodType,
+						controller: vm.controller,
+						publicKeyJwk: JSON.parse(vm.verificationMaterial),
+					}
+				case VerificationMethods.Ed255192018:
+					if (!protobufDidDocument.context.includes(contexts.W3CSuiteEd255192018))
+						protobufDidDocument.context = [...protobufDidDocument.context, contexts.W3CSuiteEd255192018]
+					return {
+						id: vm.id,
+						type: vm.verificationMethodType,
+						controller: vm.controller,
+						publicKeyBase58: vm.verificationMaterial,
+					}
+				default:
+					throw new Error('Unsupported verificationMethod type') // should never happen
+			}
+		})
+
+		const service = protobufDidDocument.service.map((s) => {
+			return {
+				id: s.id,
+				type: s.serviceType,
+				serviceEndpoint: s.serviceEndpoint,
+			}
+		})
+
+		const context = function () {
+			if (protobufDidDocument.context.includes(contexts.W3CDIDv1))
+				return protobufDidDocument.context
+
+			return [contexts.W3CDIDv1, ...protobufDidDocument.context]
+		}()
+
+		const specCompliant = {
+			'@context': context,
+			id: protobufDidDocument.id,
+			controller: protobufDidDocument.controller,
+			verificationMethod: verificationMethod,
+			authentication: protobufDidDocument.authentication,
+			assertionMethod: protobufDidDocument.assertionMethod,
+			capabilityInvocation: protobufDidDocument.capabilityInvocation,
+			capabilityDelegation: protobufDidDocument.capabilityDelegation,
+			keyAgreement: protobufDidDocument.keyAgreement,
+			service: service,
+			alsoKnownAs: protobufDidDocument.alsoKnownAs,
+		} as DIDDocument
+
+		if (!protobufDidDocument.authentication?.length) delete specCompliant.authentication
+		if (!protobufDidDocument.assertionMethod?.length) delete specCompliant.assertionMethod
+		if (!protobufDidDocument.capabilityInvocation?.length) delete specCompliant.capabilityInvocation
+		if (!protobufDidDocument.capabilityDelegation?.length) delete specCompliant.capabilityDelegation
+		if (!protobufDidDocument.keyAgreement?.length) delete specCompliant.keyAgreement
+		if (!protobufDidDocument.service?.length) delete specCompliant.service
+		if (!protobufDidDocument.alsoKnownAs?.length) delete specCompliant.alsoKnownAs
+
+		return specCompliant
+	}
+
+	static async toSpecCompliantMetadata(protobufDidDocument: Metadata): Promise<DIDDocumentMetadata> {
+		return {
+			created: protobufDidDocument.created?.toISOString(),
+			updated: protobufDidDocument.updated?.toISOString(),
+			deactivated: protobufDidDocument.deactivated,
+			versionId: protobufDidDocument.versionId,
+			nextVersionId: protobufDidDocument?.nextVersionId,
+		}
+	}
+
 	static async generateCreateDidDocFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [
-				DIDModule.fees.DefaultCreateDidFee
+				DIDModule.fees.DefaultCreateDidDocFee
 			],
 			gas: '360000',
 			payer: feePayer,
@@ -369,7 +543,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	static async generateUpdateDidDocFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [
-				DIDModule.fees.DefaultUpdateDidFee
+				DIDModule.fees.DefaultUpdateDidDocFee
 			],
 			gas: '360000',
 			payer: feePayer,
@@ -380,29 +554,11 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	static async generateDeactivateDidDocFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [
-				DIDModule.fees.DefaultDeactivateDidFee
+				DIDModule.fees.DefaultDeactivateDidDocFee
 			],
 			gas: '360000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee
-	}
-}
-
-export type MinimalImportableDIDModule = MinimalImportableCheqdSDKModule<DIDModule>
-
-export interface DidExtension extends CheqdExtension<string, {}> {
-	did: {}
-}
-
-export const setupDidExtension = (base: QueryClient): DidExtension => {
-	const rpc = createProtobufRpcClient(base)
-
-	/* const queryService = new QueryClientImpl(rpc) */
-
-	return {
-		did: {
-			//...
-		}
 	}
 }
