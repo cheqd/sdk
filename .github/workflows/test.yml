@@ -31,7 +31,7 @@ jobs:
           mkdir -p ${{ env.RUNNER_BIN_DIR }}
           CHEQD_NODE_VERSION="$(cut -c2- <<< "$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$(curl --silent https://api.github.com/repos/cheqd/cheqd-node/releases)")")"
           wget -c "https://github.com/cheqd/cheqd-node/releases/download/v$CHEQD_NODE_VERSION/cheqd-noded-.$CHEQD_NODE_VERSION-.linux-x86_64.tar.gz"
-          tar -xvf "cheqd-noded-$CHEQD_NODE_VERSION-Linux-x86_64.tar.gz" -C ${{ env.RUNNER_BIN_DIR }}
+          tar -xvf "cheqd-noded-.$CHEQD_NODE_VERSION-.linux-x86_64.tar.gz" -C ${{ env.RUNNER_BIN_DIR }}
           sudo chmod +x ${{ env.RUNNER_BIN_DIR }}/cheqd-noded
 
       - name: Restore binary permissions
