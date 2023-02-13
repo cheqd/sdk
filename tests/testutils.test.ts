@@ -22,3 +22,8 @@ export const default_content = '<p>Test file content</p>'
 export function containsAll<T>(array: T[], values: T[]): boolean {
     return values.every(value => array.includes(value))
 }
+
+export function containsAllButOmittedFields<T extends Record<string, any>>(array: T[], values: T[], omit: string[]): boolean {
+    const replacer = (key: string, value: any) => omit.includes(key) ? undefined : value
+    return values.every(value => array.some(item => JSON.stringify(item, replacer) === JSON.stringify(value, replacer)))
+}
