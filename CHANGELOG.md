@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0-develop.1](https://github.com/cheqd/sdk/compare/2.1.0-develop.1...3.0.0-develop.1) (2023-02-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Transition to ESM as hybrid package (#133)
+
+### Build System
+
+* Transition to ESM as hybrid package ([#133](https://github.com/cheqd/sdk/issues/133)) ([a832043](https://github.com/cheqd/sdk/commit/a832043016336aa4cc74a8106429576c72ffe9d9))
+
 ## [2.1.0-develop.1](https://github.com/cheqd/sdk/compare/2.0.2-develop.1...2.1.0-develop.1) (2023-02-08)
 
 
