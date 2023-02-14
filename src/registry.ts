@@ -3,9 +3,7 @@ import {
 	GeneratedType,
 } from '@cosmjs/proto-signing'
 
-import {
-	defaultRegistryTypes
-} from '@cosmjs/stargate'
+import { defaultRegistryTypes } from '@cosmjs/stargate'
 
 export function createDefaultCheqdRegistry(customTypes?: Iterable<[string, GeneratedType]>): Registry {
 	if (!customTypes) customTypes = [];

@@ -1,17 +1,51 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { fromString, toString } from 'uint8arrays'
-import { DIDModule, ResourceModule } from "../../src"
+import {
+    fromString,
+    toString
+} from 'uint8arrays'
+import {
+    DIDModule,
+    ResourceModule
+} from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
-import { ISignInputs, MethodSpecificIdAlgo, QueryExtensionSetup, VerificationMethods, CheqdExtensions } from '../../src/types';
-import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys } from "../../src/utils"
-import { localnet, faucet, image_content, default_content, json_content, containsAllButOmittedFields } from '../testutils.test';
-import { AlternativeUri, Metadata, MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
+import {
+    ISignInputs,
+    MethodSpecificIdAlgo,
+    QueryExtensionSetup,
+    VerificationMethods,
+    CheqdExtensions
+} from '../../src/types';
+import {
+    createDidPayload,
+    createDidVerificationMethod,
+    createKeyPairBase64,
+    createVerificationKeys
+} from "../../src/utils"
+import {
+    localnet,
+    faucet,
+    image_content,
+    default_content,
+    json_content,
+    containsAllButOmittedFields
+} from '../testutils.test';
+import {
+    AlternativeUri,
+    Metadata,
+    MsgCreateResourcePayload
+} from '@cheqd/ts-proto/cheqd/resource/v2';
 import { v4 } from "uuid"
 import { CheqdQuerier } from "../../src/querier"
-import { setupResourceExtension, ResourceExtension } from '../../src/modules/resource';
-import { DidExtension, setupDidExtension } from "../../src/modules/did"
+import {
+    setupResourceExtension,
+    ResourceExtension
+} from '../../src/modules/resource';
+import {
+    DidExtension,
+    setupDidExtension
+} from "../../src/modules/did"
 import { sha256 } from "@cosmjs/crypto"
 
 const defaultAsyncTxTimeout = 30000
