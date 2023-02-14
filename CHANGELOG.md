@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.0-develop.3](https://github.com/cheqd/sdk/compare/3.0.0-develop.2...3.0.0-develop.3) (2023-02-14)
+
+
+### Bug Fixes
+
+* Removed traces of directory imports ([#135](https://github.com/cheqd/sdk/issues/135)) ([9a5d53c](https://github.com/cheqd/sdk/commit/9a5d53c87343aa1a568f0feda9c586e1fd74ffde))
+
 ## [3.0.0-develop.2](https://github.com/cheqd/sdk/compare/3.0.0-develop.1...3.0.0-develop.2) (2023-02-14)
 
 ## [3.0.0-develop.1](https://github.com/cheqd/sdk/compare/2.1.0-develop.1...3.0.0-develop.1) (2023-02-14)
