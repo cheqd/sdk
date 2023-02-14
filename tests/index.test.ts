@@ -26,7 +26,8 @@ import {
     setupResourceExtension,
     ResourceExtension,
     defaultResourceExtensionKey
-} from '../src/modules/resource';
+} from '../src/modules/resource'
+import { jest } from '@jest/globals'
 
 describe(
     'CheqdSDK', () => {

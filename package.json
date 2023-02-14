@@ -23,13 +23,13 @@
     }
   },
   "scripts": {
-    "test": "jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
-    "test:esm": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
-    "test:watch": "jest --passWithNoTests --watch",
+    "test": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
+    "test:cjs": "echo 'Experimental backwards compatibility! Use v2 major version for deep CommonJS exports.' && jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
+    "test:watch": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1 --watch",
     "build": "rm -rf build && npm run build:types && npm run build:esm && npm run build:cjs",
     "build:types": "tsc -p tsconfig.types.json",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json"
+    "build:cjs": "echo 'Experimental backwards compatibility! Use v2 major version or `@cjs` npm tag for deep CommonJS exports.' && tsc -p tsconfig.cjs.json"
   },
   "repository": "https://github.com/cheqd/sdk.git",
   "keywords": [
@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/cheqd/sdk#readme",
   "dependencies": {
-    "@cheqd/ts-proto": "^3.0.0",
+    "@cheqd/ts-proto": "^3.1.0",
     "@cosmjs/amino": "^0.29.5",
     "@cosmjs/encoding": "^0.29.5",
     "@cosmjs/math": "^0.29.5",
@@ -57,8 +57,8 @@
     "cosmjs-types": "^0.5.2",
     "did-jwt": "^6.11.1",
     "did-resolver": "^4.0.1",
-    "file-type": "^16.5.4",
-    "multiformats": "^9.9.0",
+    "file-type": "^18.2.0",
+    "multiformats": "^11.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -77,7 +77,7 @@
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
-    "uint8arrays": "^3.1.1"
+    "uint8arrays": "^4.0.3"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
