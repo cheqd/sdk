@@ -5,6 +5,11 @@
             "name": "develop",
             "channel": "beta",
             "prerelease": true
+        },
+        {
+            "name": "commonjs",
+            "channel": "cjs",
+            "prerelease": true
         }
     ],
     "tagFormat": "${version}",
