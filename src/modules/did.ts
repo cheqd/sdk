@@ -1,7 +1,24 @@
-import { createPagination, createProtobufRpcClient, DeliverTxResponse, QueryClient } from "@cosmjs/stargate"
-import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
-import { CheqdSigningStargateClient } from "../signer"
-import { DIDDocument, DidStdFee, IContext, ISignInputs, QueryExtensionSetup, SpecValidationResult, VerificationMethods, DIDDocumentWithMetadata } from '../types';
+import {
+	createPagination,
+	createProtobufRpcClient,
+	DeliverTxResponse,
+	QueryClient
+} from "@cosmjs/stargate"
+import {
+	AbstractCheqdSDKModule,
+	MinimalImportableCheqdSDKModule
+} from './_.js';
+import { CheqdSigningStargateClient } from "../signer.js"
+import {
+	DIDDocument,
+	DidStdFee,
+	IContext,
+	ISignInputs,
+	QueryExtensionSetup,
+	SpecValidationResult,
+	VerificationMethods,
+	DIDDocumentWithMetadata
+} from '../types.js';
 import { 
 	MsgCreateDidDoc,
 	MsgCreateDidDocPayload,
@@ -21,12 +38,12 @@ import {
 	DidDocWithMetadata,
 	DidDoc,
 	Metadata
-} from "@cheqd/ts-proto/cheqd/did/v2"
+} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
 import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
 import { v4 } from "uuid"
 import { assert } from "@cosmjs/utils";
-import { PageRequest } from "@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination";
-import { CheqdQuerier } from "../querier";
+import { PageRequest } from "@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination.js";
+import { CheqdQuerier } from "../querier.js";
 import { DIDDocumentMetadata } from "did-resolver";
 
 export const defaultDidExtensionKey = "did" as const
@@ -60,6 +77,14 @@ export interface MsgCreateDidDocEncodeObject extends EncodeObject {
 
 export function isMsgCreateDidDocEncodeObject(obj: EncodeObject): obj is MsgCreateDidDocEncodeObject {
 	return obj.typeUrl === typeUrlMsgCreateDidDoc
+}
+
+export function isMsgUpdateDidDocEncodeObject(obj: EncodeObject): obj is MsgUpdateDidDocEncodeObject {
+	return obj.typeUrl === typeUrlMsgUpdateDidDoc
+}
+
+export function isMsgDeactivateDidDocEncodeObject(obj: EncodeObject): obj is MsgDeactivateDidDocEncodeObject {
+	return obj.typeUrl === typeUrlMsgDeactivateDidDoc
 }
 
 export interface MsgCreateDidDocResponseEncodeObject extends EncodeObject {
