@@ -1,7 +1,18 @@
-import { TImportableEd25519Key, createSignInputsFromImportableEd25519Key } from '../src/utils'
-import { createDidVerificationMethod, createVerificationKeys, createKeyPairRaw } from '../src/utils'
+import {
+    TImportableEd25519Key,
+    createSignInputsFromImportableEd25519Key
+} from '../src/utils'
+import {
+    createDidVerificationMethod,
+    createVerificationKeys,
+    createKeyPairRaw
+} from '../src/utils'
 import { toString } from 'uint8arrays'
-import { IKeyPair, MethodSpecificIdAlgo, VerificationMethods } from '../src/types'
+import {
+    IKeyPair,
+    MethodSpecificIdAlgo,
+    VerificationMethods
+} from '../src/types'
 
 describe('createSignInputsFromImportableEd25519Key', () => {
     it('should create a sign input from an importable ed25519 key 2020', async () => {

@@ -14,10 +14,17 @@ import {
     SpecValidationResult,
     JsonWebKey,
 } from "./types.js"
-import { fromString, toString } from 'uint8arrays'
+import {
+    fromString,
+    toString
+} from 'uint8arrays'
 import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
-import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
+import {
+    generateKeyPair,
+    generateKeyPairFromSeed,
+    KeyPair
+} from '@stablelib/ed25519'
 import { sha256 } from '@cosmjs/crypto'
 import { v4 } from 'uuid'
 import {

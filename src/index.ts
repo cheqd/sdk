@@ -1,11 +1,35 @@
-import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
-import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did.js';
-import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource.js';
-import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, instantiateCheqdSDKModuleQuerierExtensionSetup } from './modules/_.js';
+import {
+	OfflineSigner,
+	Registry
+} from '@cosmjs/proto-signing'
+import {
+	DIDModule,
+	MinimalImportableDIDModule,
+	DidExtension
+} from './modules/did.js';
+import {
+	MinimalImportableResourceModule,
+	ResourceModule,
+	ResourceExtension
+} from './modules/resource.js';
+import {
+	AbstractCheqdSDKModule,
+	applyMixins,
+	instantiateCheqdSDKModule,
+	instantiateCheqdSDKModuleRegistryTypes,
+	instantiateCheqdSDKModuleQuerierExtensionSetup
+} from './modules/_.js';
 import { createDefaultCheqdRegistry } from './registry.js'
 import { CheqdSigningStargateClient } from './signer.js'
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types.js';
-import { GasPrice, QueryClient } from '@cosmjs/stargate'
+import {
+	CheqdNetwork,
+	IContext,
+	IModuleMethodMap
+} from './types.js';
+import {
+	GasPrice,
+	QueryClient
+} from '@cosmjs/stargate'
 import { CheqdQuerier } from './querier.js'
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 
