@@ -1,13 +1,36 @@
-import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
-import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did';
-import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource';
-import { AbstractCheqdSDKModule, applyMixins, instantiateCheqdSDKModule, instantiateCheqdSDKModuleRegistryTypes, instantiateCheqdSDKModuleQuerierExtensionSetup } from './modules/_';
-import { createDefaultCheqdRegistry } from './registry'
-import { CheqdSigningStargateClient } from './signer'
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
-import { createSignInputsFromImportableEd25519Key } from './utils'
-import { GasPrice, QueryClient } from '@cosmjs/stargate'
-import { CheqdQuerier } from './querier'
+import {
+	OfflineSigner,
+	Registry
+} from '@cosmjs/proto-signing'
+import {
+	DIDModule,
+	MinimalImportableDIDModule,
+	DidExtension
+} from './modules/did.js';
+import {
+	MinimalImportableResourceModule,
+	ResourceModule,
+	ResourceExtension
+} from './modules/resource.js';
+import {
+	AbstractCheqdSDKModule,
+	applyMixins,
+	instantiateCheqdSDKModule,
+	instantiateCheqdSDKModuleRegistryTypes,
+	instantiateCheqdSDKModuleQuerierExtensionSetup
+} from './modules/_.js';
+import { createDefaultCheqdRegistry } from './registry.js'
+import { CheqdSigningStargateClient } from './signer.js'
+import {
+	CheqdNetwork,
+	IContext,
+	IModuleMethodMap
+} from './types.js';
+import {
+	GasPrice,
+	QueryClient
+} from '@cosmjs/stargate'
+import { CheqdQuerier } from './querier.js'
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 
 export interface ICheqdSDKOptions {
@@ -117,12 +140,53 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 }
 
 export { DIDModule, ResourceModule }
-export { createSignInputsFromImportableEd25519Key }
+export { AbstractCheqdSDKModule, applyMixins } from './modules/_.js'
 export {
+	DidExtension,
+	MinimalImportableDIDModule,
+	MsgCreateDidDocEncodeObject,
+	MsgCreateDidDocResponseEncodeObject,
+	MsgUpdateDidDocEncodeObject,
+	MsgUpdateDidDocResponseEncodeObject,
+	MsgDeactivateDidDocEncodeObject,
+	MsgDeactivateDidDocResponseEncodeObject,
+	contexts,
+	defaultDidExtensionKey,
+	protobufLiterals as protobufLiteralsDid,
+	typeUrlMsgCreateDidDoc,
+	typeUrlMsgCreateDidDocResponse,
+	typeUrlMsgUpdateDidDoc,
+	typeUrlMsgUpdateDidDocResponse,
+	typeUrlMsgDeactivateDidDoc,
+	typeUrlMsgDeactivateDidDocResponse,
+	setupDidExtension,
+	isMsgCreateDidDocEncodeObject,
+	isMsgUpdateDidDocEncodeObject,
+	isMsgDeactivateDidDocEncodeObject,
+} from './modules/did.js'
+export {
+	ResourceExtension,
+	MinimalImportableResourceModule,
+	defaultResourceExtensionKey,
+	protobufLiterals as protobufLiteralsResource,
+	typeUrlMsgCreateResource,
+	typeUrlMsgCreateResourceResponse,
+	setupResourceExtension,
+	isMsgCreateResourceEncodeObject,
+} from './modules/resource.js'
+export * from './signer.js'
+export * from './querier.js'
+export * from './registry.js'
+export * from './types.js'
+export {
+	TImportableEd25519Key,
 	createKeyPairRaw, 
 	createKeyPairBase64,
 	createKeyPairHex,
 	createVerificationKeys,
 	createDidVerificationMethod,
-	createDidPayload
-} from './utils'
+	createDidPayload,
+	createSignInputsFromImportableEd25519Key,
+	validateSpecCompliantPayload,
+	isEqualKeyValuePair,
+} from './utils.js'

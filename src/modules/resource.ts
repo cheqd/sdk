@@ -1,14 +1,39 @@
-import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
-import { CheqdSigningStargateClient } from "../signer"
-import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
-import { DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types';
-import { Metadata, MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, QueryClientImpl, QueryCollectionResourcesResponse, ResourceWithMetadata, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
-import { DeliverTxResponse, QueryClient, createPagination, createProtobufRpcClient } from "@cosmjs/stargate"
-import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
-import { fromBuffer } from "file-type";
+import {
+	AbstractCheqdSDKModule,
+	MinimalImportableCheqdSDKModule
+} from './_.js';
+import { CheqdSigningStargateClient } from "../signer.js"
+import {
+	EncodeObject,
+	GeneratedType
+} from "@cosmjs/proto-signing"
+import {
+	DidStdFee,
+	IContext,
+	ISignInputs,
+	QueryExtensionSetup
+} from '../types.js';
+import {
+	Metadata,
+	MsgCreateResource,
+	MsgCreateResourcePayload,
+	MsgCreateResourceResponse,
+	QueryClientImpl,
+	QueryCollectionResourcesResponse,
+	ResourceWithMetadata,
+	protobufPackage
+} from "@cheqd/ts-proto/cheqd/resource/v2/index.js"
+import {
+	DeliverTxResponse,
+	QueryClient,
+	createPagination,
+	createProtobufRpcClient
+} from "@cosmjs/stargate"
+import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index.js";
+import { fileTypeFromBuffer } from "file-type";
 import { assert } from '@cosmjs/utils';
-import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
-import { CheqdQuerier } from '../querier';
+import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination.js';
+import { CheqdQuerier } from '../querier.js';
 
 export const defaultResourceExtensionKey = 'resource' as const
 
@@ -175,7 +200,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
-		return (await fromBuffer(content))?.mime ?? 'application/octet-stream'
+		return (await fileTypeFromBuffer(content))?.mime ?? 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {

@@ -13,17 +13,24 @@ import {
     DIDDocument,
     SpecValidationResult,
     JsonWebKey,
-} from "./types"
-import { fromString, toString } from 'uint8arrays'
+} from "./types.js"
+import {
+    fromString,
+    toString
+} from 'uint8arrays'
 import { bases } from "multiformats/basics"
 import { base64ToBytes } from "did-jwt"
-import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519'
+import {
+    generateKeyPair,
+    generateKeyPairFromSeed,
+    KeyPair
+} from '@stablelib/ed25519'
+import { sha256 } from '@cosmjs/crypto'
 import { v4 } from 'uuid'
-import { createHash } from 'crypto'
 import {
     VerificationMethod as ProtoVerificationMethod,
     Service as ProtoService,
-} from "@cheqd/ts-proto/cheqd/did/v2"
+} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -107,7 +114,7 @@ export function createVerificationKeys(publicKey: string, algo: MethodSpecificId
     switch (algo) {
         case MethodSpecificIdAlgo.Base58:
             methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey))
-            didUrl = `did:cheqd:${network}:${(bases['base58btc'].encode((fromString(sha256(publicKey))).slice(0,16))).slice(1)}`
+            didUrl = `did:cheqd:${network}:${(bases['base58btc'].encode((sha256(base64ToBytes(publicKey))).slice(0,16))).slice(1)}`
             return {
                 methodSpecificId,
                 didUrl,
@@ -227,10 +234,6 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
     })
 
     return { valid: true, protobufVerificationMethod: protoVerificationMethod, protobufService: protoService }
-}
-
-function sha256(message: string) {
-    return createHash('sha256').update(message).digest('hex')
 }
 
 function toMultibaseRaw(key: Uint8Array) {

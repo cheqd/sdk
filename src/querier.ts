@@ -1,6 +1,9 @@
 import { QueryClient } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { QueryExtensionSetup, CheqdExtensions } from "./types";
+import {
+    QueryExtensionSetup,
+    CheqdExtensions
+} from "./types.js";
 
 export class CheqdQuerier extends QueryClient {
     constructor(tmClient: Tendermint34Client) {

@@ -1,12 +1,21 @@
-import { Service as ProtobufService, VerificationMethod as ProtobufVerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
-import { CheqdSDK } from "."
+import {
+    Service as ProtobufService, 
+    VerificationMethod as ProtobufVerificationMethod
+} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
+import { CheqdSDK } from "./index.js"
 import { Coin } from "@cosmjs/proto-signing"
 import { Signer } from "did-jwt"
 import { QueryClient } from "@cosmjs/stargate"
 import { DIDResolutionResult } from "did-resolver"
-import { DidExtension } from "./modules/did"
-import { ResourceExtension } from './modules/resource';
-export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from "did-resolver"
+import { DidExtension } from "./modules/did.js"
+import { ResourceExtension } from './modules/resource.js';
+export {
+    DIDDocument,
+    VerificationMethod,
+    Service,
+    ServiceEndpoint,
+    JsonWebKey
+} from "did-resolver"
 
 export enum CheqdNetwork {
     Mainnet = 'mainnet',
