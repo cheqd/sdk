@@ -6,7 +6,6 @@
 
 ## [3.0.0-develop.3](https://github.com/cheqd/sdk/compare/3.0.0-develop.2...3.0.0-develop.3) (2023-02-14)
 
-
 ### Bug Fixes
 
 * Removed traces of directory imports ([#135](https://github.com/cheqd/sdk/issues/135)) ([9a5d53c](https://github.com/cheqd/sdk/commit/9a5d53c87343aa1a568f0feda9c586e1fd74ffde))
@@ -15,7 +14,6 @@
 
 ## [3.0.0-develop.1](https://github.com/cheqd/sdk/compare/2.1.0-develop.1...3.0.0-develop.1) (2023-02-14)
 
-
 ### ⚠ BREAKING CHANGES
 
 * Transition to ESM as hybrid package (#133)
@@ -23,6 +21,13 @@
 ### Build System
 
 * Transition to ESM as hybrid package ([#133](https://github.com/cheqd/sdk/issues/133)) ([a832043](https://github.com/cheqd/sdk/commit/a832043016336aa4cc74a8106429576c72ffe9d9))
+
+## [2.1.0](https://github.com/cheqd/sdk/compare/2.0.1...2.1.0) (2023-02-08)
+
+
+### Features
+
+* Added querier as service capability ([#129](https://github.com/cheqd/sdk/issues/129)) ([71faac7](https://github.com/cheqd/sdk/commit/71faac7c7d9d9d854b89ef862bca1434b45b4905))
 
 ## [2.1.0-develop.1](https://github.com/cheqd/sdk/compare/2.0.2-develop.1...2.1.0-develop.1) (2023-02-08)
 
