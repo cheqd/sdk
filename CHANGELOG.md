@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.0.0](https://github.com/cheqd/sdk/compare/2.1.0...3.0.0) (2023-02-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Transition to ESM as hybrid package (#133)
+
+### Bug Fixes
+
+* Removed traces of directory imports ([#135](https://github.com/cheqd/sdk/issues/135)) ([9a5d53c](https://github.com/cheqd/sdk/commit/9a5d53c87343aa1a568f0feda9c586e1fd74ffde))
+
+
+### Build System
+
+* Transition to ESM as hybrid package ([#133](https://github.com/cheqd/sdk/issues/133)) ([a832043](https://github.com/cheqd/sdk/commit/a832043016336aa4cc74a8106429576c72ffe9d9))
+
 ## [3.0.0-develop.6](https://github.com/cheqd/sdk/compare/3.0.0-develop.5...3.0.0-develop.6) (2023-02-15)
 
 ## [3.0.0-develop.5](https://github.com/cheqd/sdk/compare/3.0.0-develop.4...3.0.0-develop.5) (2023-02-15)
