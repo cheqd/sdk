@@ -13,7 +13,7 @@ import {
     DIDDocument,
     SpecValidationResult,
     JsonWebKey,
-} from "./types.js"
+} from "./types"
 import {
     fromString,
     toString
@@ -30,7 +30,7 @@ import { v4 } from 'uuid'
 import {
     VerificationMethod as ProtoVerificationMethod,
     Service as ProtoService,
-} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
+} from "@cheqd/ts-proto/cheqd/did/v2"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string

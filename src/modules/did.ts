@@ -7,8 +7,8 @@ import {
 import {
 	AbstractCheqdSDKModule,
 	MinimalImportableCheqdSDKModule
-} from './_.js';
-import { CheqdSigningStargateClient } from "../signer.js"
+} from './_';
+import { CheqdSigningStargateClient } from "../signer"
 import {
 	DIDDocument,
 	DidStdFee,
@@ -18,7 +18,7 @@ import {
 	SpecValidationResult,
 	VerificationMethods,
 	DIDDocumentWithMetadata
-} from '../types.js';
+} from '../types';
 import { 
 	MsgCreateDidDoc,
 	MsgCreateDidDocPayload,
@@ -38,15 +38,15 @@ import {
 	DidDocWithMetadata,
 	DidDoc,
 	Metadata
-} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
+} from "@cheqd/ts-proto/cheqd/did/v2/index"
 import {
 	EncodeObject,
 	GeneratedType
 } from "@cosmjs/proto-signing"
 import { v4 } from "uuid"
 import { assert } from "@cosmjs/utils";
-import { PageRequest } from "@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination.js";
-import { CheqdQuerier } from "../querier.js";
+import { PageRequest } from "@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination";
+import { CheqdQuerier } from "../querier";
 import { DIDDocumentMetadata } from "did-resolver";
 
 export const defaultDidExtensionKey = "did" as const
