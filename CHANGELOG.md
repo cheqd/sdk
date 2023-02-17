@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-17)
+
+
+### Bug Fixes
+
+* Bugfix on conditional context injection ([6497799](https://github.com/cheqd/sdk/commit/649779976bb57d6239c1e2e285146f8d5d668406))
+
 ## [3.0.1](https://github.com/cheqd/sdk/compare/3.0.0...3.0.1) (2023-02-17)
 
 
