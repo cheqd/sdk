@@ -105,7 +105,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 
 	static readonly querierExtensionSetup: QueryExtensionSetup<ResourceExtension> = setupResourceExtension
 
-	readonly querier: CheqdQuerier & ResourceExtension
+	querier: CheqdQuerier & ResourceExtension
 
 	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier & ResourceExtension) {
 		super(signer, querier)
@@ -188,14 +188,23 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	async queryLinkedResource(collectionId: string, resourceId: string, context?: IContext): Promise<ResourceWithMetadata> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		return await this.querier[defaultResourceExtensionKey].resource(collectionId, resourceId)
 	}
 
 	async queryLinkedResourceMetadata(collectionId: string, resourceId: string, context?: IContext): Promise<Metadata> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		return await this.querier[defaultResourceExtensionKey].resourceMetadata(collectionId, resourceId)
 	}
 
 	async queryLinkedResources(collectionId: string, context?: IContext): Promise<QueryCollectionResourcesResponse> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		return await this.querier[defaultResourceExtensionKey].collectionResources(collectionId)
 	}
 
