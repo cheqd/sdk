@@ -191,7 +191,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 	static readonly querierExtensionSetup: QueryExtensionSetup<DidExtension> = setupDidExtension
 
-	readonly querier: CheqdQuerier & DidExtension
+	querier: CheqdQuerier & DidExtension
 
 	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier & DidExtension) {
 		super(signer, querier)
@@ -200,9 +200,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			createDidDocTx: this.createDidDocTx.bind(this),
 			updateDidDocTx: this.updateDidDocTx.bind(this),
 			deactivateDidDocTx: this.deactivateDidDocTx.bind(this),
-			queryDidDoc: this.querier.did.didDoc.bind(this),
-			queryDidDocVersion: this.querier.did.didDocVersion.bind(this),
-			queryAllDidDocVersionsMetadata: this.querier.did.allDidDocVersionsMetadata.bind(this),
+			queryDidDoc: this.queryDidDoc.bind(this),
+			queryDidDocVersion: this.queryDidDocVersion.bind(this),
+			queryAllDidDocVersionsMetadata: this.queryAllDidDocVersionsMetadata.bind(this),
 		}
 	}
 
@@ -393,6 +393,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	}
 
 	async queryDidDoc(id: string, context?: IContext): Promise<DIDDocumentWithMetadata> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		const { didDoc, metadata } = await this.querier[defaultDidExtensionKey].didDoc(id)
 		return {
 			didDocument: await DIDModule.toSpecCompliantPayload(didDoc!),
@@ -401,6 +404,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	}
 
 	async queryDidDocVersion(id: string, versionId: string, context?: IContext): Promise<DIDDocumentWithMetadata> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		const { didDoc, metadata } = await this.querier[defaultDidExtensionKey].didDocVersion(id, versionId)
 		return {
 			didDocument: await DIDModule.toSpecCompliantPayload(didDoc!),
@@ -409,6 +415,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	}
 
 	async queryAllDidDocVersionsMetadata(id: string, context?: IContext): Promise<{ didDocumentVersionsMetadata: DIDDocumentMetadata[], pagination: QueryAllDidDocVersionsMetadataResponse['pagination']}> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		const { versions, pagination } = await this.querier[defaultDidExtensionKey].allDidDocVersionsMetadata(id)
 		return {
 			didDocumentVersionsMetadata: await Promise.all(versions.map(async (m) => await DIDModule.toSpecCompliantMetadata(m))),
