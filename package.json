@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/cheqd/sdk#readme",
   "dependencies": {
-    "@cheqd/ts-proto": "^3.1.1",
+    "@cheqd/ts-proto": "^3.1.2",
     "@cosmjs/amino": "^0.29.5",
     "@cosmjs/encoding": "^0.29.5",
     "@cosmjs/math": "^0.29.5",
@@ -57,7 +57,7 @@
     "cosmjs-types": "^0.5.2",
     "did-jwt": "^6.11.1",
     "did-resolver": "^4.0.1",
-    "file-type": "^18.2.0",
+    "file-type": "^18.2.1",
     "multiformats": "^11.0.1",
     "uuid": "^9.0.0"
   },
@@ -66,7 +66,7 @@
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.7",
-    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/npm": "^9.0.2",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.14.0",
