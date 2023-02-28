@@ -1,6 +1,8 @@
 # Changelog
 
-## [3.1.0](https://github.com/cheqd/sdk/compare/3.0.1...3.1.0) (2023-02-28)
+## [3.1.0](https://github.com/cheqd/sdk/compare/3.0.1...3.1.0) (2023-02-28)]
+
+## [3.1.0-develop.1](https://github.com/cheqd/sdk/compare/3.0.2-develop.3...3.1.0-develop.1) (2023-02-28)
 
 
 ### Features
