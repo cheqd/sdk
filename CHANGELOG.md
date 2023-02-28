@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0-develop.1](https://github.com/cheqd/sdk/compare/3.0.2-develop.3...3.1.0-develop.1) (2023-02-28)
+
+
+### Features
+
+* Updated ts-proto package ([72e5bcf](https://github.com/cheqd/sdk/commit/72e5bcf970aa1c57aefee5a413d3922f1739fee7))
+
 ## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-28)
 
 ## [3.0.2-develop.3](https://github.com/cheqd/sdk/compare/3.0.2-develop.2...3.0.2-develop.3) (2023-02-27)
