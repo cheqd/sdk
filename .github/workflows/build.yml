@@ -76,6 +76,9 @@ jobs:
         working-directory: ./docker/localnet
         run: |
           bash import-keys.sh
-      
+
+      - name: "Clean install dependencies"
+        run: npm ci
+
       - name: Run Tests
         run: npm test
