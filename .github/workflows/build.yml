@@ -6,6 +6,7 @@ defaults:
     shell: bash
 
 jobs:
+
   build:
     name: "Build Node.js"
     runs-on: ubuntu-latest
@@ -24,3 +25,50 @@ jobs:
 
       - name: "Run npm build"
         run: npm run build
+
+  integration-tests:
+    name: "Integration Tests"
+    runs-on: ubuntu-20.04
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Download binary artifact
+        run: |
+          mkdir -p ${{ env.RUNNER_BIN_DIR }}
+          CHEQD_NODE_VERSION="$(cut -c2- <<< "$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$(curl --silent https://api.github.com/repos/cheqd/cheqd-node/releases)")")"
+          wget -c "https://github.com/cheqd/cheqd-node/releases/download/v${CHEQD_NODE_VERSION}/cheqd-noded-${CHEQD_NODE_VERSION}-linux-amd64.tar.gz"
+          tar -xvf "cheqd-noded-${CHEQD_NODE_VERSION}-linux-amd64.tar.gz" -C ${{ env.RUNNER_BIN_DIR }}
+          sudo chmod +x ${{ env.RUNNER_BIN_DIR }}/cheqd-noded
+
+      - name: Restore binary permissions
+        run: sudo chmod +x ${{ env.RUNNER_BIN_DIR }}/cheqd-noded
+
+      - name: Generate localnet configs
+        working-directory: ./docker/localnet
+        run: |
+          bash gen-network-config.sh
+          sudo chown -R 1000:1000 network-config
+
+      - name: Set up Docker localnet
+        working-directory: ./docker/localnet
+        run: |
+          CHEQD_NODE_VERSION="$(cut -c2- <<< "$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$(curl --silent https://api.github.com/repos/cheqd/cheqd-node/releases)")")"
+          BUILD_IMAGE="ghcr.io/cheqd/cheqd-node:$CHEQD_NODE_VERSION"
+          export BUILD_IMAGE
+          docker compose up --detach
+
+      - name: Import keys
+        working-directory: ./docker/localnet
+        run: |
+          bash import-keys.sh
+      
+      - name: Run Tests
+        run: npm test
