@@ -4,6 +4,13 @@ on:
 defaults:
   run:
     shell: bash
+env:
+  RUNNER_BIN_DIR: /home/runner/.local/bin
+permissions:
+  contents: write
+  packages: read
+  checks: write
+
 
 jobs:
 
