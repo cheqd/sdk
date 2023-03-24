@@ -31,7 +31,10 @@ import { v4 } from 'uuid'
 import {
     VerificationMethod as ProtoVerificationMethod,
     Service as ProtoService,
-} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
+    MsgCreateDidDocPayload,
+    MsgDeactivateDidDocPayload,
+} from "@cheqd/ts-proto/cheqd/did/v2"
+import { DIDModule } from "./modules/did"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -254,4 +257,33 @@ function toMultibaseRaw(key: Uint8Array) {
     multibase.set(key, MULTICODEC_ED25519_HEADER.length);
 
     return bases['base58btc'].encode(multibase);
+}
+
+export async function createMsgCreateDidDocPayloadToSign(didPayload: DIDDocument, versionId: string) {
+    const { protobufVerificationMethod, protobufService } = await DIDModule.validateSpecCompliantPayload(didPayload)
+    return MsgCreateDidDocPayload.encode(
+      MsgCreateDidDocPayload.fromPartial({
+        context: <string[]>didPayload?.['@context'],
+        id: didPayload.id,
+        controller: <string[]>didPayload.controller,
+        verificationMethod: protobufVerificationMethod,
+        authentication: <string[]>didPayload.authentication,
+        assertionMethod: <string[]>didPayload.assertionMethod,
+        capabilityInvocation: <string[]>didPayload.capabilityInvocation,
+        capabilityDelegation: <string[]>didPayload.capabilityDelegation,
+        keyAgreement: <string[]>didPayload.keyAgreement,
+        service: protobufService,
+        alsoKnownAs: <string[]>didPayload.alsoKnownAs,
+        versionId,
+      })
+    ).finish()
+}
+
+export function createMsgDeactivateDidDocPayloadToSign(didPayload: DIDDocument, versionId?: string) {
+  return MsgDeactivateDidDocPayload.encode(
+    MsgDeactivateDidDocPayload.fromPartial({
+      id: didPayload.id,
+      versionId,
+    })
+  ).finish()
 }
