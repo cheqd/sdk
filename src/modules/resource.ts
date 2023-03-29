@@ -30,7 +30,6 @@ import {
 	createProtobufRpcClient
 } from "@cosmjs/stargate"
 import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index";
-import { fromBuffer } from "file-type";
 import { assert } from '@cosmjs/utils';
 import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
@@ -209,7 +208,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
-		return (await fromBuffer(content))?.mime ?? 'application/octet-stream'
+		return 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
