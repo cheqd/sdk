@@ -1,8 +1,8 @@
 import {
 	AbstractCheqdSDKModule,
 	MinimalImportableCheqdSDKModule
-} from './_.js';
-import { CheqdSigningStargateClient } from "../signer.js"
+} from './_';
+import { CheqdSigningStargateClient } from "../signer"
 import {
 	EncodeObject,
 	GeneratedType
@@ -12,7 +12,7 @@ import {
 	IContext,
 	ISignInputs,
 	QueryExtensionSetup
-} from '../types.js';
+} from '../types';
 import {
 	Metadata,
 	MsgCreateResource,
@@ -22,18 +22,17 @@ import {
 	QueryCollectionResourcesResponse,
 	ResourceWithMetadata,
 	protobufPackage
-} from "@cheqd/ts-proto/cheqd/resource/v2/index.js"
+} from "@cheqd/ts-proto/cheqd/resource/v2"
 import {
 	DeliverTxResponse,
 	QueryClient,
 	createPagination,
 	createProtobufRpcClient
 } from "@cosmjs/stargate"
-import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index.js";
-import { fileTypeFromBuffer } from "file-type";
+import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index";
 import { assert } from '@cosmjs/utils';
-import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination.js';
-import { CheqdQuerier } from '../querier.js';
+import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
+import { CheqdQuerier } from '../querier';
 
 export const defaultResourceExtensionKey = 'resource' as const
 
@@ -209,7 +208,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
-		return (await fileTypeFromBuffer(content))?.mime ?? 'application/octet-stream'
+		return 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {

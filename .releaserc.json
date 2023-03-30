@@ -8,8 +8,7 @@
         },
         {
             "name": "commonjs",
-            "channel": "cjs",
-            "prerelease": true
+            "channel": "cjs"
         }
     ],
     "tagFormat": "${version}",
