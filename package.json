@@ -54,6 +54,7 @@
     "@cosmjs/stargate": "^0.29.5",
     "@cosmjs/tendermint-rpc": "^0.29.5",
     "@cosmjs/utils": "^0.29.5",
+    "@cosmjs/crypto": "^0.29.5",
     "@stablelib/ed25519": "^1.0.3",
     "cosmjs-types": "^0.5.2",
     "did-jwt": "^6.11.6",
