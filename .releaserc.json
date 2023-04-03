@@ -8,11 +8,10 @@
         },
         {
             "name": "commonjs",
-            "channel": "cjs",
-            "prerelease": true
+            "channel": "cjs"
         }
     ],
-    "tagFormat": "${version}",
+    "tagFormat": "${version}-commonjs",
     "ci": true,
     "preset": "conventionalcommits",
     "plugins": [

@@ -3,7 +3,7 @@ import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import {
     QueryExtensionSetup,
     CheqdExtensions
-} from "./types.js";
+} from "./types";
 
 export class CheqdQuerier extends QueryClient {
     constructor(tmClient: Tendermint34Client) {

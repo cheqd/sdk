@@ -1,11 +1,11 @@
 import { GeneratedType } from "@cosmjs/proto-signing"
 import { QueryClient } from "@cosmjs/stargate"
-import { CheqdSigningStargateClient } from '../signer.js'
+import { CheqdSigningStargateClient } from '../signer'
 import {
 	IModuleMethodMap,
 	QueryExtensionSetup
-} from '../types.js';
-import { CheqdQuerier } from "../querier.js";
+} from '../types';
+import { CheqdQuerier } from "../querier";
 
 export abstract class AbstractCheqdSDKModule {
 	_signer: CheqdSigningStargateClient
