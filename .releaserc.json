@@ -11,7 +11,7 @@
             "channel": "cjs"
         }
     ],
-    "tagFormat": "${version}-commonjs",
+    "tagFormat": "${version}",
     "ci": true,
     "preset": "conventionalcommits",
     "plugins": [
