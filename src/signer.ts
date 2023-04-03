@@ -15,20 +15,20 @@ import {
 	calculateFee,
 	SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
-import { createDefaultCheqdRegistry } from "./registry.js"
+import { createDefaultCheqdRegistry } from "./registry"
 import { 
 	MsgCreateDidDocPayload,
 	SignInfo,
 	MsgUpdateDidDocPayload,
 	MsgDeactivateDidDocPayload,
 	VerificationMethod 
-} from '@cheqd/ts-proto/cheqd/did/v2/index.js';
+} from '@cheqd/ts-proto/cheqd/did/v2';
 import {
 	DidStdFee,
 	ISignInputs,
 	TSignerAlgo,
 	VerificationMethods
-} from './types.js';
+} from './types';
 import {
 	base64ToBytes,
 	EdDSASigner,
@@ -48,10 +48,10 @@ import {
 	AuthInfo,
 	SignerInfo,
 	TxRaw
-} from 'cosmjs-types/cosmos/tx/v1beta1/tx.js'
-import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js'
-import { Any } from 'cosmjs-types/google/protobuf/any.js'
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin.js'
+} from 'cosmjs-types/cosmos/tx/v1beta1/tx'
+import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
+import { Any } from 'cosmjs-types/google/protobuf/any'
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import Long from 'long'
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {

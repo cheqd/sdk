@@ -1,14 +1,14 @@
 import {
     Service as ProtobufService, 
     VerificationMethod as ProtobufVerificationMethod
-} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
-import { CheqdSDK } from "./index.js"
+} from "@cheqd/ts-proto/cheqd/did/v2"
+import { CheqdSDK } from "./index"
 import { Coin } from "@cosmjs/proto-signing"
 import { Signer } from "did-jwt"
 import { QueryClient } from "@cosmjs/stargate"
 import { DIDResolutionResult } from "did-resolver"
-import { DidExtension } from "./modules/did.js"
-import { ResourceExtension } from './modules/resource.js';
+import { DidExtension } from "./modules/did"
+import { ResourceExtension } from './modules/resource';
 export {
     DIDDocument,
     VerificationMethod,
