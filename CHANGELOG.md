@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1-commonjs...3.3.0-commonjs) (2023-04-03)
+
+
+### Features
+
+* Add @cosmjs/crypto as direct dependency ([#174](https://github.com/cheqd/sdk/issues/174)) ([9af5faf](https://github.com/cheqd/sdk/commit/9af5faf6336bae048860669a83da598dd704818c))
+
 ## [3.2.1](https://github.com/cheqd/sdk/compare/3.2.0-commonjs...3.2.1-commonjs) (2023-04-03)
 
 ## [3.2.0](https://github.com/cheqd/sdk/compare/3.1.1...3.2.0) (2023-03-09)
