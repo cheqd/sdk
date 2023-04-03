@@ -12,7 +12,7 @@
             "channel": "cjs"
         }
     ],
-    "tagFormat": "${version}",
+    "tagFormat": "${version}-${name}",
     "ci": true,
     "preset": "conventionalcommits",
     "plugins": [
