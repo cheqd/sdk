@@ -7,9 +7,9 @@
             "prerelease": true
         },
         {
-            "name": "commonjs",
-            "channel": "cjs",
-            "prerelease": true
+            "name": "release/2.x",
+            "range": "2.x",
+            "channel": "cjs"
         }
     ],
     "tagFormat": "${version}",
