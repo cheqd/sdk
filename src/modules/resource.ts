@@ -217,7 +217,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			amount: [
 				ResourceModule.fees.DefaultCreateResourceImageFee
 			],
-			gas: '360000',
+			gas: '1200000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee
@@ -228,7 +228,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			amount: [
 				ResourceModule.fees.DefaultCreateResourceJsonFee
 			],
-			gas: '360000',
+			gas: '1200000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee
@@ -239,7 +239,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			amount: [
 				ResourceModule.fees.DefaultCreateResourceDefaultFee
 			],
-			gas: '360000',
+			gas: '1200000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee
