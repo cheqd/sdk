@@ -1,5 +1,7 @@
 # Changelog
 
+## [3.4.1](https://github.com/cheqd/sdk/compare/3.4.0...3.4.1) (2023-04-14)
+
 ## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1...3.4.0) (2023-04-14)
 
 
