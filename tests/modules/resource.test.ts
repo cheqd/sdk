@@ -1,17 +1,51 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing"
 import { DeliverTxResponse } from "@cosmjs/stargate"
-import { fromString, toString } from 'uint8arrays'
-import { DIDModule, ResourceModule } from "../../src"
+import {
+    fromString,
+    toString
+} from 'uint8arrays'
+import {
+    DIDModule,
+    ResourceModule
+} from "../../src"
 import { createDefaultCheqdRegistry } from "../../src/registry"
 import { CheqdSigningStargateClient } from "../../src/signer"
-import { ISignInputs, MethodSpecificIdAlgo, QueryExtensionSetup, VerificationMethods, CheqdExtensions } from '../../src/types';
-import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys } from "../../src/utils"
-import { localnet, faucet, image_content, default_content, json_content } from "../testutils.test"
-import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
+import {
+    ISignInputs,
+    MethodSpecificIdAlgo,
+    QueryExtensionSetup,
+    VerificationMethods,
+    CheqdExtensions
+} from '../../src/types';
+import {
+    createDidPayload,
+    createDidVerificationMethod,
+    createKeyPairBase64,
+    createVerificationKeys
+} from "../../src/utils"
+import {
+    localnet,
+    faucet,
+    image_content,
+    default_content,
+    json_content,
+    containsAllButOmittedFields
+} from '../testutils.test';
+import {
+    AlternativeUri,
+    Metadata,
+    MsgCreateResourcePayload
+} from '@cheqd/ts-proto/cheqd/resource/v2';
 import { v4 } from "uuid"
 import { CheqdQuerier } from "../../src/querier"
-import { setupResourceExtension, ResourceExtension } from '../../src/modules/resource';
-import { DidExtension, setupDidExtension } from "../../src/modules/did"
+import {
+    setupResourceExtension,
+    ResourceExtension
+} from '../../src/modules/resource';
+import {
+    DidExtension,
+    setupDidExtension
+} from "../../src/modules/did"
 import { sha256 } from "@cosmjs/crypto"
 
 const defaultAsyncTxTimeout = 30000
@@ -781,5 +815,177 @@ describe('ResourceModule', () => {
             expect(metadata?.previousVersionId).toBe('')
             expect(metadata?.nextVersionId).toBe('')
         }, defaultAsyncTxTimeout)
+    })
+
+    describe('queryLinkedResources', () => {
+        it('should query linked resource collection', async () => {
+            // create an associated did document
+            const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {prefix: faucet.prefix})
+            const registry = createDefaultCheqdRegistry(Array.from(DIDModule.registryTypes).concat(Array.from(ResourceModule.registryTypes)))
+            const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, { registry })
+            const querier = await CheqdQuerier.connectWithExtensions(localnet.rpcUrl, ...[setupDidExtension, setupResourceExtension] as unknown as QueryExtensionSetup<CheqdExtensions>[])
+            const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension)
+
+            const keyPair = createKeyPairBase64()
+            const verificationKeys = createVerificationKeys(keyPair.publicKey, MethodSpecificIdAlgo.Base58, 'key-1')
+            const verificationMethods = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys])
+            const didPayload = createDidPayload(verificationMethods, [verificationKeys])
+
+            const signInputs: ISignInputs[] = [
+                {
+                    verificationMethodId: didPayload.verificationMethod![0].id,
+                    privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex')
+                }
+            ]
+
+            const feePayer = (await wallet.getAccounts())[0].address
+            const fee = await DIDModule.generateCreateDidDocFees(feePayer)
+            const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+                signInputs,
+                didPayload,
+                feePayer,
+                fee
+            )
+
+            console.warn(`Using payload: ${JSON.stringify(didPayload)}`)
+            console.warn(`DID Tx: ${JSON.stringify(didTx)}`)
+
+            expect(didTx.code).toBe(0)
+
+            // create a did linked resource
+            const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension)
+
+            const collectionId = didPayload.id.split(":").reverse()[0]
+
+            const resourcePayload: MsgCreateResourcePayload = {
+                collectionId: collectionId,
+                id: v4(),
+                version: "1.0",
+                alsoKnownAs: [],
+                name: 'Test Resource',
+                resourceType: 'test-resource-type',
+                data: new TextEncoder().encode(json_content)
+            }
+
+            const resourceSignInputs: ISignInputs[] = [
+                {
+                    verificationMethodId: didPayload.verificationMethod![0].id,
+                    keyType: 'Ed25519',
+                    privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex')
+                }
+            ]
+
+            const feeResourceJson = await ResourceModule.generateCreateResourceJsonFees(feePayer)
+            const resourceTx = await resourceModule.createLinkedResourceTx(
+                resourceSignInputs,
+                resourcePayload,
+                feePayer,
+                feeResourceJson,
+            )
+
+            console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`)
+            console.warn(`Resource Tx: ${JSON.stringify(resourceTx)}`)
+
+            expect(resourceTx.code).toBe(0)
+
+            // create a did linked resource following version
+            const resourcePayload2: MsgCreateResourcePayload = {
+                collectionId: collectionId,
+                id: v4(),
+                version: "2.0",
+                alsoKnownAs: [],
+                name: 'Test Resource',
+                resourceType: 'test-resource-type',
+                data: new TextEncoder().encode(json_content)
+            }
+
+            const resourceTx2 = await resourceModule.createLinkedResourceTx(
+                resourceSignInputs,
+                resourcePayload2,
+                feePayer,
+                feeResourceJson,
+            )
+
+            console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`)
+            console.warn(`Resource Tx: ${JSON.stringify(resourceTx2)}`)
+
+            expect(resourceTx2.code).toBe(0)
+
+            // create a different did linked resource
+            const resourcePayload3: MsgCreateResourcePayload = {
+                collectionId: collectionId,
+                id: v4(),
+                version: "1.0",
+                alsoKnownAs: [],
+                name: 'Different Test Resource',
+                resourceType: 'different-test-resource-type',
+                data: new TextEncoder().encode(json_content) // different regardless of data
+            }
+
+            const resourceTx3 = await resourceModule.createLinkedResourceTx(
+                resourceSignInputs,
+                resourcePayload3,
+                feePayer,
+                feeResourceJson,
+            )
+
+            console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`)
+            console.warn(`Resource Tx: ${JSON.stringify(resourceTx3)}`)
+
+            expect(resourceTx3.code).toBe(0)
+
+            // query the linked resource collection
+            const resources = await resourceModule.queryLinkedResources(collectionId)
+
+            console.warn(`Resources: ${JSON.stringify(resources)}`)
+
+            // ledger constructed
+            const alsoKnownAs = (resourceId: string): AlternativeUri[] => [{ uri: `${didPayload.id}/resources/${resourceId}`, description: 'did-url' }]
+            const checksum = toString(sha256(resourcePayload.data), 'hex')
+            const mimeType = 'application/json'
+
+            // expected unordered
+            const expected: Omit<Metadata, 'created'>[] = [
+                {
+                    collectionId: collectionId,
+                    id: resourcePayload.id,
+                    name: resourcePayload.name,
+                    version: resourcePayload.version,
+                    resourceType: resourcePayload.resourceType,
+                    alsoKnownAs: alsoKnownAs(resourcePayload.id),
+                    mediaType: mimeType,
+                    checksum: checksum,
+                    previousVersionId: '',
+                    nextVersionId: resourcePayload2.id,
+                },
+                {
+                    collectionId: collectionId,
+                    id: resourcePayload2.id,
+                    name: resourcePayload2.name,
+                    version: resourcePayload2.version,
+                    resourceType: resourcePayload2.resourceType,
+                    alsoKnownAs: alsoKnownAs(resourcePayload2.id),
+                    mediaType: mimeType,
+                    checksum: checksum,
+                    previousVersionId: resourcePayload.id,
+                    nextVersionId: '',
+                },
+                {
+                    collectionId: collectionId,
+                    id: resourcePayload3.id,
+                    name: resourcePayload3.name,
+                    version: resourcePayload3.version,
+                    resourceType: resourcePayload3.resourceType,
+                    alsoKnownAs: alsoKnownAs(resourcePayload3.id),
+                    mediaType: mimeType,
+                    checksum: checksum,
+                    previousVersionId: '',
+                    nextVersionId: '',
+                }
+            ]
+
+            expect(resources.resources).toHaveLength(3)
+            expect(containsAllButOmittedFields(resources.resources, expected, ['created'])).toBe(true)
+        }, defaultAsyncTxTimeout * 3)
     })
 })

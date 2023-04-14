@@ -1,13 +1,33 @@
-import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing'
-import { createCheqdSDK, DIDModule, ICheqdSDKOptions, ResourceModule } from '../src/index'
-import { localnet, faucet } from './testutils.test'
+import {
+    DirectSecp256k1HdWallet,
+    GeneratedType
+} from '@cosmjs/proto-signing'
+import {
+    createCheqdSDK,
+    DIDModule,
+    ICheqdSDKOptions,
+    ResourceModule
+} from '../src/index'
+import {
+    localnet,
+    faucet
+} from './testutils.test'
 import { AbstractCheqdSDKModule } from '../src/modules/_'
 import { CheqdSigningStargateClient } from '../src/signer'
 import { createDefaultCheqdRegistry } from '../src/registry'
 import { CheqdQuerier } from '../src/querier'
-import { setupDidExtension, DidExtension, defaultDidExtensionKey } from '../src/modules/did';
+import {
+    setupDidExtension,
+    DidExtension,
+    defaultDidExtensionKey
+} from '../src/modules/did';
 import { QueryExtensionSetup } from '../src/types'
-import { setupResourceExtension, ResourceExtension, defaultResourceExtensionKey } from '../src/modules/resource';
+import {
+    setupResourceExtension,
+    ResourceExtension,
+    defaultResourceExtensionKey
+} from '../src/modules/resource'
+import { jest } from '@jest/globals'
 
 describe(
     'CheqdSDK', () => {
