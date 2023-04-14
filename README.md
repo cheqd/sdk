@@ -8,7 +8,7 @@
 
 ## ℹ️ Overview
 
-The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide base functionality for interacting with cheqd network. It combines the DID and DID-Linked Resources modules, and putting them into a Cosmos transaction wrapper using [CosmJS](https://github.com/cosmos/cosmjs).
+The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide base functionality for interacting with cheqd network. It combines the DID and [DID-Linked Resources](https://docs.cheqd.io/identity/guides/did-linked-resources) modules, and putting them into a Cosmos transaction wrapper using [CosmJS](https://github.com/cosmos/cosmjs).
 
 This package is consumed by other SDKs/libraries such as [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) and [Hyperledger Aries Framework JavaScript (AFJ)](https://github.com/hyperledger/aries-framework-javascript) to add cheqd network support.
 
@@ -19,12 +19,14 @@ This package includes:
 
 ## 🆔 Features
 
+Our identity documentation site provides [tutorials for utilising the identity features](https://docs.cheqd.io/identity/overview/readme) on cheqd network.
+
 With this SDK, developers are able to:
 
 * ✅ Create a `did:cheqd` method DID
 * ✅ Update a `did:cheqd` method DID
 * ✅ Deactivate a `did:cheqd` method DID
-* ✅ Create Resource within a `did:cheqd` method DID
+* ✅ Create or update [a DID-Linked Resource](https://docs.cheqd.io/identity/tutorials/did-linked-resources/create-resource)
 
 ### 🧰 Tooling
 
