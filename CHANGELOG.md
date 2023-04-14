@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1-commonjs...3.4.0-commonjs) (2023-04-14)
+
+
+### Features
+
+* Bump resource gas ([#178](https://github.com/cheqd/sdk/issues/178)) ([a67b3e1](https://github.com/cheqd/sdk/commit/a67b3e14589569b5ad01e8d0b0bdfd8370cb4f9a))
+
 ## [3.3.1](https://github.com/cheqd/sdk/compare/3.3.0-commonjs...3.3.1-commonjs) (2023-04-06)
 
 ## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1-commonjs...3.3.0-commonjs) (2023-04-03)
