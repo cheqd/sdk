@@ -52,7 +52,7 @@
   ],
   "dependencies": {
     "@cheqd/ts-proto": "^3.2.0",
-    "@cosmjs/amino": "^0.29.5",
+    "@cosmjs/amino": "^0.30.1",
     "@cosmjs/crypto": "^0.29.5",
     "@cosmjs/encoding": "^0.29.5",
     "@cosmjs/math": "^0.29.5",
