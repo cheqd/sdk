@@ -7,11 +7,12 @@
             "prerelease": true
         },
         {
-            "name": "commonjs",
+            "name": "release/2.x",
+            "range": "2.x",
             "channel": "cjs"
         }
     ],
-    "tagFormat": "${version}-commonjs",
+    "tagFormat": "${version}",
     "ci": true,
     "preset": "conventionalcommits",
     "plugins": [
