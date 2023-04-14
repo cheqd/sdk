@@ -1,29 +1,29 @@
 # Changelog
 
-## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1-commonjs...3.4.0-commonjs) (2023-04-14)
+## [3.3.0-develop.4](https://github.com/cheqd/sdk/compare/3.3.0-develop.3...3.3.0-develop.4) (2023-04-14)
+
+## [3.3.0-develop.3](https://github.com/cheqd/sdk/compare/3.3.0-develop.2...3.3.0-develop.3) (2023-04-14)
+
+## [3.3.0-develop.2](https://github.com/cheqd/sdk/compare/3.3.0-develop.1...3.3.0-develop.2) (2023-04-14)
+
+## [3.3.0-develop.1](https://github.com/cheqd/sdk/compare/3.2.1-develop.1...3.3.0-develop.1) (2023-04-14)
 
 
 ### Features
 
-* Bump resource gas ([#178](https://github.com/cheqd/sdk/issues/178)) ([a67b3e1](https://github.com/cheqd/sdk/commit/a67b3e14589569b5ad01e8d0b0bdfd8370cb4f9a))
+* Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
 
-## [3.3.1](https://github.com/cheqd/sdk/compare/3.3.0-commonjs...3.3.1-commonjs) (2023-04-06)
+## [3.2.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1) (2023-04-05)
 
-## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1-commonjs...3.3.0-commonjs) (2023-04-03)
-
-
-### Features
-
-* Add @cosmjs/crypto as direct dependency ([#174](https://github.com/cheqd/sdk/issues/174)) ([9af5faf](https://github.com/cheqd/sdk/commit/9af5faf6336bae048860669a83da598dd704818c))
-
-## [3.2.1](https://github.com/cheqd/sdk/compare/3.2.0-commonjs...3.2.1-commonjs) (2023-04-03)
+## [3.2.1-develop.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1-develop.1) (2023-04-03)
 
 ## [3.2.0](https://github.com/cheqd/sdk/compare/3.1.1...3.2.0) (2023-03-09)
-
 
 ### Features
 
 * Update @cheqd/ts-proto from 3.1.2 to 3.1.3 ([#151](https://github.com/cheqd/sdk/issues/151)) ([f6ac275](https://github.com/cheqd/sdk/commit/f6ac2759255ed612a99aff35d497468ff4530e11))
+
+## [3.2.0-develop.1](https://github.com/cheqd/sdk/compare/3.1.2-develop.1...3.2.0-develop.1) (2023-03-09)
 
 ## [3.1.2-develop.1](https://github.com/cheqd/sdk/compare/3.1.1...3.1.2-develop.1) (2023-03-09)
 
@@ -44,11 +44,9 @@
 
 ## [3.0.2-develop.2](https://github.com/cheqd/sdk/compare/3.0.2-develop.1...3.0.2-develop.2) (2023-02-27)
 
-## [3.0.2-develop.1](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2-develop.1) (2023-02-20)
-
 ## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-20)
 
-## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-17)
+## [3.0.2-develop.1](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2-develop.1) (2023-02-20)
 
 ## [3.0.1](https://github.com/cheqd/sdk/compare/3.0.0...3.0.1) (2023-02-17)
 
