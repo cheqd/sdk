@@ -1,12 +1,35 @@
-import { MsgCreateDidDoc, MsgCreateDidDocPayload, VerificationMethod } from "@cheqd/ts-proto/cheqd/did/v2"
-import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing"
+import {
+    MsgCreateDidDoc,
+    MsgCreateDidDocPayload,
+    VerificationMethod
+} from "@cheqd/ts-proto/cheqd/did/v2"
+import {
+    DirectSecp256k1HdWallet,
+    Registry
+} from "@cosmjs/proto-signing"
 import { EdDSASigner } from "did-jwt"
 import { typeUrlMsgCreateDidDoc } from '../src/modules/did'
 import { CheqdSigningStargateClient } from "../src/signer"
-import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from "../src/types"
-import { fromString, toString } from 'uint8arrays'
-import { createDidPayload, createDidVerificationMethod, createKeyPairBase64, createVerificationKeys, validateSpecCompliantPayload } from '../src/utils';
-import { localnet, faucet } from "./testutils.test"
+import {
+    ISignInputs,
+    MethodSpecificIdAlgo,
+    VerificationMethods
+} from "../src/types"
+import {
+    fromString,
+    toString
+} from 'uint8arrays'
+import {
+    createDidPayload,
+    createDidVerificationMethod,
+    createKeyPairBase64,
+    createVerificationKeys,
+    validateSpecCompliantPayload
+} from '../src/utils';
+import {
+    localnet,
+    faucet
+} from "./testutils.test"
 import { verify } from "@stablelib/ed25519"
 import { v4 } from "uuid"
 

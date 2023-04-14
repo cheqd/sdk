@@ -1,5 +1,110 @@
 # Changelog
 
+## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1-commonjs...3.4.0-commonjs) (2023-04-14)
+
+
+### Features
+
+* Bump resource gas ([#178](https://github.com/cheqd/sdk/issues/178)) ([a67b3e1](https://github.com/cheqd/sdk/commit/a67b3e14589569b5ad01e8d0b0bdfd8370cb4f9a))
+
+## [3.3.1](https://github.com/cheqd/sdk/compare/3.3.0-commonjs...3.3.1-commonjs) (2023-04-06)
+
+## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1-commonjs...3.3.0-commonjs) (2023-04-03)
+
+
+### Features
+
+* Add @cosmjs/crypto as direct dependency ([#174](https://github.com/cheqd/sdk/issues/174)) ([9af5faf](https://github.com/cheqd/sdk/commit/9af5faf6336bae048860669a83da598dd704818c))
+
+## [3.2.1](https://github.com/cheqd/sdk/compare/3.2.0-commonjs...3.2.1-commonjs) (2023-04-03)
+
+## [3.2.0](https://github.com/cheqd/sdk/compare/3.1.1...3.2.0) (2023-03-09)
+
+
+### Features
+
+* Update @cheqd/ts-proto from 3.1.2 to 3.1.3 ([#151](https://github.com/cheqd/sdk/issues/151)) ([f6ac275](https://github.com/cheqd/sdk/commit/f6ac2759255ed612a99aff35d497468ff4530e11))
+
+## [3.1.2-develop.1](https://github.com/cheqd/sdk/compare/3.1.1...3.1.2-develop.1) (2023-03-09)
+
+## [3.1.1](https://github.com/cheqd/sdk/compare/3.1.0...3.1.1) (2023-02-28)
+
+## [3.1.0](https://github.com/cheqd/sdk/compare/3.0.1...3.1.0) (2023-02-28)]
+
+## [3.1.0-develop.1](https://github.com/cheqd/sdk/compare/3.0.2-develop.3...3.1.0-develop.1) (2023-02-28)
+
+
+### Features
+
+* Updated ts-proto package ([72e5bcf](https://github.com/cheqd/sdk/commit/72e5bcf970aa1c57aefee5a413d3922f1739fee7))
+
+## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-28)
+
+## [3.0.2-develop.3](https://github.com/cheqd/sdk/compare/3.0.2-develop.2...3.0.2-develop.3) (2023-02-27)
+
+## [3.0.2-develop.2](https://github.com/cheqd/sdk/compare/3.0.2-develop.1...3.0.2-develop.2) (2023-02-27)
+
+## [3.0.2-develop.1](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2-develop.1) (2023-02-20)
+
+## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-20)
+
+## [3.0.2](https://github.com/cheqd/sdk/compare/3.0.1...3.0.2) (2023-02-17)
+
+## [3.0.1](https://github.com/cheqd/sdk/compare/3.0.0...3.0.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* Bugfix on conditional context injection ([#142](https://github.com/cheqd/sdk/issues/142)) ([b09c681](https://github.com/cheqd/sdk/commit/b09c681369de1f577faeeb4568e8103344e123c1))
+* Bugfix on conditional context injection ([#143](https://github.com/cheqd/sdk/issues/143)) ([854232c](https://github.com/cheqd/sdk/commit/854232c4707f7cea5b41b9a111f8bfbc2f2a02ea))
+
+## [3.0.1-develop.1](https://github.com/cheqd/sdk/compare/3.0.0...3.0.1-develop.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* Bugfix on conditional context injection ([#142](https://github.com/cheqd/sdk/issues/142)) ([b09c681](https://github.com/cheqd/sdk/commit/b09c681369de1f577faeeb4568e8103344e123c1))
+
+## [3.0.0](https://github.com/cheqd/sdk/compare/2.1.0...3.0.0) (2023-02-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Transition to ESM as hybrid package (#133)
+
+### Bug Fixes
+
+* Removed traces of directory imports ([#135](https://github.com/cheqd/sdk/issues/135)) ([9a5d53c](https://github.com/cheqd/sdk/commit/9a5d53c87343aa1a568f0feda9c586e1fd74ffde))
+
+
+### Build System
+
+* Transition to ESM as hybrid package ([#133](https://github.com/cheqd/sdk/issues/133)) ([a832043](https://github.com/cheqd/sdk/commit/a832043016336aa4cc74a8106429576c72ffe9d9))
+
+## [3.0.0-develop.6](https://github.com/cheqd/sdk/compare/3.0.0-develop.5...3.0.0-develop.6) (2023-02-15)
+
+## [3.0.0-develop.5](https://github.com/cheqd/sdk/compare/3.0.0-develop.4...3.0.0-develop.5) (2023-02-15)
+
+## [3.0.0-develop.4](https://github.com/cheqd/sdk/compare/3.0.0-develop.3...3.0.0-develop.4) (2023-02-14)
+
+## [3.0.0-develop.3](https://github.com/cheqd/sdk/compare/3.0.0-develop.2...3.0.0-develop.3) (2023-02-14)
+
+### Bug Fixes
+
+* Removed traces of directory imports ([#135](https://github.com/cheqd/sdk/issues/135)) ([9a5d53c](https://github.com/cheqd/sdk/commit/9a5d53c87343aa1a568f0feda9c586e1fd74ffde))
+
+## [3.0.0-develop.2](https://github.com/cheqd/sdk/compare/3.0.0-develop.1...3.0.0-develop.2) (2023-02-14)
+
+## [3.0.0-develop.1](https://github.com/cheqd/sdk/compare/2.1.0-develop.1...3.0.0-develop.1) (2023-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* Transition to ESM as hybrid package (#133)
+
+### Build System
+
+* Transition to ESM as hybrid package ([#133](https://github.com/cheqd/sdk/issues/133)) ([a832043](https://github.com/cheqd/sdk/commit/a832043016336aa4cc74a8106429576c72ffe9d9))
+
 ## [2.1.0](https://github.com/cheqd/sdk/compare/2.0.1...2.1.0) (2023-02-08)
 
 

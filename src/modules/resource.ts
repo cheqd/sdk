@@ -1,11 +1,35 @@
-import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
+import {
+	AbstractCheqdSDKModule,
+	MinimalImportableCheqdSDKModule
+} from './_';
 import { CheqdSigningStargateClient } from "../signer"
-import { EncodeObject, GeneratedType } from "@cosmjs/proto-signing"
-import { DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types';
-import { Metadata, MsgCreateResource, MsgCreateResourcePayload, MsgCreateResourceResponse, QueryClientImpl, QueryCollectionResourcesResponse, ResourceWithMetadata, protobufPackage } from "@cheqd/ts-proto/cheqd/resource/v2"
-import { DeliverTxResponse, QueryClient, createPagination, createProtobufRpcClient } from "@cosmjs/stargate"
-import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2";
-import { fromBuffer } from "file-type";
+import {
+	EncodeObject,
+	GeneratedType
+} from "@cosmjs/proto-signing"
+import {
+	DidStdFee,
+	IContext,
+	ISignInputs,
+	QueryExtensionSetup
+} from '../types';
+import {
+	Metadata,
+	MsgCreateResource,
+	MsgCreateResourcePayload,
+	MsgCreateResourceResponse,
+	QueryClientImpl,
+	QueryCollectionResourcesResponse,
+	ResourceWithMetadata,
+	protobufPackage
+} from "@cheqd/ts-proto/cheqd/resource/v2"
+import {
+	DeliverTxResponse,
+	QueryClient,
+	createPagination,
+	createProtobufRpcClient
+} from "@cosmjs/stargate"
+import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index";
 import { assert } from '@cosmjs/utils';
 import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
@@ -80,7 +104,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 
 	static readonly querierExtensionSetup: QueryExtensionSetup<ResourceExtension> = setupResourceExtension
 
-	readonly querier: CheqdQuerier & ResourceExtension
+	querier: CheqdQuerier & ResourceExtension
 
 	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier & ResourceExtension) {
 		super(signer, querier)
@@ -163,19 +187,28 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	async queryLinkedResource(collectionId: string, resourceId: string, context?: IContext): Promise<ResourceWithMetadata> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		return await this.querier[defaultResourceExtensionKey].resource(collectionId, resourceId)
 	}
 
 	async queryLinkedResourceMetadata(collectionId: string, resourceId: string, context?: IContext): Promise<Metadata> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		return await this.querier[defaultResourceExtensionKey].resourceMetadata(collectionId, resourceId)
 	}
 
 	async queryLinkedResources(collectionId: string, context?: IContext): Promise<QueryCollectionResourcesResponse> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier
+		}
 		return await this.querier[defaultResourceExtensionKey].collectionResources(collectionId)
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
-		return (await fromBuffer(content))?.mime ?? 'application/octet-stream'
+		return 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
@@ -183,7 +216,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			amount: [
 				ResourceModule.fees.DefaultCreateResourceImageFee
 			],
-			gas: '360000',
+			gas: '1200000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee
@@ -194,7 +227,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			amount: [
 				ResourceModule.fees.DefaultCreateResourceJsonFee
 			],
-			gas: '360000',
+			gas: '1200000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee
@@ -205,7 +238,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			amount: [
 				ResourceModule.fees.DefaultCreateResourceDefaultFee
 			],
-			gas: '360000',
+			gas: '1200000',
 			payer: feePayer,
 			granter: granter
 		} as DidStdFee

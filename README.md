@@ -4,18 +4,18 @@
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cheqd/sdk?include_prereleases&label=dev%20release&style=flat-square)](https://github.com/cheqd/sdk/releases/) ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/cheqd/sdk/latest?style=flat-square) [![GitHub contributors](https://img.shields.io/github/contributors/cheqd/sdk?label=contributors%20%E2%9D%A4%EF%B8%8F&style=flat-square)](https://github.com/cheqd/sdk/graphs/contributors)
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cheqd/sdk/Workflow%20Dispatch?label=workflows&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/dispatch.yml) [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cheqd/sdk/CodeQL?label=CodeQL&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/codeql.yml) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/sdk?style=flat-square)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cheqd/sdk/dispatch.yml?label=workflows&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/dispatch.yml) [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cheqd/sdk/codeql.yml?label=CodeQL&style=flat-square)](https://github.com/cheqd/sdk/actions/workflows/codeql.yml) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/sdk?style=flat-square)
 
 ## ℹ️ Overview
 
-The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide a mechanism of integrating cheqd functionality in an application *without* using a 3rd-party SDK like [Veramo SDK for cheqd](https://docs.cheqd.io/identity/building-decentralized-identity-apps/veramo-sdk-for-cheqd).
+The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide a mechanism of integrating cheqd functionality in an application *without* using a 3rd-party SDK like [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd).
 
 This package includes:
 
 * [TypeScript Protobuf definitions](https://github.com/cheqd/ts-proto) for custom cheqd Cosmos SDK modules
 * [CosmJS](https://github.com/cosmos/cosmjs), for base Cosmos SDK module functions
 
-If you are using [Veramo SDK for cheqd](https://docs.cheqd.io/identity/building-decentralized-identity-apps/veramo-sdk-for-cheqd), this SDK package is automatically installed and consumed by the [`@cheqd/did-provider-cheqd` Veramo plugin](https://github.com/cheqd/did-provider-cheqd).
+If you are using [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd), this SDK package is automatically installed and consumed by the [`@cheqd/did-provider-cheqd` Veramo plugin](https://github.com/cheqd/did-provider-cheqd).
 
 ## 🆔 Features
 
@@ -32,7 +32,7 @@ With this SDK, developers are able to:
 
 ## 📖 Documentation
 
-Our [identity documentation site](https://docs.cheqd.io/identity/) explains how `@cheqd/sdk` is [consumed in Veramo SDK for cheqd](https://docs.cheqd.io/identity/building-decentralized-identity-apps/veramo-sdk-for-cheqd) (as an example of how this package can be consumed).
+Our [identity documentation site](https://docs.cheqd.io/identity/) explains how `@cheqd/sdk` is [consumed in Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) (as an example of how this package can be consumed).
 
 ## 💬 Community
 

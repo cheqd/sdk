@@ -1,13 +1,16 @@
 import { GeneratedType } from "@cosmjs/proto-signing"
 import { QueryClient } from "@cosmjs/stargate"
 import { CheqdSigningStargateClient } from '../signer'
-import { IModuleMethodMap, QueryExtensionSetup } from '../types';
+import {
+	IModuleMethodMap,
+	QueryExtensionSetup
+} from '../types';
 import { CheqdQuerier } from "../querier";
 
 export abstract class AbstractCheqdSDKModule {
 	_signer: CheqdSigningStargateClient
 	methods: IModuleMethodMap = {}
-	readonly querier: CheqdQuerier
+	querier: CheqdQuerier
 	readonly _protectedMethods: string[] = ['constructor', 'getRegistryTypes', 'getQuerierExtensionSetup']
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = []
 	static readonly querierExtensionSetup: QueryExtensionSetup<any> = (base: QueryClient) => ({})
@@ -15,6 +18,9 @@ export abstract class AbstractCheqdSDKModule {
 	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier) {
 		if (!signer) {
 			throw new Error("signer is required")
+		}
+		if (!querier) {
+			throw new Error("querier is required")
 		}
 		this._signer = signer
 		this.querier = querier

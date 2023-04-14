@@ -1,15 +1,54 @@
-import { EncodeObject, isOfflineDirectSigner, OfflineSigner, encodePubkey, TxBodyEncodeObject, makeSignDoc } from "@cosmjs/proto-signing"
-import { DeliverTxResponse, GasPrice, HttpEndpoint, SigningStargateClient, SigningStargateClientOptions, calculateFee, SignerData } from "@cosmjs/stargate"
+import {
+	EncodeObject,
+	isOfflineDirectSigner,
+	OfflineSigner,
+	encodePubkey,
+	TxBodyEncodeObject,
+	makeSignDoc
+} from "@cosmjs/proto-signing"
+import {
+	DeliverTxResponse,
+	GasPrice,
+	HttpEndpoint,
+	SigningStargateClient,
+	SigningStargateClientOptions,
+	calculateFee,
+	SignerData } from "@cosmjs/stargate"
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { createDefaultCheqdRegistry } from "./registry"
-import { MsgCreateDidDocPayload, SignInfo, MsgUpdateDidDocPayload, MsgDeactivateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
-import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
-import { assert, assertDefined } from '@cosmjs/utils'
+import { 
+	MsgCreateDidDocPayload,
+	SignInfo,
+	MsgUpdateDidDocPayload,
+	MsgDeactivateDidDocPayload,
+	VerificationMethod 
+} from '@cheqd/ts-proto/cheqd/did/v2';
+import {
+	DidStdFee,
+	ISignInputs,
+	TSignerAlgo,
+	VerificationMethods
+} from './types';
+import {
+	base64ToBytes,
+	EdDSASigner,
+	hexToBytes,
+	Signer,
+	ES256Signer,
+	ES256KSigner
+} from 'did-jwt';
+import {
+	assert,
+	assertDefined
+} from '@cosmjs/utils'
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino'
 import { Int53 } from '@cosmjs/math'
 import { fromBase64 } from '@cosmjs/encoding'
-import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
+import {
+	AuthInfo,
+	SignerInfo,
+	TxRaw
+} from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing'
 import { Any } from 'cosmjs-types/google/protobuf/any'
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
