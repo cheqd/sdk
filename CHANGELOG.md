@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0-develop.1](https://github.com/cheqd/sdk/compare/3.2.1-develop.1...3.3.0-develop.1) (2023-04-14)
+
+
+### Features
+
+* Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
+
 ## [3.2.1-develop.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1-develop.1) (2023-04-03)
 
 ## [3.2.0](https://github.com/cheqd/sdk/compare/3.1.1...3.2.0) (2023-03-09)
