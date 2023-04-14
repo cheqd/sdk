@@ -8,14 +8,14 @@
 
 ## ℹ️ Overview
 
-The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide a mechanism of integrating cheqd functionality in an application *without* using a 3rd-party SDK like [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd).
+The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide base functionality for interacting with cheqd network. It combines the DID and DID-Linked Resources modules, and putting them into a Cosmos transaction wrapper using [CosmJS](https://github.com/cosmos/cosmjs).
+
+This package is consumed by other SDKs/libraries such as [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) and [Hyperledger Aries Framework JavaScript (AFJ)](https://github.com/hyperledger/aries-framework-javascript) to add cheqd network support.
 
 This package includes:
 
 * [TypeScript Protobuf definitions](https://github.com/cheqd/ts-proto) for custom cheqd Cosmos SDK modules
 * [CosmJS](https://github.com/cosmos/cosmjs), for base Cosmos SDK module functions
-
-If you are using [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd), this SDK package is automatically installed and consumed by the [`@cheqd/did-provider-cheqd` Veramo plugin](https://github.com/cheqd/did-provider-cheqd).
 
 ## 🆔 Features
 
@@ -23,6 +23,7 @@ With this SDK, developers are able to:
 
 * ✅ Create a `did:cheqd` method DID
 * ✅ Update a `did:cheqd` method DID
+* ✅ Deactivate a `did:cheqd` method DID
 * ✅ Create Resource within a `did:cheqd` method DID
 
 ### 🧰 Tooling
