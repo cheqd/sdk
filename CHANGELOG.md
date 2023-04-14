@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1...3.4.0) (2023-04-14)
+
+
+### Features
+
+* **bump:** Attempt v3.4.0 release ([967f870](https://github.com/cheqd/sdk/commit/967f870c07d4c8c6fcd0ea29e8dfabba6d63f13b))
+* **docs:** Attempt v3.5.0 bump ([96a30da](https://github.com/cheqd/sdk/commit/96a30da4c43597c320946566a491b0404bc5601f))
+
 ## [3.3.1](https://github.com/cheqd/sdk/compare/3.3.0...3.3.1) (2023-04-14)
 
 ## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1...3.3.0) (2023-04-14)
