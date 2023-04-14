@@ -33,6 +33,30 @@ With this SDK, developers are able to:
 * ✅ **Raw payload creator**: Enables users to generate a valid raw DID payload which is ready to be populated, depending on the use case. For example, `did-provider-cheqd` leverages this helper in the CLI application.
 * ✅ **Identity key converter**: Enables users to convert specific key formats from different kinds of SDKs, by transforming the input keys into valid sign inputs for a cheqd specific DID transaction (e.g. `createDidDocTx`, `updateDidDocTx`). For example, the Veramo SDK for cheqd uses this helper to enable users to pass a key in a Veramo SDK specific format to a cheqd sign input keys interface.
 
+## 🧑‍💻 Developer Guide
+
+### Installing in ESM projects
+
+To install this NPM package in a project that needs ESM builds, use our `latest` release channel to install the stable version:
+
+```bash
+npm install @cheqd/sdk@latest
+```
+
+To install beta releases instead, use our `-develop` releases from the `beta` channel:
+
+```bash
+npm install @cheqd/sdk@beta
+```
+
+### Installing in CommonJS projects
+
+To install this NPM package in a project that needs CommonJS builds, use our `cjs` release channel to install the latest stable CommonJS version:
+
+```bash
+npm install @cheqd/sdk@cjs
+```
+
 ## 📖 Documentation
 
 Our [identity documentation site](https://docs.cheqd.io/identity/) explains how `@cheqd/sdk` is [consumed in Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) (as an example of how this package can be consumed).
