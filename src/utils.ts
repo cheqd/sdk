@@ -35,6 +35,7 @@ import {
     MsgDeactivateDidDocPayload,
 } from "@cheqd/ts-proto/cheqd/did/v2"
 import { DIDModule } from "./modules/did"
+import { MsgCreateResourcePayload } from "@cheqd/ts-proto/cheqd/resource/v2/tx.js"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -279,11 +280,19 @@ export async function createMsgCreateDidDocPayloadToSign(didPayload: DIDDocument
     ).finish()
 }
 
+export const createMsgUpdateDidDocPayloadToSign = createMsgCreateDidDocPayloadToSign
+
 export function createMsgDeactivateDidDocPayloadToSign(didPayload: DIDDocument, versionId?: string) {
   return MsgDeactivateDidDocPayload.encode(
     MsgDeactivateDidDocPayload.fromPartial({
       id: didPayload.id,
       versionId,
     })
+  ).finish()
+}
+
+export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourcePayload> | MsgCreateResourcePayload) {
+  return MsgCreateResourcePayload.encode(
+    MsgCreateResourcePayload.fromPartial(payload)
   ).finish()
 }
