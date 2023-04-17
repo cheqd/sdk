@@ -8,27 +8,54 @@
 
 ## ℹ️ Overview
 
-The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide a mechanism of integrating cheqd functionality in an application *without* using a 3rd-party SDK like [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd).
+The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide base functionality for interacting with cheqd network. It combines the DID and [DID-Linked Resources](https://docs.cheqd.io/identity/guides/did-linked-resources) modules, and putting them into a Cosmos transaction wrapper using [CosmJS](https://github.com/cosmos/cosmjs).
+
+This package is consumed by other SDKs/libraries such as [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) and [Hyperledger Aries Framework JavaScript (AFJ)](https://github.com/hyperledger/aries-framework-javascript) to add cheqd network support.
 
 This package includes:
 
 * [TypeScript Protobuf definitions](https://github.com/cheqd/ts-proto) for custom cheqd Cosmos SDK modules
 * [CosmJS](https://github.com/cosmos/cosmjs), for base Cosmos SDK module functions
 
-If you are using [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd), this SDK package is automatically installed and consumed by the [`@cheqd/did-provider-cheqd` Veramo plugin](https://github.com/cheqd/did-provider-cheqd).
-
 ## 🆔 Features
+
+Our identity documentation site provides [tutorials for utilising the identity features](https://docs.cheqd.io/identity/overview/readme) on cheqd network.
 
 With this SDK, developers are able to:
 
 * ✅ Create a `did:cheqd` method DID
 * ✅ Update a `did:cheqd` method DID
-* ✅ Create Resource within a `did:cheqd` method DID
+* ✅ Deactivate a `did:cheqd` method DID
+* ✅ Create or update [a DID-Linked Resource](https://docs.cheqd.io/identity/tutorials/did-linked-resources/create-resource)
 
 ### 🧰 Tooling
 
 * ✅ **Raw payload creator**: Enables users to generate a valid raw DID payload which is ready to be populated, depending on the use case. For example, `did-provider-cheqd` leverages this helper in the CLI application.
 * ✅ **Identity key converter**: Enables users to convert specific key formats from different kinds of SDKs, by transforming the input keys into valid sign inputs for a cheqd specific DID transaction (e.g. `createDidDocTx`, `updateDidDocTx`). For example, the Veramo SDK for cheqd uses this helper to enable users to pass a key in a Veramo SDK specific format to a cheqd sign input keys interface.
+
+## 🧑‍💻 Developer Guide
+
+### Installing in ESM projects
+
+To install this NPM package in a project that needs ESM builds, use our `latest` release channel to install the stable version:
+
+```bash
+npm install @cheqd/sdk@latest
+```
+
+To install beta releases instead, use our `-develop` releases from the `beta` channel:
+
+```bash
+npm install @cheqd/sdk@beta
+```
+
+### Installing in CommonJS projects
+
+To install this NPM package in a project that needs CommonJS builds, use our `cjs` release channel to install the latest stable CommonJS version:
+
+```bash
+npm install @cheqd/sdk@cjs
+```
 
 ## 📖 Documentation
 

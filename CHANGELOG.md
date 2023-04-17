@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.4.1](https://github.com/cheqd/sdk/compare/3.4.0...3.4.1) (2023-04-14)
+
+## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1...3.4.0) (2023-04-14)
+
+
+### Features
+
+* **bump:** Attempt v3.4.0 release ([967f870](https://github.com/cheqd/sdk/commit/967f870c07d4c8c6fcd0ea29e8dfabba6d63f13b))
+* **docs:** Attempt v3.5.0 bump ([96a30da](https://github.com/cheqd/sdk/commit/96a30da4c43597c320946566a491b0404bc5601f))
+
+## [3.3.1](https://github.com/cheqd/sdk/compare/3.3.0...3.3.1) (2023-04-14)
+
+## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1...3.3.0) (2023-04-14)
+
+
+### Features
+
+* Bump resource fee ([#181](https://github.com/cheqd/sdk/issues/181)) ([bffcf42](https://github.com/cheqd/sdk/commit/bffcf427669a27ad705e2ae12d7a69d45c49cab4))
+* Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
+
+## [3.3.0-develop.4](https://github.com/cheqd/sdk/compare/3.3.0-develop.3...3.3.0-develop.4) (2023-04-14)
+
+## [3.3.0-develop.3](https://github.com/cheqd/sdk/compare/3.3.0-develop.2...3.3.0-develop.3) (2023-04-14)
+
 ## [3.3.0-develop.2](https://github.com/cheqd/sdk/compare/3.3.0-develop.1...3.3.0-develop.2) (2023-04-14)
 
 ## [3.3.0-develop.1](https://github.com/cheqd/sdk/compare/3.2.1-develop.1...3.3.0-develop.1) (2023-04-14)
@@ -8,6 +32,8 @@
 ### Features
 
 * Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
+
+## [3.2.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1) (2023-04-05)
 
 ## [3.2.1-develop.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1-develop.1) (2023-04-03)
 
