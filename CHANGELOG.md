@@ -1,5 +1,7 @@
 # Changelog
 
+## [3.5.0-develop.2](https://github.com/cheqd/sdk/compare/3.5.0-develop.1...3.5.0-develop.2) (2023-04-19)
+
 ## [3.5.0-develop.1](https://github.com/cheqd/sdk/compare/3.4.1...3.5.0-develop.1) (2023-04-17)
 
 
