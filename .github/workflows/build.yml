@@ -54,6 +54,4 @@ jobs:
         run: npm ci
 
       - name: Run Tests
-        run: |
-          sleep 1m
-          npm test
+        run: npm test
