@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.5.0](https://github.com/cheqd/sdk/compare/3.4.1...3.5.0) (2023-04-21)
+
+
+### Features
+
+* Add cosmosWallet util ([d3e2d96](https://github.com/cheqd/sdk/commit/d3e2d967f762fc6441ecabb1b2b34803177dcbaa))
+* Add cosmosWallet util [DEV-2430] ([#147](https://github.com/cheqd/sdk/issues/147)) ([9b7c5e0](https://github.com/cheqd/sdk/commit/9b7c5e00b013cf307fe5321f6ed6ae7b306c74e5))
+* Add utils for signing ([e60801d](https://github.com/cheqd/sdk/commit/e60801deede3716ecd423852a992d1195b112925))
+* Update payload to sign ([1883ed7](https://github.com/cheqd/sdk/commit/1883ed7af0c75c1a66a99af379221a29379f16ac))
+
+
+### Bug Fixes
+
+* Markdown linting error ([f73dac0](https://github.com/cheqd/sdk/commit/f73dac05910c8e334f4ae51d90e415049379c739))
+
 ## [3.5.0-develop.2](https://github.com/cheqd/sdk/compare/3.5.0-develop.1...3.5.0-develop.2) (2023-04-19)
 
 ## [3.5.0-develop.1](https://github.com/cheqd/sdk/compare/3.4.1...3.5.0-develop.1) (2023-04-17)
