@@ -2,14 +2,12 @@
 
 ## [3.5.0](https://github.com/cheqd/sdk/compare/3.4.1...3.5.0) (2023-04-21)
 
-
 ### Features
 
 * Add cosmosWallet util ([d3e2d96](https://github.com/cheqd/sdk/commit/d3e2d967f762fc6441ecabb1b2b34803177dcbaa))
 * Add cosmosWallet util [DEV-2430] ([#147](https://github.com/cheqd/sdk/issues/147)) ([9b7c5e0](https://github.com/cheqd/sdk/commit/9b7c5e00b013cf307fe5321f6ed6ae7b306c74e5))
 * Add utils for signing ([e60801d](https://github.com/cheqd/sdk/commit/e60801deede3716ecd423852a992d1195b112925))
 * Update payload to sign ([1883ed7](https://github.com/cheqd/sdk/commit/1883ed7af0c75c1a66a99af379221a29379f16ac))
-
 
 ### Bug Fixes
 
@@ -51,6 +49,18 @@
 
 * Bump resource fee ([#181](https://github.com/cheqd/sdk/issues/181)) ([bffcf42](https://github.com/cheqd/sdk/commit/bffcf427669a27ad705e2ae12d7a69d45c49cab4))
 * Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
+
+
+## [2.2.0](https://github.com/cheqd/sdk/compare/2.1.0...2.2.0) (2023-04-14)
+
+### Features
+
+* Backport CommonJS releases to release/2.x branch ([#183](https://github.com/cheqd/sdk/issues/183)) ([a1e0424](https://github.com/cheqd/sdk/commit/a1e0424acd95957def3019fcd15b83b3b26a3048)), closes [#132](https://github.com/cheqd/sdk/issues/132) [#178](https://github.com/cheqd/sdk/issues/178) [#178](https://github.com/cheqd/sdk/issues/178) [#176](https://github.com/cheqd/sdk/issues/176) [#174](https://github.com/cheqd/sdk/issues/174) [#174](https://github.com/cheqd/sdk/issues/174) [#133](https://github.com/cheqd/sdk/issues/133) [#115](https://github.com/cheqd/sdk/issues/115) [#49](https://github.com/cheqd/sdk/issues/49) [#129](https://github.com/cheqd/sdk/issues/129) [#115](https://github.com/cheqd/sdk/issues/115) [#163](https://github.com/cheqd/sdk/issues/163) [#18](https://github.com/cheqd/sdk/issues/18) [#151](https://github.com/cheqd/sdk/issues/151) [#114](https://github.com/cheqd/sdk/issues/114) [#142](https://github.com/cheqd/sdk/issues/142) [#143](https://github.com/cheqd/sdk/issues/143) [#117](https://github.com/cheqd/sdk/issues/117) [#125](https://github.com/cheqd/sdk/issues/125) [#135](https://github.com/cheqd/sdk/issues/135) [#133](https://github.com/cheqd/sdk/issues/133) [#167](https://github.com/cheqd/sdk/issues/167) [#144](https://github.com/cheqd/sdk/issues/144) [#145](https://github.com/cheqd/sdk/issues/145) [#151](https://github.com/cheqd/sdk/issues/151) [#151](https://github.com/cheqd/sdk/issues/151) [#157](https://github.com/cheqd/sdk/issues/157) [#163](https://github.com/cheqd/sdk/issues/163) [#151](https://github.com/cheqd/sdk/issues/151) [#151](https://github.com/cheqd/sdk/issues/151) [#150](https://github.com/cheqd/sdk/issues/150) [#149](https://github.com/cheqd/sdk/issues/149) [#148](https://github.com/cheqd/sdk/issues/148) [#146](https://github.com/cheqd/sdk/issues/146) [#145](https://github.com/cheqd/sdk/issues/145) [#144](https://github.com/cheqd/sdk/issues/144) [#142](https://github.com/cheqd/sdk/issues/142) [#143](https://github.com/cheqd/sdk/issues/143) [#143](https://github.com/cheqd/sdk/issues/143) [#142](https://github.com/cheqd/sdk/issues/142) [#142](https://github.com/cheqd/sdk/issues/142) [#140](https://github.com/cheqd/sdk/issues/140) [#139](https://github.com/cheqd/sdk/issues/139) [#133](https://github.com/cheqd/sdk/issues/133) [#135](https://github.com/cheqd/sdk/issues/135) [#133](https://github.com/cheqd/sdk/issues/133) [#137](https://github.com/cheqd/sdk/issues/137) [#136](https://github.com/cheqd/sdk/issues/136) [#135](https://github.com/cheqd/sdk/issues/135) [#135](https://github.com/cheqd/sdk/issues/135) [#134](https://github.com/cheqd/sdk/issues/134) [#133](https://github.com/cheqd/sdk/issues/133) [#133](https://github.com/cheqd/sdk/issues/133) [#133](https://github.com/cheqd/sdk/issues/133) [#132](https://github.com/cheqd/sdk/issues/132)
+
+
+### Bug Fixes
+
+* Broken release/2.x branch tests ([#186](https://github.com/cheqd/sdk/issues/186)) ([86da499](https://github.com/cheqd/sdk/commit/86da4996a46cc55a08217c6a19f906cc4263d443)), closes [#132](https://github.com/cheqd/sdk/issues/132) [#133](https://github.com/cheqd/sdk/issues/133) [#133](https://github.com/cheqd/sdk/issues/133) [#133](https://github.com/cheqd/sdk/issues/133) [#134](https://github.com/cheqd/sdk/issues/134) [#135](https://github.com/cheqd/sdk/issues/135) [#135](https://github.com/cheqd/sdk/issues/135) [#136](https://github.com/cheqd/sdk/issues/136) [#133](https://github.com/cheqd/sdk/issues/133) [#135](https://github.com/cheqd/sdk/issues/135) [#133](https://github.com/cheqd/sdk/issues/133) [#139](https://github.com/cheqd/sdk/issues/139) [#140](https://github.com/cheqd/sdk/issues/140)
 
 ## [3.3.0-develop.4](https://github.com/cheqd/sdk/compare/3.3.0-develop.3...3.3.0-develop.4) (2023-04-14)
 

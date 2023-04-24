@@ -6,31 +6,31 @@ import {
 	DIDModule,
 	MinimalImportableDIDModule,
 	DidExtension
-} from './modules/did.js';
+} from './modules/did';
 import {
 	MinimalImportableResourceModule,
 	ResourceModule,
 	ResourceExtension
-} from './modules/resource.js';
+} from './modules/resource';
 import {
 	AbstractCheqdSDKModule,
 	applyMixins,
 	instantiateCheqdSDKModule,
 	instantiateCheqdSDKModuleRegistryTypes,
 	instantiateCheqdSDKModuleQuerierExtensionSetup
-} from './modules/_.js';
-import { createDefaultCheqdRegistry } from './registry.js'
-import { CheqdSigningStargateClient } from './signer.js'
+} from './modules/_';
+import { createDefaultCheqdRegistry } from './registry'
+import { CheqdSigningStargateClient } from './signer'
 import {
 	CheqdNetwork,
 	IContext,
 	IModuleMethodMap
-} from './types.js';
+} from './types';
 import {
 	GasPrice,
 	QueryClient
 } from '@cosmjs/stargate'
-import { CheqdQuerier } from './querier.js'
+import { CheqdQuerier } from './querier'
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 
 export interface ICheqdSDKOptions {
@@ -140,7 +140,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 }
 
 export { DIDModule, ResourceModule }
-export { AbstractCheqdSDKModule, applyMixins } from './modules/_.js'
+export { AbstractCheqdSDKModule, applyMixins } from './modules/_'
 export {
 	DidExtension,
 	MinimalImportableDIDModule,
@@ -163,7 +163,7 @@ export {
 	isMsgCreateDidDocEncodeObject,
 	isMsgUpdateDidDocEncodeObject,
 	isMsgDeactivateDidDocEncodeObject,
-} from './modules/did.js'
+} from './modules/did'
 export {
 	ResourceExtension,
 	MinimalImportableResourceModule,
@@ -173,11 +173,11 @@ export {
 	typeUrlMsgCreateResourceResponse,
 	setupResourceExtension,
 	isMsgCreateResourceEncodeObject,
-} from './modules/resource.js'
-export * from './signer.js'
-export * from './querier.js'
-export * from './registry.js'
-export * from './types.js'
+} from './modules/resource'
+export * from './signer'
+export * from './querier'
+export * from './registry'
+export * from './types'
 export {
 	TImportableEd25519Key,
 	createKeyPairRaw, 
@@ -189,5 +189,4 @@ export {
 	createSignInputsFromImportableEd25519Key,
 	validateSpecCompliantPayload,
 	isEqualKeyValuePair,
-    createCosmosPayerWallet,
-} from './utils.js'
+} from './utils'

@@ -7,8 +7,8 @@ import {
 import {
 	AbstractCheqdSDKModule,
 	MinimalImportableCheqdSDKModule
-} from './_.js';
-import { CheqdSigningStargateClient } from "../signer.js"
+} from './_';
+import { CheqdSigningStargateClient } from "../signer"
 import {
 	DIDDocument,
 	DidStdFee,
@@ -18,7 +18,7 @@ import {
 	SpecValidationResult,
 	VerificationMethods,
 	DIDDocumentWithMetadata
-} from '../types.js';
+} from '../types';
 import { 
 	MsgCreateDidDoc,
 	MsgCreateDidDocPayload,
@@ -38,7 +38,7 @@ import {
 	DidDocWithMetadata,
 	DidDoc,
 	Metadata
-} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
+} from "@cheqd/ts-proto/cheqd/did/v2/index"
 import {
 	EncodeObject,
 	GeneratedType

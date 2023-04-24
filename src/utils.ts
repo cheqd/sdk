@@ -13,7 +13,7 @@ import {
     DIDDocument,
     SpecValidationResult,
     JsonWebKey,
-} from "./types.js"
+} from "./types"
 import {
     fromString,
     toString
