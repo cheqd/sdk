@@ -189,4 +189,5 @@ export {
 	createSignInputsFromImportableEd25519Key,
 	validateSpecCompliantPayload,
 	isEqualKeyValuePair,
+    createCosmosPayerWallet,
 } from './utils.js'

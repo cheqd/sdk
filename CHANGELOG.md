@@ -1,5 +1,57 @@
 # Changelog
 
+## [3.5.0-develop.2](https://github.com/cheqd/sdk/compare/3.5.0-develop.1...3.5.0-develop.2) (2023-04-19)
+
+## [3.5.0-develop.1](https://github.com/cheqd/sdk/compare/3.4.1...3.5.0-develop.1) (2023-04-17)
+
+
+### Features
+
+* Add cosmosWallet util ([d3e2d96](https://github.com/cheqd/sdk/commit/d3e2d967f762fc6441ecabb1b2b34803177dcbaa))
+* Add cosmosWallet util [DEV-2430] ([#147](https://github.com/cheqd/sdk/issues/147)) ([9b7c5e0](https://github.com/cheqd/sdk/commit/9b7c5e00b013cf307fe5321f6ed6ae7b306c74e5))
+* Add utils for signing ([e60801d](https://github.com/cheqd/sdk/commit/e60801deede3716ecd423852a992d1195b112925))
+* Update payload to sign ([1883ed7](https://github.com/cheqd/sdk/commit/1883ed7af0c75c1a66a99af379221a29379f16ac))
+
+
+### Bug Fixes
+
+* Markdown linting error ([f73dac0](https://github.com/cheqd/sdk/commit/f73dac05910c8e334f4ae51d90e415049379c739))
+
+## [3.4.1](https://github.com/cheqd/sdk/compare/3.4.0...3.4.1) (2023-04-14)
+
+## [3.4.0](https://github.com/cheqd/sdk/compare/3.3.1...3.4.0) (2023-04-14)
+
+
+### Features
+
+* **bump:** Attempt v3.4.0 release ([967f870](https://github.com/cheqd/sdk/commit/967f870c07d4c8c6fcd0ea29e8dfabba6d63f13b))
+* **docs:** Attempt v3.5.0 bump ([96a30da](https://github.com/cheqd/sdk/commit/96a30da4c43597c320946566a491b0404bc5601f))
+
+## [3.3.1](https://github.com/cheqd/sdk/compare/3.3.0...3.3.1) (2023-04-14)
+
+## [3.3.0](https://github.com/cheqd/sdk/compare/3.2.1...3.3.0) (2023-04-14)
+
+
+### Features
+
+* Bump resource fee ([#181](https://github.com/cheqd/sdk/issues/181)) ([bffcf42](https://github.com/cheqd/sdk/commit/bffcf427669a27ad705e2ae12d7a69d45c49cab4))
+* Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
+
+## [3.3.0-develop.4](https://github.com/cheqd/sdk/compare/3.3.0-develop.3...3.3.0-develop.4) (2023-04-14)
+
+## [3.3.0-develop.3](https://github.com/cheqd/sdk/compare/3.3.0-develop.2...3.3.0-develop.3) (2023-04-14)
+
+## [3.3.0-develop.2](https://github.com/cheqd/sdk/compare/3.3.0-develop.1...3.3.0-develop.2) (2023-04-14)
+
+## [3.3.0-develop.1](https://github.com/cheqd/sdk/compare/3.2.1-develop.1...3.3.0-develop.1) (2023-04-14)
+
+
+### Features
+
+* Bump resource gas ([#179](https://github.com/cheqd/sdk/issues/179)) ([8de317b](https://github.com/cheqd/sdk/commit/8de317bdd2521f5b6f8728d049f7a3f647d6d26b))
+
+## [3.2.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1) (2023-04-05)
+
 ## [3.2.1-develop.1](https://github.com/cheqd/sdk/compare/3.2.0...3.2.1-develop.1) (2023-04-03)
 
 ## [3.2.0](https://github.com/cheqd/sdk/compare/3.1.1...3.2.0) (2023-03-09)
