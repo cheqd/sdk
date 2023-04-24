@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/cheqd/sdk/compare/2.2.0...2.3.0) (2023-04-24)
+
+
+### Features
+
+* Update localnet & utils ([#191](https://github.com/cheqd/sdk/issues/191)) ([6d9f858](https://github.com/cheqd/sdk/commit/6d9f8585d54798d8225a64b2faa10038c72116bd))
+
 ## [2.2.0](https://github.com/cheqd/sdk/compare/2.1.0...2.2.0) (2023-04-14)
 
 
