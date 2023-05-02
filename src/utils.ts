@@ -25,12 +25,17 @@ import {
     generateKeyPairFromSeed,
     KeyPair
 } from '@stablelib/ed25519'
-import { sha256 } from '@cosmjs/crypto'
+import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-signing'
+import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto'
 import { v4 } from 'uuid'
 import {
     VerificationMethod as ProtoVerificationMethod,
     Service as ProtoService,
-} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
+    MsgCreateDidDocPayload,
+    MsgDeactivateDidDocPayload,
+} from "@cheqd/ts-proto/cheqd/did/v2"
+import { DIDModule } from "./modules/did"
+import { MsgCreateResourcePayload } from "@cheqd/ts-proto/cheqd/resource/v2/tx.js"
 
 export type TImportableEd25519Key = {
     publicKeyHex: string
@@ -43,6 +48,10 @@ const MULTICODEC_ED25519_HEADER = new Uint8Array([0xed, 0x01]);
 
 export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
     return kv1.every((item, index) => item.key === kv2[index].key && item.value === kv2[index].value)
+}
+
+export class EnglishMnemonic extends _ {
+    public static readonly _mnemonicMatcher = /^[a-z]+( [a-z]+)*$/
 }
 
 export function createSignInputsFromImportableEd25519Key(key: TImportableEd25519Key, verificationMethod: VerificationMethod[]): ISignInputs {
@@ -236,6 +245,12 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
     return { valid: true, protobufVerificationMethod: protoVerificationMethod, protobufService: protoService }
 }
 
+export function createCosmosPayerWallet(cosmosPayerSeed: string) : Promise<DirectSecp256k1HdWallet | DirectSecp256k1Wallet> {
+    return EnglishMnemonic._mnemonicMatcher.test(cosmosPayerSeed)
+    ? DirectSecp256k1HdWallet.fromMnemonic(cosmosPayerSeed, { prefix: 'cheqd' })
+    : DirectSecp256k1Wallet.fromKey(fromString(cosmosPayerSeed.replace(/^0x/, ''), 'hex'), 'cheqd')
+}
+
 function toMultibaseRaw(key: Uint8Array) {
     const multibase = new Uint8Array(MULTICODEC_ED25519_HEADER.length + key.length);
 
@@ -243,4 +258,41 @@ function toMultibaseRaw(key: Uint8Array) {
     multibase.set(key, MULTICODEC_ED25519_HEADER.length);
 
     return bases['base58btc'].encode(multibase);
+}
+
+export async function createMsgCreateDidDocPayloadToSign(didPayload: DIDDocument, versionId: string) {
+    const { protobufVerificationMethod, protobufService } = await DIDModule.validateSpecCompliantPayload(didPayload)
+    return MsgCreateDidDocPayload.encode(
+      MsgCreateDidDocPayload.fromPartial({
+        context: <string[]>didPayload?.['@context'],
+        id: didPayload.id,
+        controller: <string[]>didPayload.controller,
+        verificationMethod: protobufVerificationMethod,
+        authentication: <string[]>didPayload.authentication,
+        assertionMethod: <string[]>didPayload.assertionMethod,
+        capabilityInvocation: <string[]>didPayload.capabilityInvocation,
+        capabilityDelegation: <string[]>didPayload.capabilityDelegation,
+        keyAgreement: <string[]>didPayload.keyAgreement,
+        service: protobufService,
+        alsoKnownAs: <string[]>didPayload.alsoKnownAs,
+        versionId,
+      })
+    ).finish()
+}
+
+export const createMsgUpdateDidDocPayloadToSign = createMsgCreateDidDocPayloadToSign
+
+export function createMsgDeactivateDidDocPayloadToSign(didPayload: DIDDocument, versionId?: string) {
+  return MsgDeactivateDidDocPayload.encode(
+    MsgDeactivateDidDocPayload.fromPartial({
+      id: didPayload.id,
+      versionId,
+    })
+  ).finish()
+}
+
+export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourcePayload> | MsgCreateResourcePayload) {
+  return MsgCreateResourcePayload.encode(
+    MsgCreateResourcePayload.fromPartial(payload)
+  ).finish()
 }
