@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.1-develop.3](https://github.com/cheqd/sdk/compare/3.5.1-develop.2...3.5.1-develop.3) (2023-05-17)
+
+
+### Bug Fixes
+
+* Switched to file imports ([954c474](https://github.com/cheqd/sdk/commit/954c4743f81f3e5fee8b8b125fb35a0c1a6aa797))
+
 ## [3.5.1-develop.2](https://github.com/cheqd/sdk/compare/3.5.1-develop.1...3.5.1-develop.2) (2023-05-17)
 
 ### Bug Fixes
