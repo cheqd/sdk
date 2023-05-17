@@ -33,7 +33,7 @@ import {
     Service as ProtoService,
     MsgCreateDidDocPayload,
     MsgDeactivateDidDocPayload,
-} from "@cheqd/ts-proto/cheqd/did/v2"
+} from "@cheqd/ts-proto/cheqd/did/v2/index.js"
 import { DIDModule } from "./modules/did"
 import { MsgCreateResourcePayload } from "@cheqd/ts-proto/cheqd/resource/v2/tx.js"
 
