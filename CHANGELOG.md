@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.5.2](https://github.com/cheqd/sdk/compare/3.5.1...3.5.2) (2023-05-17)
+
+
+### Bug Fixes
+
+* ESM error importing ts-proto ([8b099fb](https://github.com/cheqd/sdk/commit/8b099fb4bd946fc7842d0275780e83cd99d6bd35))
+* ESM error importing ts-proto ([#198](https://github.com/cheqd/sdk/issues/198)) ([727acb2](https://github.com/cheqd/sdk/commit/727acb2f54cad0fe712756128da33ac61ad6b1d8))
+* Switched to file imports ([954c474](https://github.com/cheqd/sdk/commit/954c4743f81f3e5fee8b8b125fb35a0c1a6aa797))
+
 ## [3.5.2-develop.1](https://github.com/cheqd/sdk/compare/3.5.1...3.5.2-develop.1) (2023-05-17)
 
 
