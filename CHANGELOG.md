@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.5.2-develop.1](https://github.com/cheqd/sdk/compare/3.5.1...3.5.2-develop.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* ESM error importing ts-proto ([8b099fb](https://github.com/cheqd/sdk/commit/8b099fb4bd946fc7842d0275780e83cd99d6bd35))
+* Switched to file imports ([954c474](https://github.com/cheqd/sdk/commit/954c4743f81f3e5fee8b8b125fb35a0c1a6aa797))
+
+## [3.5.1-develop.3](https://github.com/cheqd/sdk/compare/3.5.1-develop.2...3.5.1-develop.3) (2023-05-17)
+
+
+### Bug Fixes
+
+* Switched to file imports ([954c474](https://github.com/cheqd/sdk/commit/954c4743f81f3e5fee8b8b125fb35a0c1a6aa797))
+
+## [3.5.1-develop.2](https://github.com/cheqd/sdk/compare/3.5.1-develop.1...3.5.1-develop.2) (2023-05-17)
+
+### Bug Fixes
+
+* ESM error importing ts-proto ([8b099fb](https://github.com/cheqd/sdk/commit/8b099fb4bd946fc7842d0275780e83cd99d6bd35))
+
 ## [3.5.1](https://github.com/cheqd/sdk/compare/3.5.0...3.5.1) (2023-05-02)
 
 ## [3.5.1-develop.1](https://github.com/cheqd/sdk/compare/3.5.0...3.5.1-develop.1) (2023-05-02)
@@ -14,7 +35,6 @@
 * Add cosmosWallet util [DEV-2430] ([#147](https://github.com/cheqd/sdk/issues/147)) ([9b7c5e0](https://github.com/cheqd/sdk/commit/9b7c5e00b013cf307fe5321f6ed6ae7b306c74e5))
 * Add utils for signing ([e60801d](https://github.com/cheqd/sdk/commit/e60801deede3716ecd423852a992d1195b112925))
 * Update payload to sign ([1883ed7](https://github.com/cheqd/sdk/commit/1883ed7af0c75c1a66a99af379221a29379f16ac))
-
 
 ### Bug Fixes
 
