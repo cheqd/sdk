@@ -64,7 +64,7 @@
     "cosmjs-types": "^0.7.2",
     "did-jwt": "^7.1.0",
     "did-resolver": "^4.1.0",
-    "file-type": "^18.3.0",
+    "file-type": "^18.4.0",
     "multiformats": "^11.0.2",
     "uuid": "^9.0.0"
   },
