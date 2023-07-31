@@ -78,7 +78,7 @@
     "@types/jest": "^29.5.3",
     "@types/node": "^20.4.5",
     "@types/uuid": "^9.0.2",
-    "conventional-changelog-conventionalcommits": "^5.0.0",
+    "conventional-changelog-conventionalcommits": "^6.1.0",
     "cross-env": "^7.0.3",
     "jest": "^29.6.2",
     "long": "^4.0.0",
