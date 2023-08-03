@@ -51,7 +51,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@cheqd/ts-proto": "^3.3.0-develop.1",
+    "@cheqd/ts-proto": "^3.3.0",
     "@cosmjs/amino": "^0.31.0",
     "@cosmjs/crypto": "^0.31.0",
     "@cosmjs/encoding": "^0.31.0",
