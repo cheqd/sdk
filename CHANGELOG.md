@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.8-develop.1](https://github.com/cheqd/sdk/compare/3.5.7...3.5.8-develop.1) (2023-08-03)
+
+
+### Bug Fixes
+
+* Beta release with @cheqd/ts-proto 3.3.0-develop.1 ([#232](https://github.com/cheqd/sdk/issues/232)) ([390565f](https://github.com/cheqd/sdk/commit/390565f0f937240316186e6701b963cb7f67dabc))
+
 ## [3.5.7](https://github.com/cheqd/sdk/compare/3.5.6...3.5.7) (2023-07-19)
 
 ## [3.5.7-develop.2](https://github.com/cheqd/sdk/compare/3.5.7-develop.1...3.5.7-develop.2) (2023-07-19)
