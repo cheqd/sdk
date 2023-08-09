@@ -302,9 +302,9 @@ export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourc
   ).finish()
 }
 
-export function getCosmosAccount(kid: string): string {
+export function getCosmosAccount(publicKeyHex: string): string {
     const { publicKeyConvert } = pkg
-    return toBech32('cheqd', rawSecp256k1PubkeyToRawAddress(publicKeyConvert(fromString(kid, 'hex'), true)))
+    return toBech32('cheqd', rawSecp256k1PubkeyToRawAddress(publicKeyConvert(fromString(publicKeyHex, 'hex'), true)))
 }
 
 export async function checkBalance(address: string, rpcAddress: string): Promise<readonly Coin[]> {
