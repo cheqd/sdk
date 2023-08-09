@@ -15,7 +15,7 @@ import {
     MethodSpecificIdAlgo,
     VerificationMethods
 } from '../src/types'
-import { FAUCET_ADDRESS, PUBKEY_HEX, TESTNET_RPC } from './constants'
+import { faucet_address, pubkey_hex, testnet_rpc } from './testutils.test'
 
 describe('createSignInputsFromImportableEd25519Key', () => {
     it('should create a sign input from an importable ed25519 key 2020', async () => {
@@ -82,12 +82,12 @@ describe('createSignInputsFromImportableEd25519Key', () => {
         // We know, that such point could be transformed to a cheqd account cheqd1ehcg0jarxkyxtkzrwcxayedxrskwyftxj4exm9
         const expectedAddress = "cheqd1ehcg0jarxkyxtkzrwcxayedxrskwyftxj4exm9"
 
-        expect(expectedAddress).toEqual(getCosmosAccount(PUBKEY_HEX))
+        expect(expectedAddress).toEqual(getCosmosAccount(pubkey_hex))
 
     })
 
     it('should return not empty account balance', async () => {
-        const balances = await checkBalance(FAUCET_ADDRESS, TESTNET_RPC)
+        const balances = await checkBalance(faucet_address, testnet_rpc)
         expect(balances.length).toBeGreaterThan(0)
         expect(balances[0].denom).toEqual("ncheq")
         expect(+balances[0].amount).toBeGreaterThan(0)
