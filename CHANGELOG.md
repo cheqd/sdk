@@ -2,20 +2,22 @@
 
 ## [3.6.0](https://github.com/cheqd/sdk/compare/3.5.8...3.6.0) (2023-08-09)
 
-
 ### Features
 
 * Move utils from CredentialService [DEV-3051] ([#235](https://github.com/cheqd/sdk/issues/235)) ([2836c9d](https://github.com/cheqd/sdk/commit/2836c9d75b8e698e48214ba4a5bbb5e2388f2d32))
+## [3.6.0-develop.2](https://github.com/cheqd/sdk/compare/3.6.0-develop.1...3.6.0-develop.2) (2023-08-10)
+
+### Bug Fixes
+
+* Add missed import from utils ([#236](https://github.com/cheqd/sdk/issues/236)) ([7c5d0fa](https://github.com/cheqd/sdk/commit/7c5d0faf482424e627813d6a87c439c0f0eab1e2))
 
 ## [3.6.0-develop.1](https://github.com/cheqd/sdk/compare/3.5.8...3.6.0-develop.1) (2023-08-09)
-
 
 ### Features
 
 * Move utils from CredentialService [DEV-3051] ([#235](https://github.com/cheqd/sdk/issues/235)) ([2836c9d](https://github.com/cheqd/sdk/commit/2836c9d75b8e698e48214ba4a5bbb5e2388f2d32))
 
 ## [3.5.8](https://github.com/cheqd/sdk/compare/3.5.7...3.5.8) (2023-08-03)
-
 
 ### Bug Fixes
 
