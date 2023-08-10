@@ -5,6 +5,7 @@
 ### Features
 
 * Move utils from CredentialService [DEV-3051] ([#235](https://github.com/cheqd/sdk/issues/235)) ([2836c9d](https://github.com/cheqd/sdk/commit/2836c9d75b8e698e48214ba4a5bbb5e2388f2d32))
+
 ## [3.6.0-develop.2](https://github.com/cheqd/sdk/compare/3.6.0-develop.1...3.6.0-develop.2) (2023-08-10)
 
 ### Bug Fixes
