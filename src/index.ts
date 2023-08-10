@@ -190,4 +190,6 @@ export {
 	validateSpecCompliantPayload,
 	isEqualKeyValuePair,
     createCosmosPayerWallet,
+	getCosmosAccount,
+	checkBalance
 } from './utils.js'
