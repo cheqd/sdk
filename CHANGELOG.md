@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.1](https://github.com/cheqd/sdk/compare/3.6.0...3.6.1) (2023-08-10)
+
+
+### Bug Fixes
+
+* Add missed import from utils ([#236](https://github.com/cheqd/sdk/issues/236)) ([7c5d0fa](https://github.com/cheqd/sdk/commit/7c5d0faf482424e627813d6a87c439c0f0eab1e2))
+* Resolved lint issue ([74bee36](https://github.com/cheqd/sdk/commit/74bee369187229d42bf3324387098be4a4345b09))
+
 ## [3.6.0](https://github.com/cheqd/sdk/compare/3.5.8...3.6.0) (2023-08-09)
 
 ### Features
