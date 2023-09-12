@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.2-develop.1](https://github.com/cheqd/sdk/compare/3.6.1...3.6.2-develop.1) (2023-09-12)
+
+
+### Bug Fixes
+
+* Switch to native JSON validation + drop signature-based mime check for textual content ([be42db3](https://github.com/cheqd/sdk/commit/be42db3e46d240871350630012f63eb2f3c2cd7e))
+
 ## [3.6.1](https://github.com/cheqd/sdk/compare/3.6.0...3.6.1) (2023-08-10)
 
 
