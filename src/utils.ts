@@ -296,3 +296,13 @@ export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourc
     MsgCreateResourcePayload.fromPartial(payload)
   ).finish()
 }
+
+export function isJSON(input: any): boolean {
+    if (typeof input !== 'string') return false
+    try {
+        JSON.parse(input)
+        return true
+    } catch (e) {
+        return false
+    }
+}

@@ -29,10 +29,13 @@ import {
 	createPagination,
 	createProtobufRpcClient
 } from "@cosmjs/stargate"
+import { toString } from 'uint8arrays';
+import FileType from 'file-type/browser';
 import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index";
 import { assert } from '@cosmjs/utils';
 import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
+import { isJSON } from '../utils';
 
 export const defaultResourceExtensionKey = 'resource' as const
 
@@ -208,7 +211,8 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
-		return 'application/octet-stream'
+		if (isJSON(toString(content, 'utf-8'))) return 'application/json'
+		return (await FileType.fromBuffer(content))?.mime ?? 'application/octet-stream'
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
