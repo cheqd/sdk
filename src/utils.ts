@@ -256,7 +256,7 @@ export function createCosmosPayerWallet(cosmosPayerSeed: string) : Promise<Direc
     : DirectSecp256k1Wallet.fromKey(fromString(cosmosPayerSeed.replace(/^0x/, ''), 'hex'), 'cheqd')
 }
 
-function toMultibaseRaw(key: Uint8Array) {
+export function toMultibaseRaw(key: Uint8Array) {
     const multibase = new Uint8Array(MULTICODEC_ED25519_HEADER.length + key.length);
 
     multibase.set(MULTICODEC_ED25519_HEADER);
@@ -310,4 +310,14 @@ export function getCosmosAccount(publicKeyHex: string): string {
 export async function checkBalance(address: string, rpcAddress: string): Promise<readonly Coin[]> {
     const client = await StargateClient.connect(rpcAddress)
     return await client.getAllBalances(address)
+}
+
+export function isJSON(input: any): boolean {
+    if (typeof input !== 'string') return false
+    try {
+        JSON.parse(input)
+        return true
+    } catch (e) {
+        return false
+    }
 }

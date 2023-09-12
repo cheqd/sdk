@@ -31,9 +31,11 @@ import {
 } from "@cosmjs/stargate"
 import { SignInfo } from "@cheqd/ts-proto/cheqd/did/v2/index.js";
 import { fileTypeFromBuffer } from "file-type";
+import { toString } from 'uint8arrays/to-string';
 import { assert } from '@cosmjs/utils';
 import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination.js';
 import { CheqdQuerier } from '../querier.js';
+import { isJSON } from '../utils.js';
 
 export const defaultResourceExtensionKey = 'resource' as const
 
@@ -209,6 +211,8 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
+		if (isJSON(toString(content, 'utf-8'))) return 'application/json'
+
 		return (await fileTypeFromBuffer(content))?.mime ?? 'application/octet-stream'
 	}
 
