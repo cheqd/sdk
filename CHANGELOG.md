@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/cheqd/sdk/compare/2.3.0...2.3.1) (2023-09-12)
+
+
+### Bug Fixes
+
+* Backport #be42db3e46d240871350630012f63eb2f3c2cd7e ([249164d](https://github.com/cheqd/sdk/commit/249164d62c3b928b3bf34ea9b0ecceb3890f808d)), closes [#be42db3e46d240871350630012f63eb2f3c2cd7](https://github.com/cheqd/sdk/issues/be42db3e46d240871350630012f63eb2f3c2cd7)
+
 ## [2.3.0](https://github.com/cheqd/sdk/compare/2.2.0...2.3.0) (2023-04-24)
 
 
