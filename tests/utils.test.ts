@@ -2,14 +2,15 @@ import {
     TImportableEd25519Key,
     checkBalance,
     createSignInputsFromImportableEd25519Key,
-    getCosmosAccount
+    getCosmosAccount,
+    isJSON,
 } from '../src/utils'
 import {
     createDidVerificationMethod,
     createVerificationKeys,
     createKeyPairRaw
 } from '../src/utils'
-import { toString } from 'uint8arrays'
+import { toString } from 'uint8arrays/to-string'
 import {
     IKeyPair,
     MethodSpecificIdAlgo,
@@ -91,5 +92,47 @@ describe('createSignInputsFromImportableEd25519Key', () => {
         expect(balances.length).toBeGreaterThan(0)
         expect(balances[0].denom).toEqual("ncheq")
         expect(+balances[0].amount).toBeGreaterThan(0)
+    })
+
+    it('should return valid json', async () => {
+        // define invalid cases
+        const invalid = [
+            'invalid',
+            '{invalid: json}',
+            '{"invalid": "json"',
+            '"invalid": "json"}',
+            '{""}',
+            0,
+            1,
+            true,
+            null,
+            undefined,
+        ]
+
+        // define valid cases
+        const valid = [
+            '{"valid": "json"}',
+            '{"valid": "json", "with": "multiple", "keys": "and", "values": "of", "different": "types"}',
+            '{"valid": "json", "with": "multiple", "keys": "and", "values": "of", "different": "types", "and": {"nested": "objects"}}',
+            '{"valid": "json", "with": "multiple", "keys": "and", "values": "of", "different": "types", "and": {"nested": "objects", "and": {"even": {"more": {"nested": "objects"}}}}}',
+            '{"": ""}',
+            '{"boolean": true}',
+            '{"boolean": false}',
+            '{"number": 0}',
+            '{"nullish": null}',
+            '{"array": []}',
+            '{"array": [1, 2, 3]}',
+            '{"array": [1, 2, 3], "with": ["multiple", "arrays"]}',
+        ]
+
+        // check invalid cases
+        invalid.forEach((invalidCase) => {
+            expect(isJSON(invalidCase)).toBe(false)
+        })
+
+        // check valid cases
+        valid.forEach((validCase) => {
+            expect(isJSON(validCase)).toBe(true)
+        })
     })
 })
