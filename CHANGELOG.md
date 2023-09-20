@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0-develop.1](https://github.com/cheqd/sdk/compare/3.6.2...3.7.0-develop.1) (2023-09-20)
+
+
+### Features
+
+* Update export list in index.ts ([#259](https://github.com/cheqd/sdk/issues/259)) ([34aeb65](https://github.com/cheqd/sdk/commit/34aeb65d716da24a3e1eb2f99c5459b2427200b9))
+
 ## [3.6.2](https://github.com/cheqd/sdk/compare/3.6.1...3.6.2) (2023-09-12)
 
 
