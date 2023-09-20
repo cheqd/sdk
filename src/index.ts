@@ -191,5 +191,6 @@ export {
 	isEqualKeyValuePair,
     createCosmosPayerWallet,
 	getCosmosAccount,
-	checkBalance
+	checkBalance,
+	toMultibaseRaw
 } from './utils.js'
