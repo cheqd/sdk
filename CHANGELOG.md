@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.2-develop.2](https://github.com/cheqd/sdk/compare/3.7.2-develop.1...3.7.2-develop.2) (2023-09-26)
+
+
+### Bug Fixes
+
+* Run prettier format ([#267](https://github.com/cheqd/sdk/issues/267)) ([5110c2d](https://github.com/cheqd/sdk/commit/5110c2d4396e4832590fa5191daf3a3d618f7488))
+
 ## [3.7.2-develop.1](https://github.com/cheqd/sdk/compare/3.7.1...3.7.2-develop.1) (2023-09-26)
 
 ## [3.7.1](https://github.com/cheqd/sdk/compare/3.7.0...3.7.1) (2023-09-20)
