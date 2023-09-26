@@ -14,11 +14,10 @@
     ],
     "tagFormat": "${version}",
     "ci": true,
-    "preset": "conventionalcommits",
     "plugins": [
         [ "@semantic-release/commit-analyzer",
             {
-                "parserOpts": "./.github/linters/.commitlint.rules.js",
+                "preset": "conventionalcommits",
                 "releaseRules": [
                     { "breaking": true, "release": "major" },
                     { "type": "feat", "release": "minor" },
@@ -41,6 +40,7 @@
         ],
         [ "@semantic-release/release-notes-generator",
             {
+                "preset": "conventionalcommits",
                 "presetConfig": true
             }
         ],
