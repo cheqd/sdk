@@ -64,7 +64,7 @@
     "@stablelib/ed25519": "^1.0.3",
     "@types/secp256k1": "^4.0.4",
     "cosmjs-types": "^0.8.0",
-    "did-jwt": "^7.3.0",
+    "did-jwt": "^7.4.2",
     "did-resolver": "^4.1.0",
     "file-type": "^18.5.0",
     "multiformats": "^12.1.2",
