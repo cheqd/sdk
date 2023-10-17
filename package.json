@@ -79,7 +79,7 @@
     "@semantic-release/npm": "^11.0.0",
     "@semantic-release/release-notes-generator": "^12.0.0",
     "@types/jest": "^29.5.5",
-    "@types/node": "^20.8.4",
+    "@types/node": "^20.8.6",
     "@types/uuid": "^9.0.5",
     "conventional-changelog-conventionalcommits": "^7.0.2",
     "cross-env": "^7.0.3",
