@@ -34,7 +34,6 @@ import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx.j
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin.js';
-import Long from 'long';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice);
@@ -50,7 +49,7 @@ export function makeSignerInfos(
 			modeInfo: {
 				single: { mode: signMode },
 			},
-			sequence: Long.fromNumber(sequence),
+			sequence: BigInt(sequence),
 		})
 	);
 }
@@ -58,7 +57,7 @@ export function makeSignerInfos(
 export function makeDidAuthInfoBytes(
 	signers: ReadonlyArray<{ readonly pubkey: Any; readonly sequence: number }>,
 	feeAmount: readonly Coin[],
-	gasLimit: number,
+	gasLimit: bigint,
 	feePayer: string,
 	signMode = SignMode.SIGN_MODE_DIRECT
 ): Uint8Array {
@@ -66,7 +65,7 @@ export function makeDidAuthInfoBytes(
 		signerInfos: makeSignerInfos(signers, signMode),
 		fee: {
 			amount: [...feeAmount],
-			gasLimit: Long.fromNumber(gasLimit),
+			gasLimit: gasLimit,
 			payer: feePayer,
 		},
 	};
@@ -170,7 +169,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		};
 		const txBodyBytes = this.registry.encode(txBodyEncodeObject);
 		const gasLimit = Int53.fromString(fee.gas).toNumber();
-		const authInfoBytes = makeDidAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit, fee.payer!);
+		const authInfoBytes = makeDidAuthInfoBytes([{ pubkey, sequence }], fee.amount, BigInt(gasLimit), fee.payer!);
 		const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
 		const { signature, signed } = await this._signer.signDirect(signerAddress, signDoc);
 		return TxRaw.fromPartial({
