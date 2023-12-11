@@ -55,7 +55,7 @@
     "@cheqd/ts-proto": "^3.3.7",
     "@cosmjs/amino": "^0.31.3",
     "@cosmjs/crypto": "^0.32.0",
-    "@cosmjs/encoding": "^0.31.3",
+    "@cosmjs/encoding": "^0.32.1",
     "@cosmjs/math": "^0.32.0",
     "@cosmjs/proto-signing": "^0.31.3",
     "@cosmjs/stargate": "^0.31.3",
