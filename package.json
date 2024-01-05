@@ -52,7 +52,7 @@
 		"README.md"
 	],
 	"dependencies": {
-		"@cheqd/ts-proto": "3.3.7",
+		"@cheqd/ts-proto": "^3.3.9",
 		"@cosmjs/amino": "^0.31.3",
 		"@cosmjs/crypto": "^0.32.2",
 		"@cosmjs/encoding": "^0.31.3",
