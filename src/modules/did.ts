@@ -563,6 +563,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			deactivated: protobufDidDocument.deactivated,
 			versionId: protobufDidDocument.versionId,
 			nextVersionId: protobufDidDocument?.nextVersionId,
+			previousVersionId: protobufDidDocument?.previousVersionId,
 		}
 	}
 
