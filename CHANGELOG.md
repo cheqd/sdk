@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.7-develop.1](https://github.com/cheqd/sdk/compare/3.7.6...3.7.7-develop.1) (2024-01-08)
+
+
+### Bug Fixes
+
+* Added `previousVersionId` pass-through on transformer ([3fa867f](https://github.com/cheqd/sdk/commit/3fa867f5ceef29b37d0e9c28313eddddf34eaccb))
+
 ## [3.7.6](https://github.com/cheqd/sdk/compare/3.7.5...3.7.6) (2024-01-05)
 
 ## [3.7.6-develop.2](https://github.com/cheqd/sdk/compare/3.7.6-develop.1...3.7.6-develop.2) (2024-01-05)
