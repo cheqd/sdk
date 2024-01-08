@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/cheqd/sdk/compare/2.3.1...2.3.2) (2024-01-08)
+
+
+### Bug Fixes
+
+* Added `previousVersionId` pass-through on transformer ([7265e6b](https://github.com/cheqd/sdk/commit/7265e6b0487b0c5a55c2fec2138d156e140c443f))
+
 ## [2.3.1](https://github.com/cheqd/sdk/compare/2.3.0...2.3.1) (2023-09-12)
 
 
