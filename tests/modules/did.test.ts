@@ -18,6 +18,10 @@ import { v4 } from 'uuid';
 
 const defaultAsyncTxTimeout = 30000;
 
+(BigInt.prototype as any).toJSON = function () {
+	return this.toString();
+  };
+
 describe('DIDModule', () => {
 	describe('constructor', () => {
 		it('should instantiate standalone module', async () => {
