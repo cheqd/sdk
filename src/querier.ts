@@ -1,18 +1,18 @@
 import { QueryClient } from '@cosmjs/stargate';
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { QueryExtensionSetup, CheqdExtensions } from './types.js';
 
 export class CheqdQuerier extends QueryClient {
-	constructor(tmClient: Tendermint34Client) {
+	constructor(tmClient: Tendermint37Client) {
 		super(tmClient);
 	}
 
 	static async connect(url: string): Promise<CheqdQuerier> {
-		const tmClient = await Tendermint34Client.connect(url);
+		const tmClient = await Tendermint37Client.connect(url);
 		return new CheqdQuerier(tmClient);
 	}
 
-	static async fromClient(client: Tendermint34Client): Promise<CheqdQuerier> {
+	static async fromClient(client: Tendermint37Client): Promise<CheqdQuerier> {
 		return new CheqdQuerier(client);
 	}
 
@@ -20,7 +20,7 @@ export class CheqdQuerier extends QueryClient {
 		url: string,
 		extension: QueryExtensionSetup<CheqdExtensions>
 	): Promise<CheqdQuerier & CheqdExtensions> {
-		const tmClient = await Tendermint34Client.connect(url);
+		const tmClient = await Tendermint37Client.connect(url);
 		return CheqdQuerier.withExtensions(tmClient, extension);
 	}
 
@@ -32,7 +32,7 @@ export class CheqdQuerier extends QueryClient {
 			return CheqdQuerier.connectWithExtension(url, extensions[0]);
 		}
 
-		const tmClient = await Tendermint34Client.connect(url);
+		const tmClient = await Tendermint37Client.connect(url);
 		const tupleLike = extensions as [QueryExtensionSetup<CheqdExtensions>, QueryExtensionSetup<CheqdExtensions>];
 		return CheqdQuerier.withExtensions(tmClient, ...tupleLike);
 	}
