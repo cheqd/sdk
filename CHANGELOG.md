@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0-develop.1](https://github.com/cheqd/sdk/compare/3.7.9...4.0.0-develop.1) (2024-03-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* Align with v2.x software upgrade
+
+### Features
+
+* Align with v2.x software upgrade ([2f6db32](https://github.com/cheqd/sdk/commit/2f6db32c0751284a6c4702cd0fbd764e92db9996))
+
 ## [3.7.9](https://github.com/cheqd/sdk/compare/3.7.8...3.7.9) (2024-01-17)
 
 ## [3.7.8](https://github.com/cheqd/sdk/compare/3.7.7...3.7.8) (2024-01-16)
