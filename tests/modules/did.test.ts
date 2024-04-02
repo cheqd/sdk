@@ -20,7 +20,7 @@ const defaultAsyncTxTimeout = 30000;
 
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
-  };
+};
 
 describe('DIDModule', () => {
 	describe('constructor', () => {
@@ -29,6 +29,7 @@ describe('DIDModule', () => {
 			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet);
 			const querier = (await CheqdQuerier.connectWithExtension(
 				localnet.rpcUrl,
+				localnet.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 			const didModule = new DIDModule(signer, querier);
@@ -47,6 +48,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -91,6 +93,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -134,6 +137,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -174,6 +178,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -212,6 +217,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -250,6 +256,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -287,6 +294,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -353,6 +361,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -420,6 +429,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -486,6 +496,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -549,6 +560,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -612,6 +624,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -674,6 +687,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -734,6 +748,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -794,6 +809,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -853,6 +869,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -925,6 +942,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -1028,6 +1046,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);
@@ -1128,6 +1147,7 @@ describe('DIDModule', () => {
 				});
 				const querier = (await CheqdQuerier.connectWithExtension(
 					localnet.rpcUrl,
+					localnet.network,
 					setupDidExtension
 				)) as CheqdQuerier & DidExtension;
 				const didModule = new DIDModule(signer, querier);

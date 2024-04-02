@@ -16,14 +16,16 @@ describe('CheqdSDK', () => {
 			const options = {
 				modules: [DIDModule as unknown as AbstractCheqdSDKModule],
 				rpcUrl: localnet.rpcUrl,
+				network: localnet.network,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const sdkMethods = Object.keys(cheqdSDK.methods);
 			const testSigner = await CheqdSigningStargateClient.connectWithSigner(options.rpcUrl, options.wallet);
 			const testQuerier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
+				options.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 			const moduleMethods = Object.keys(new DIDModule(testSigner, testQuerier).methods);
@@ -109,12 +111,14 @@ describe('CheqdSDK', () => {
 			const options = {
 				modules: [DIDModule as unknown as AbstractCheqdSDKModule],
 				rpcUrl: localnet.rpcUrl,
+				network: localnet.network,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const querier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
+				options.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 
@@ -132,16 +136,19 @@ describe('CheqdSDK', () => {
 					ResourceModule as unknown as AbstractCheqdSDKModule,
 				],
 				rpcUrl: localnet.rpcUrl,
+				network: localnet.network,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const didQuerier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
+				options.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 			const resourceQuerier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
+				options.network,
 				setupResourceExtension
 			)) as CheqdQuerier & ResourceExtension;
 

@@ -13,7 +13,7 @@ import { CheqdSigningStargateClient } from './signer.js';
 import { CheqdNetwork, IContext, IModuleMethodMap } from './types.js';
 import { GasPrice, QueryClient } from '@cosmjs/stargate';
 import { CheqdQuerier } from './querier.js';
-import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint34Client, Tendermint37Client } from '@cosmjs/tendermint-rpc';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -49,7 +49,7 @@ export class CheqdSDK {
 
 		this.methods = {};
 		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, {});
-		this.querier = <any>new QueryClient({} as unknown as Tendermint37Client);
+		this.querier = <any>new QueryClient({} as unknown as Tendermint37Client | Tendermint34Client);
 	}
 
 	async execute<P = any, R = any>(method: string, ...params: P[]): Promise<R> {
@@ -93,10 +93,14 @@ export class CheqdSDK {
 	}
 
 	private async loadQuerierExtensions(): Promise<CheqdQuerier & DidExtension & ResourceExtension> {
-		const querierExtensions = this.options.modules.map((module: any) =>
+		const querierExtensions = this.options.modules.map((module) =>
 			instantiateCheqdSDKModuleQuerierExtensionSetup(module)
 		);
-		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, ...querierExtensions);
+		const querier = await CheqdQuerier.connectWithExtensions(
+			this.options.rpcUrl,
+			this.options.network || CheqdNetwork.Testnet,
+			...querierExtensions
+		);
 		return <CheqdQuerier & DidExtension & ResourceExtension>querier;
 	}
 
