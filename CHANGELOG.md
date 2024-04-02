@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.0-develop.2](https://github.com/cheqd/sdk/compare/4.0.0-develop.1...4.0.0-develop.2) (2024-04-02)
+
+
+### Features
+
+* Added multiversioned convertible querier ([773b8a6](https://github.com/cheqd/sdk/commit/773b8a6792232e7f10f7dac8d46cd9e83c85dca5))
+
 ## [4.0.0-develop.1](https://github.com/cheqd/sdk/compare/3.7.9...4.0.0-develop.1) (2024-03-28)
 
 
