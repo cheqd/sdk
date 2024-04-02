@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/cheqd/sdk/compare/2.3.2...2.4.0) (2024-04-02)
+
+
+### Features
+
+* Backport multiversioned convertible querier ([6574d75](https://github.com/cheqd/sdk/commit/6574d75d1f65a4b41ad4462e2c663b2c035cda64))
+
 ## [2.3.2](https://github.com/cheqd/sdk/compare/2.3.1...2.3.2) (2024-01-08)
 
 
