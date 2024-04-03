@@ -1,5 +1,7 @@
 # Changelog
 
+## [2.4.1](https://github.com/cheqd/sdk/compare/2.4.0...2.4.1) (2024-04-03)
+
 ## [2.4.0](https://github.com/cheqd/sdk/compare/2.3.2...2.4.0) (2024-04-02)
 
 
