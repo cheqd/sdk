@@ -61,7 +61,7 @@ describe('CheqdSDK', () => {
 				modules: [TestModule as unknown as AbstractCheqdSDKModule],
 				rpcUrl,
 				wallet,
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 
 			const cheqdSDK = await createCheqdSDK(options);
 
@@ -80,7 +80,7 @@ describe('CheqdSDK', () => {
 				modules: [DIDModule as unknown as AbstractCheqdSDKModule],
 				rpcUrl: localnet.rpcUrl,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const didRegistryTypes = DIDModule.registryTypes;
@@ -97,7 +97,7 @@ describe('CheqdSDK', () => {
 				],
 				rpcUrl: localnet.rpcUrl,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const didRegistryTypes = DIDModule.registryTypes;

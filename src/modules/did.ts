@@ -152,7 +152,10 @@ export const setupDidExtension = (base: QueryClient): DidExtension => {
 				return value;
 			},
 			didDocVersion: async (id: string, versionId: string) => {
-				const { value } = await queryService.DidDocVersion({ id, version: versionId });
+				const { value } = await queryService.DidDocVersion({
+					id,
+					version: versionId,
+				});
 				assert(value);
 				return value;
 			},
@@ -180,9 +183,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	static readonly baseMinimalDenom = 'ncheq' as const;
 
 	static readonly fees = {
-		DefaultCreateDidDocFee: { amount: '50000000000', denom: DIDModule.baseMinimalDenom } as const,
-		DefaultUpdateDidDocFee: { amount: '25000000000', denom: DIDModule.baseMinimalDenom } as const,
-		DefaultDeactivateDidDocFee: { amount: '10000000000', denom: DIDModule.baseMinimalDenom } as const,
+		DefaultCreateDidDocFee: {
+			amount: '50000000000',
+			denom: DIDModule.baseMinimalDenom,
+		} as const,
+		DefaultUpdateDidDocFee: {
+			amount: '25000000000',
+			denom: DIDModule.baseMinimalDenom,
+		} as const,
+		DefaultDeactivateDidDocFee: {
+			amount: '10000000000',
+			denom: DIDModule.baseMinimalDenom,
+		} as const,
 	} as const;
 
 	static readonly querierExtensionSetup: QueryExtensionSetup<DidExtension> = setupDidExtension;

@@ -93,10 +93,14 @@ export class CheqdSDK {
 	}
 
 	private async loadQuerierExtensions(): Promise<CheqdQuerier & DidExtension & ResourceExtension> {
-		const querierExtensions = this.options.modules.map((module: any) =>
+		const querierExtensions = this.options.modules.map((module) =>
 			instantiateCheqdSDKModuleQuerierExtensionSetup(module)
 		);
-		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, this.options.network || CheqdNetwork.Testnet, ...querierExtensions);
+		const querier = await CheqdQuerier.connectWithExtensions(
+			this.options.rpcUrl,
+			this.options.network || CheqdNetwork.Testnet,
+			...querierExtensions
+		);
 		return <CheqdQuerier & DidExtension & ResourceExtension>querier;
 	}
 

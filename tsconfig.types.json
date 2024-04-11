@@ -1,10 +1,10 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-        "outDir": "build/types",
-        "declaration": true,
-        "emitDeclarationOnly": true,
-        "module": "esnext",
-        "target": "esnext",
-    }
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build/types",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "module": "esnext",
+    "target": "esnext"
+  }
 }

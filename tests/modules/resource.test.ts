@@ -34,10 +34,6 @@ import { sha256 } from '@cosmjs/crypto';
 
 const defaultAsyncTxTimeout = 30000;
 
-(BigInt.prototype as any).toJSON = function () {
-	return this.toString();
-};
-
 describe('ResourceModule', () => {
 	describe('constructor', () => {
 		it('should instantiate standalone module', async () => {
@@ -404,7 +400,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = [
-					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+					{
+						description: 'did-url',
+						uri: `${didPayload.id}/resources/${resourcePayload.id}`,
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'application/json';
@@ -514,7 +513,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = [
-					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+					{
+						description: 'did-url',
+						uri: `${didPayload.id}/resources/${resourcePayload.id}`,
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'image/png';
@@ -624,7 +626,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = [
-					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+					{
+						description: 'did-url',
+						uri: `${didPayload.id}/resources/${resourcePayload.id}`,
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'text/html; charset=utf-8';
@@ -736,7 +741,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = [
-					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+					{
+						description: 'did-url',
+						uri: `${didPayload.id}/resources/${resourcePayload.id}`,
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'application/json';
@@ -845,7 +853,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = [
-					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+					{
+						description: 'did-url',
+						uri: `${didPayload.id}/resources/${resourcePayload.id}`,
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'image/png';
@@ -954,7 +965,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = [
-					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+					{
+						description: 'did-url',
+						uri: `${didPayload.id}/resources/${resourcePayload.id}`,
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'text/html; charset=utf-8';
@@ -1113,7 +1127,10 @@ describe('ResourceModule', () => {
 
 				// ledger constructed
 				const alsoKnownAs = (resourceId: string): AlternativeUri[] => [
-					{ uri: `${didPayload.id}/resources/${resourceId}`, description: 'did-url' },
+					{
+						uri: `${didPayload.id}/resources/${resourceId}`,
+						description: 'did-url',
+					},
 				];
 				const checksum = toString(sha256(resourcePayload.data), 'hex');
 				const mimeType = 'application/json';
