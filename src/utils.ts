@@ -250,7 +250,11 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
 		});
 	});
 
-	return { valid: true, protobufVerificationMethod: protoVerificationMethod, protobufService: protoService };
+	return {
+		valid: true,
+		protobufVerificationMethod: protoVerificationMethod,
+		protobufService: protoService,
+	};
 }
 
 export function createCosmosPayerWallet(

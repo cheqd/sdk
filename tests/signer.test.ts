@@ -152,7 +152,9 @@ describe('CheqdSigningStargateClient', () => {
 				id: nonExistingKeyId,
 				verificationMethodType: nonExistingVerificationMethod,
 				controller: nonExistingDid,
-				verificationMaterial: JSON.stringify({ publicKeyMultibase: nonExistingPublicKeyMultibase }),
+				verificationMaterial: JSON.stringify({
+					publicKeyMultibase: nonExistingPublicKeyMultibase,
+				}),
 			};
 
 			await expect(

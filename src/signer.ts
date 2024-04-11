@@ -15,7 +15,7 @@ import {
 	calculateFee,
 	SignerData,
 } from '@cosmjs/stargate';
-import { Tendermint34Client, Tendermint37Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { createDefaultCheqdRegistry } from './registry';
 import {
 	MsgCreateDidDocPayload,
@@ -34,6 +34,7 @@ import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing';
 import { Any } from 'cosmjs-types/google/protobuf/any';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import Long from 'long';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice);
@@ -49,7 +50,7 @@ export function makeSignerInfos(
 			modeInfo: {
 				single: { mode: signMode },
 			},
-			sequence: BigInt(sequence),
+			sequence: Long.fromNumber(sequence),
 		})
 	);
 }
@@ -65,7 +66,7 @@ export function makeDidAuthInfoBytes(
 		signerInfos: makeSignerInfos(signers, signMode),
 		fee: {
 			amount: [...feeAmount],
-			gasLimit: BigInt(gasLimit),
+			gasLimit: Long.fromNumber(gasLimit),
 			payer: feePayer,
 		},
 	};

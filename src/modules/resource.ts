@@ -61,12 +61,18 @@ export const setupResourceExtension = (base: QueryClient): ResourceExtension => 
 	return {
 		[defaultResourceExtensionKey]: {
 			resource: async (collectionId: string, resourceId: string) => {
-				const { resource } = await queryService.Resource({ collectionId, id: resourceId });
+				const { resource } = await queryService.Resource({
+					collectionId,
+					id: resourceId,
+				});
 				assert(resource);
 				return resource;
 			},
 			resourceMetadata: async (collectionId: string, resourceId: string) => {
-				const { resource } = await queryService.ResourceMetadata({ collectionId, id: resourceId });
+				const { resource } = await queryService.ResourceMetadata({
+					collectionId,
+					id: resourceId,
+				});
 				assert(resource);
 				return resource;
 			},
@@ -90,9 +96,18 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	static readonly baseMinimalDenom = 'ncheq' as const;
 
 	static readonly fees = {
-		DefaultCreateResourceImageFee: { amount: '10000000000', denom: ResourceModule.baseMinimalDenom } as const,
-		DefaultCreateResourceJsonFee: { amount: '2500000000', denom: ResourceModule.baseMinimalDenom } as const,
-		DefaultCreateResourceDefaultFee: { amount: '5000000000', denom: ResourceModule.baseMinimalDenom } as const,
+		DefaultCreateResourceImageFee: {
+			amount: '10000000000',
+			denom: ResourceModule.baseMinimalDenom,
+		} as const,
+		DefaultCreateResourceJsonFee: {
+			amount: '2500000000',
+			denom: ResourceModule.baseMinimalDenom,
+		} as const,
+		DefaultCreateResourceDefaultFee: {
+			amount: '5000000000',
+			denom: ResourceModule.baseMinimalDenom,
+		} as const,
 	} as const;
 
 	static readonly querierExtensionSetup: QueryExtensionSetup<ResourceExtension> = setupResourceExtension;
