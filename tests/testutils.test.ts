@@ -11,7 +11,7 @@ export const faucet = {
 
 export const localnet = {
 	network: CheqdNetwork.Testnet,
-	rpcUrl: 'https://localhost:26657',
+	rpcUrl: 'http://localhost:26657',
 	gasPrice: GasPrice.fromString(`50${faucet.minimalDenom}`),
 };
 
