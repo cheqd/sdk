@@ -41,7 +41,6 @@ describe('ResourceModule', () => {
 			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet);
 			const querier = (await CheqdQuerier.connectWithExtension(
 				localnet.rpcUrl,
-				localnet.network,
 				setupResourceExtension
 			)) as CheqdQuerier & ResourceExtension;
 			const resourceModule = new ResourceModule(signer, querier);
@@ -63,7 +62,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -149,7 +147,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -235,7 +232,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -323,7 +319,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -436,7 +431,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -549,7 +543,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -664,7 +657,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -776,7 +768,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -888,7 +879,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,
@@ -1002,7 +992,6 @@ describe('ResourceModule', () => {
 				});
 				const querier = await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					localnet.network,
 					...([
 						setupDidExtension,
 						setupResourceExtension,

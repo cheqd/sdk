@@ -15,7 +15,7 @@ import {
 	calculateFee,
 	SignerData,
 } from '@cosmjs/stargate';
-import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
 import { createDefaultCheqdRegistry } from './registry';
 import {
 	MsgCreateDidDocPayload,
@@ -91,7 +91,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	}
 
 	constructor(
-		tmClient: Tendermint37Client | Tendermint34Client | undefined,
+		tmClient: Tendermint37Client | undefined,
 		signer: OfflineSigner,
 		options: SigningStargateClientOptions = {}
 	) {
