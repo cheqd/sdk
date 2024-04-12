@@ -25,7 +25,6 @@ describe('CheqdSDK', () => {
 			const testSigner = await CheqdSigningStargateClient.connectWithSigner(options.rpcUrl, options.wallet);
 			const testQuerier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
-				options.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 			const moduleMethods = Object.keys(new DIDModule(testSigner, testQuerier).methods);
@@ -118,7 +117,6 @@ describe('CheqdSDK', () => {
 
 			const querier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
-				options.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 
@@ -143,12 +141,10 @@ describe('CheqdSDK', () => {
 
 			const didQuerier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
-				options.network,
 				setupDidExtension
 			)) as CheqdQuerier & DidExtension;
 			const resourceQuerier = (await CheqdQuerier.connectWithExtension(
 				options.rpcUrl,
-				options.network,
 				setupResourceExtension
 			)) as CheqdQuerier & ResourceExtension;
 

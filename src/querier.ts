@@ -1,44 +1,36 @@
 import { QueryClient } from '@cosmjs/stargate';
-import { Tendermint34Client, Tendermint37Client } from '@cosmjs/tendermint-rpc';
-import { QueryExtensionSetup, CheqdExtensions, CheqdNetwork } from './types.js';
+import { CometClient, connectComet } from '@cosmjs/tendermint-rpc';
+import { QueryExtensionSetup, CheqdExtensions } from './types.js';
 
 export class CheqdQuerier extends QueryClient {
-	constructor(tmClient: Tendermint37Client | Tendermint34Client) {
+	constructor(tmClient: CometClient) {
 		super(tmClient);
 	}
 
-	static async connect(url: string, network: CheqdNetwork = CheqdNetwork.Testnet): Promise<CheqdQuerier> {
-		const tmClient =
-			network === CheqdNetwork.Testnet
-				? await Tendermint37Client.connect(url)
-				: await Tendermint34Client.connect(url);
+	static async connect(url: string): Promise<CheqdQuerier> {
+		const tmClient = await connectComet(url);
 		return new CheqdQuerier(tmClient);
 	}
 
-	static async fromClient(client: Tendermint37Client | Tendermint34Client): Promise<CheqdQuerier> {
+	static async fromClient(client: CometClient): Promise<CheqdQuerier> {
 		return new CheqdQuerier(client);
 	}
 
 	static async connectWithExtension(
 		url: string,
-		network: CheqdNetwork,
 		extension: QueryExtensionSetup<CheqdExtensions>
 	): Promise<CheqdQuerier & CheqdExtensions> {
-		const tmClient = await Tendermint37Client.connect(url);
+		const tmClient = await connectComet(url);
 		return CheqdQuerier.withExtensions(tmClient, extension);
 	}
 
 	static async connectWithExtensions(
 		url: string,
-		network: CheqdNetwork,
 		...extensions: QueryExtensionSetup<CheqdExtensions>[]
 	): Promise<CheqdQuerier & CheqdExtensions> {
-		if (extensions.length === 1) return CheqdQuerier.connectWithExtension(url, network, extensions[0]);
+		if (extensions.length === 1) return CheqdQuerier.connectWithExtension(url, extensions[0]);
 
-		const tmClient =
-			network === CheqdNetwork.Testnet
-				? await Tendermint37Client.connect(url)
-				: await Tendermint34Client.connect(url);
+		const tmClient = await connectComet(url);
 		const tupleLike = extensions as [QueryExtensionSetup<CheqdExtensions>, QueryExtensionSetup<CheqdExtensions>];
 		return CheqdQuerier.withExtensions(tmClient, ...tupleLike);
 	}
