@@ -52,7 +52,7 @@
 		"README.md"
 	],
 	"dependencies": {
-		"@cheqd/ts-proto": "^3.4.1",
+		"@cheqd/ts-proto": "^3.4.2",
 		"@cosmjs/amino": "^0.32.3",
 		"@cosmjs/crypto": "^0.32.3",
 		"@cosmjs/encoding": "^0.32.3",
@@ -79,7 +79,7 @@
 		"@semantic-release/npm": "^11.0.3",
 		"@semantic-release/release-notes-generator": "^12.1.0",
 		"@types/jest": "^29.5.12",
-		"@types/node": "^20.11.30",
+		"@types/node": "^20.12.7",
 		"@types/uuid": "^9.0.8",
 		"conventional-changelog-conventionalcommits": "^7.0.2",
 		"cross-env": "^7.0.3",
@@ -88,7 +88,7 @@
 		"semantic-release": "^22.0.12",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.4.3",
+		"typescript": "^5.4.5",
 		"uint8arrays": "^5.0.3"
 	},
 	"publishConfig": {
