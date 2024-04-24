@@ -36,7 +36,7 @@ const defaultAsyncTxTimeout = 30000;
 
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
-  };
+};
 
 describe('ResourceModule', () => {
 	describe('constructor', () => {

@@ -16,8 +16,9 @@ describe('CheqdSDK', () => {
 			const options = {
 				modules: [DIDModule as unknown as AbstractCheqdSDKModule],
 				rpcUrl: localnet.rpcUrl,
+				network: localnet.network,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const sdkMethods = Object.keys(cheqdSDK.methods);
@@ -109,8 +110,9 @@ describe('CheqdSDK', () => {
 			const options = {
 				modules: [DIDModule as unknown as AbstractCheqdSDKModule],
 				rpcUrl: localnet.rpcUrl,
+				network: localnet.network,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const querier = (await CheqdQuerier.connectWithExtension(
@@ -132,8 +134,9 @@ describe('CheqdSDK', () => {
 					ResourceModule as unknown as AbstractCheqdSDKModule,
 				],
 				rpcUrl: localnet.rpcUrl,
+				network: localnet.network,
 				wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
-			} as ICheqdSDKOptions;
+			} satisfies ICheqdSDKOptions;
 			const cheqdSDK = await createCheqdSDK(options);
 
 			const didQuerier = (await CheqdQuerier.connectWithExtension(

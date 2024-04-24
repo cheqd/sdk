@@ -15,7 +15,7 @@ import {
 	calculateFee,
 	SignerData,
 } from '@cosmjs/stargate';
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { CometClient, connectComet } from '@cosmjs/tendermint-rpc';
 import { createDefaultCheqdRegistry } from './registry.js';
 import {
 	MsgCreateDidDocPayload,
@@ -82,18 +82,14 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		signer: OfflineSigner,
 		options?: SigningStargateClientOptions | undefined
 	): Promise<CheqdSigningStargateClient> {
-		const tmClient = await Tendermint34Client.connect(endpoint);
+		const tmClient = await connectComet(endpoint);
 		return new CheqdSigningStargateClient(tmClient, signer, {
 			registry: options?.registry ? options.registry : createDefaultCheqdRegistry(),
 			...options,
 		});
 	}
 
-	constructor(
-		tmClient: Tendermint34Client | undefined,
-		signer: OfflineSigner,
-		options: SigningStargateClientOptions = {}
-	) {
+	constructor(tmClient: CometClient | undefined, signer: OfflineSigner, options: SigningStargateClientOptions = {}) {
 		super(tmClient, signer, options);
 		this._signer = signer;
 		if (options.gasPrice) this._gasPrice = options.gasPrice;
@@ -205,8 +201,9 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		verificationMethods: Partial<VerificationMethod>[]
 	): Promise<(secretKey: Uint8Array) => Signer> {
 		await this.checkDidSigners(verificationMethods);
-		const verificationMethod = verificationMethods.find((method) => method.id === verificationMethodId)
-			?.verificationMethodType;
+		const verificationMethod = verificationMethods.find(
+			(method) => method.id === verificationMethodId
+		)?.verificationMethodType;
 		if (!verificationMethod) {
 			throw new Error(`Verification method for ${verificationMethodId} not found`);
 		}
