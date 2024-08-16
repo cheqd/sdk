@@ -58,8 +58,7 @@ MD022: true
 MD023: true
 
 # Multiple headings with the same content <https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md024>
-MD024:
-  allow_different_nesting: true
+MD024: false
 
 # Multiple top level headings in the same document <https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md025>
 MD025: false
