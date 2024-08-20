@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.3](https://github.com/cheqd/sdk/compare/4.0.2...4.0.3) (2024-08-20)
+
+### Bug Fixes
+
+* Downgrade stablelib to v1.0.3 [DEV-4244] ([#369](https://github.com/cheqd/sdk/issues/369)) ([7f37f2f](https://github.com/cheqd/sdk/commit/7f37f2fdc466cb5abeac4c39a644a3aa52eaad91))
+
 ## [4.0.3-develop.1](https://github.com/cheqd/sdk/compare/4.0.2...4.0.3-develop.1) (2024-08-20)
 
 ### Bug Fixes
