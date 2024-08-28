@@ -14,7 +14,7 @@ import {
 } from '@cheqd/ts-proto/cheqd/resource/v2';
 import { DeliverTxResponse, QueryClient, createPagination, createProtobufRpcClient } from '@cosmjs/stargate';
 import { toString } from 'uint8arrays';
-import FileType from 'file-type/browser';
+import { fileTypeFromBuffer } from 'file-type';
 import { SignInfo } from '@cheqd/ts-proto/cheqd/did/v2/index';
 import { assert } from '@cosmjs/utils';
 import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
@@ -226,7 +226,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 
 	static async readMimeType(content: Uint8Array): Promise<string> {
 		if (isJSON(toString(content, 'utf-8'))) return 'application/json';
-		return (await FileType.fromBuffer(content))?.mime ?? 'application/octet-stream';
+		return (await fileTypeFromBuffer(content))?.mime ?? 'application/octet-stream';
 	}
 
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
