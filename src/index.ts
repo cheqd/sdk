@@ -183,4 +183,8 @@ export {
 	createSignInputsFromImportableEd25519Key,
 	validateSpecCompliantPayload,
 	isEqualKeyValuePair,
+	createCosmosPayerWallet,
+	getCosmosAccount,
+	checkBalance,
+	toMultibaseRaw,
 } from './utils';

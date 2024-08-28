@@ -57,12 +57,14 @@
 		"@cosmjs/tendermint-rpc": "~0.30.0",
 		"@cosmjs/utils": "~0.30.0",
 		"@stablelib/ed25519": "^1.0.3",
+		"@types/secp256k1": "^4.0.3",
 		"cosmjs-types": "^0.7.1",
 		"did-jwt": "^8.0.4",
 		"did-resolver": "^4.1.0",
 		"file-type": "^16.5.4",
 		"long": "^4.0.0",
 		"multiformats": "^9.9.0",
+		"secp256k1": "^5.0.0",
 		"uuid": "^10.0.0"
 	},
 	"devDependencies": {
