@@ -58,7 +58,8 @@ MD022: true
 MD023: true
 
 # Multiple headings with the same content <https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md024>
-MD024: false
+MD024:
+  siblings_only: true
 
 # Multiple top level headings in the same document <https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md025>
 MD025: false
