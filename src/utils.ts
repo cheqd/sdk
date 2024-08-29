@@ -20,6 +20,8 @@ import { base64ToBytes } from 'did-jwt';
 import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519';
 import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-signing';
 import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto';
+import { rawSecp256k1PubkeyToRawAddress } from '@cosmjs/amino';
+import pkg from 'secp256k1';
 import { v4 } from 'uuid';
 import {
 	VerificationMethod as ProtoVerificationMethod,
@@ -27,8 +29,11 @@ import {
 	MsgCreateDidDocPayload,
 	MsgDeactivateDidDocPayload,
 } from '@cheqd/ts-proto/cheqd/did/v2';
-import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
 import { DIDModule } from './modules/did';
+import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
+import { toBech32 } from '@cosmjs/encoding';
+import { StargateClient } from '@cosmjs/stargate';
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 
 export type TImportableEd25519Key = {
 	publicKeyHex: string;
@@ -265,7 +270,7 @@ export function createCosmosPayerWallet(
 		: DirectSecp256k1Wallet.fromKey(fromString(cosmosPayerSeed.replace(/^0x/, ''), 'hex'), 'cheqd');
 }
 
-function toMultibaseRaw(key: Uint8Array) {
+export function toMultibaseRaw(key: Uint8Array) {
 	const multibase = new Uint8Array(MULTICODEC_ED25519_HEADER.length + key.length);
 
 	multibase.set(MULTICODEC_ED25519_HEADER);
@@ -307,6 +312,18 @@ export function createMsgDeactivateDidDocPayloadToSign(didPayload: DIDDocument, 
 
 export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourcePayload> | MsgCreateResourcePayload) {
 	return MsgCreateResourcePayload.encode(MsgCreateResourcePayload.fromPartial(payload)).finish();
+}
+
+export function getCosmosAccount(publicKeyHex: string): string {
+	const { publicKeyConvert } = pkg;
+
+	return toBech32('cheqd', rawSecp256k1PubkeyToRawAddress(publicKeyConvert(fromString(publicKeyHex, 'hex'), true)));
+}
+
+export async function checkBalance(address: string, rpcAddress: string): Promise<readonly Coin[]> {
+	const client = await StargateClient.connect(rpcAddress);
+
+	return await client.getAllBalances(address);
 }
 
 export function isJSON(input: any): boolean {
