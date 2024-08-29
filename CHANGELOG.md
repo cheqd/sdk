@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/cheqd/sdk/compare/2.4.4...2.5.0) (2024-08-29)
+
+
+### Features
+
+* Update did-jwt to 8.x.x, secp256k1 to 5.x.x [DEV-4255] ([#375](https://github.com/cheqd/sdk/issues/375)) ([19b5f5a](https://github.com/cheqd/sdk/commit/19b5f5a22a347df2fe7c24df622e0457e7b002f7)), closes [#376](https://github.com/cheqd/sdk/issues/376)
+
+
+### Reverts
+
+* **deps:** Downgrade conventional-changelog-conventionalcommits ([ceb85c8](https://github.com/cheqd/sdk/commit/ceb85c8dc7eeff5b0dac37a1d9201f5b7ff04cbe))
+
 ## [2.4.4](https://github.com/cheqd/sdk/compare/2.4.3...2.4.4) (2024-04-12)
 
 ## [2.4.3](https://github.com/cheqd/sdk/compare/2.4.2...2.4.3) (2024-04-11)
