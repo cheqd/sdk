@@ -45,6 +45,7 @@ export const contexts = {
 	W3CSuiteEd255192020: 'https://w3id.org/security/suites/ed25519-2020/v1',
 	W3CSuiteEd255192018: 'https://w3id.org/security/suites/ed25519-2018/v1',
 	W3CSuiteJws2020: 'https://w3id.org/security/suites/jws-2020/v1',
+	DIFDIDConfiguration: 'https://identity.foundation/.well-known/did-configuration/v1',
 } as const;
 
 export const protobufLiterals = {
@@ -545,6 +546,13 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		});
 
 		const context = (function () {
+			if (
+				protobufDidDocument.service.length &&
+				!protobufDidDocument.context.includes(contexts.DIFDIDConfiguration)
+			) {
+				protobufDidDocument.context.push(contexts.DIFDIDConfiguration);
+			}
+
 			if (protobufDidDocument.context.includes(contexts.W3CDIDv1)) return protobufDidDocument.context;
 
 			return [contexts.W3CDIDv1, ...protobufDidDocument.context];
