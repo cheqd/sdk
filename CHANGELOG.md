@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.4-develop.1](https://github.com/cheqd/sdk/compare/4.0.3...4.0.4-develop.1) (2024-09-06)
+
+### Bug Fixes
+
+* Jsonld errors in did document ([#378](https://github.com/cheqd/sdk/issues/378)) ([d75ecb6](https://github.com/cheqd/sdk/commit/d75ecb62ccfe9ccaeb7013ef7e15331e7ddf8386))
+
 ## [4.0.3](https://github.com/cheqd/sdk/compare/4.0.2...4.0.3) (2024-08-20)
 
 ### Bug Fixes
