@@ -549,9 +549,8 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			if (
 				protobufDidDocument.service.length &&
 				!protobufDidDocument.context.includes(contexts.DIFDIDConfiguration)
-			) {
+			)
 				protobufDidDocument.context.push(contexts.DIFDIDConfiguration);
-			}
 
 			if (protobufDidDocument.context.includes(contexts.W3CDIDv1)) return protobufDidDocument.context;
 
