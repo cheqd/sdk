@@ -10,6 +10,7 @@ import {
 	SpecValidationResult,
 	VerificationMethods,
 	DIDDocumentWithMetadata,
+	ServiceType,
 } from '../types.js';
 import {
 	MsgCreateDidDoc,
@@ -547,7 +548,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		const context = (function () {
 			if (
-				protobufDidDocument.service.length &&
+				protobufDidDocument.service.find((s) => s.serviceType === ServiceType.LinkedDomains) &&
 				!protobufDidDocument.context.includes(contexts.DIFDIDConfiguration)
 			)
 				protobufDidDocument.context.push(contexts.DIFDIDConfiguration);
