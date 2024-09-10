@@ -102,3 +102,7 @@ export const ISignInputs = {
 		return object.some((x) => 'privateKeyHex' in x);
 	},
 };
+
+export enum ServiceType {
+	LinkedDomains = 'LinkedDomains',
+}
