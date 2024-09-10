@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/cheqd/sdk/compare/2.5.0...2.5.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* Add LinkedDomain jsonld context in querier ([#382](https://github.com/cheqd/sdk/issues/382)) ([0653e9d](https://github.com/cheqd/sdk/commit/0653e9dbc85e035e79bd9f06641508edeaf829f8))
+
 ## [2.5.0](https://github.com/cheqd/sdk/compare/2.4.4...2.5.0) (2024-08-29)
 
 
