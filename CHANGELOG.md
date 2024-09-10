@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.4-develop.2](https://github.com/cheqd/sdk/compare/4.0.4-develop.1...4.0.4-develop.2) (2024-09-10)
+
+### Bug Fixes
+
+* Add context only for linkedDomains ([#381](https://github.com/cheqd/sdk/issues/381)) ([be87fdd](https://github.com/cheqd/sdk/commit/be87fddd398fcc6a9995ad86855549b146baac28))
+
 ## [4.0.4-develop.1](https://github.com/cheqd/sdk/compare/4.0.3...4.0.4-develop.1) (2024-09-06)
 
 ### Bug Fixes
