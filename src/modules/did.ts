@@ -539,6 +539,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		});
 
 		const service = protobufDidDocument.service.map((s) => {
+			if (s.serviceType === ServiceType.LinkedDomains)
+				protobufDidDocument.context = [...protobufDidDocument.context, contexts.DIFDIDConfiguration];
+
 			return {
 				id: s.id,
 				type: s.serviceType,
@@ -547,12 +550,6 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		});
 
 		const context = (function () {
-			if (
-				protobufDidDocument.service.find((s) => s.serviceType === ServiceType.LinkedDomains) &&
-				!protobufDidDocument.context.includes(contexts.DIFDIDConfiguration)
-			)
-				protobufDidDocument.context.push(contexts.DIFDIDConfiguration);
-
 			if (protobufDidDocument.context.includes(contexts.W3CDIDv1)) return protobufDidDocument.context;
 
 			return [contexts.W3CDIDv1, ...protobufDidDocument.context];
