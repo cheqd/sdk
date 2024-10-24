@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.5-develop.1](https://github.com/cheqd/sdk/compare/4.0.4...4.0.5-develop.1) (2024-10-24)
+
+### Bug Fixes
+
+* Bump default resource gas units ([ae8860d](https://github.com/cheqd/sdk/commit/ae8860de540f01cf96bdb2ef25269df4181e6b81))
+
 ## [4.0.4](https://github.com/cheqd/sdk/compare/4.0.3...4.0.4) (2024-09-10)
 
 ### Bug Fixes
