@@ -69,7 +69,7 @@
 		"file-type": "^19.5.0",
 		"multiformats": "^13.3.0",
 		"secp256k1": "^5.0.0",
-		"uuid": "^10.0.0"
+		"uuid": "^11.0.1"
 	},
 	"devDependencies": {
 		"@semantic-release/changelog": "^6.0.3",
