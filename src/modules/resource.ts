@@ -218,7 +218,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceImageFee],
-			gas: '1200000',
+			gas: '2000000',
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
@@ -227,7 +227,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	static async generateCreateResourceJsonFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceJsonFee],
-			gas: '1200000',
+			gas: '2000000',
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
