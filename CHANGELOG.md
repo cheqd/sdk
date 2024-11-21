@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.0.0-develop.1](https://github.com/cheqd/sdk/compare/4.0.5...5.0.0-develop.1) (2024-11-21)
+
+### ⚠ BREAKING CHANGES
+
+* Added v3 core protocol support
+
+### Features
+
+* Added v3 core protocol support ([36936de](https://github.com/cheqd/sdk/commit/36936ded4b8c688ab5eb7a1b36df2c5c4781aefe))
+
 ## [4.0.5](https://github.com/cheqd/sdk/compare/4.0.4...4.0.5) (2024-10-24)
 
 ### Bug Fixes
