@@ -170,6 +170,7 @@ export const setupDidExtension = (base: QueryClient): DidExtension => {
 };
 
 export class DIDModule extends AbstractCheqdSDKModule {
+	// @ts-expect-error underlying type `GeneratedType` is intentionally wider
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
 		[typeUrlMsgCreateDidDoc, MsgCreateDidDoc],
 		[typeUrlMsgCreateDidDocResponse, MsgCreateDidDocResponse],

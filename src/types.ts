@@ -9,6 +9,7 @@ import { QueryClient } from '@cosmjs/stargate';
 import { DIDResolutionResult } from 'did-resolver';
 import { DidExtension } from './modules/did.js';
 import { ResourceExtension } from './modules/resource.js';
+import { FeemarketExtension } from './modules/feemarket.js';
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from 'did-resolver';
 
 export enum CheqdNetwork {
@@ -22,7 +23,7 @@ export type CheqdExtension<K extends string, V = any> = {
 	[P in K]: Record<P, V> & Partial<Record<Exclude<K, P>, never>> extends infer O ? { [Q in keyof O]: O[Q] } : never;
 }[K];
 
-export type CheqdExtensions = DidExtension | ResourceExtension;
+export type CheqdExtensions = DidExtension | ResourceExtension | FeemarketExtension;
 
 export interface IModuleMethod {
 	(...args: any[]): Promise<any>;

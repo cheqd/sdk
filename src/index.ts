@@ -1,6 +1,7 @@
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing';
 import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did.js';
 import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource.js';
+import { FeemarketModule, FeemarketExtension, MinimalImportableFeemarketModule } from './modules/feemarket.js';
 import {
 	AbstractCheqdSDKModule,
 	applyMixins,
@@ -25,14 +26,16 @@ export interface ICheqdSDKOptions {
 	readonly wallet: OfflineSigner;
 }
 
-export type DefaultCheqdSDKModules = MinimalImportableDIDModule & MinimalImportableResourceModule;
+export type DefaultCheqdSDKModules = MinimalImportableDIDModule &
+	MinimalImportableResourceModule &
+	MinimalImportableFeemarketModule;
 
 export interface CheqdSDK extends DefaultCheqdSDKModules {}
 
 export class CheqdSDK {
 	methods: IModuleMethodMap;
 	signer: CheqdSigningStargateClient;
-	querier: CheqdQuerier & DidExtension & ResourceExtension;
+	querier: CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension;
 	options: ICheqdSDKOptions;
 	private protectedMethods: string[] = ['constructor', 'build', 'loadModules', 'loadRegistry'];
 
@@ -92,12 +95,14 @@ export class CheqdSDK {
 		return createDefaultCheqdRegistry(registryTypes);
 	}
 
-	private async loadQuerierExtensions(): Promise<CheqdQuerier & DidExtension & ResourceExtension> {
+	private async loadQuerierExtensions(): Promise<
+		CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension
+	> {
 		const querierExtensions = this.options.modules.map((module) =>
 			instantiateCheqdSDKModuleQuerierExtensionSetup(module)
 		);
 		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, ...querierExtensions);
-		return <CheqdQuerier & DidExtension & ResourceExtension>querier;
+		return <CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension>querier;
 	}
 
 	async build(): Promise<CheqdSDK> {
@@ -133,7 +138,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 	return await new CheqdSDK(options).build();
 }
 
-export { DIDModule, ResourceModule };
+export { DIDModule, ResourceModule, FeemarketModule };
 export { AbstractCheqdSDKModule, applyMixins } from './modules/_.js';
 export {
 	DidExtension,
@@ -168,6 +173,16 @@ export {
 	setupResourceExtension,
 	isMsgCreateResourceEncodeObject,
 } from './modules/resource.js';
+export {
+	FeemarketExtension,
+	MinimalImportableFeemarketModule,
+	defaultFeemarketExtensionKey,
+	protobufLiterals as protobufLiteralsFeemarket,
+	setupFeemarketExtension,
+	isGasPriceEncodeObject,
+	isGasPricesEncodeObject,
+	isParamsEncodeObject,
+} from './modules/feemarket.js';
 export * from './signer.js';
 export * from './querier.js';
 export * from './registry.js';

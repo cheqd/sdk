@@ -82,6 +82,7 @@ export const setupResourceExtension = (base: QueryClient): ResourceExtension => 
 };
 
 export class ResourceModule extends AbstractCheqdSDKModule {
+	// @ts-expect-error underlying type `GeneratedType` is intentionally wider
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
 		[typeUrlMsgCreateResource, MsgCreateResource],
 		[typeUrlMsgCreateResourceResponse, MsgCreateResourceResponse],
