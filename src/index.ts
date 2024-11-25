@@ -14,6 +14,7 @@ import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
 import { GasPrice, QueryClient } from '@cosmjs/stargate';
 import { CheqdQuerier } from './querier';
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
+import { FeemarketExtension, FeemarketModule } from './modules/feemarket';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -32,7 +33,7 @@ export interface CheqdSDK extends DefaultCheqdSDKModules {}
 export class CheqdSDK {
 	methods: IModuleMethodMap;
 	signer: CheqdSigningStargateClient;
-	querier: CheqdQuerier & DidExtension & ResourceExtension;
+	querier: CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension;
 	options: ICheqdSDKOptions;
 	private protectedMethods: string[] = ['constructor', 'build', 'loadModules', 'loadRegistry'];
 
@@ -92,12 +93,14 @@ export class CheqdSDK {
 		return createDefaultCheqdRegistry(registryTypes);
 	}
 
-	private async loadQuerierExtensions(): Promise<CheqdQuerier & DidExtension & ResourceExtension> {
+	private async loadQuerierExtensions(): Promise<
+		CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension
+	> {
 		const querierExtensions = this.options.modules.map((module) =>
 			instantiateCheqdSDKModuleQuerierExtensionSetup(module)
 		);
 		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, ...querierExtensions);
-		return <CheqdQuerier & DidExtension & ResourceExtension>querier;
+		return <CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension>querier;
 	}
 
 	async build(): Promise<CheqdSDK> {
@@ -133,7 +136,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 	return await new CheqdSDK(options).build();
 }
 
-export { DIDModule, ResourceModule };
+export { DIDModule, ResourceModule, FeemarketModule };
 export { AbstractCheqdSDKModule, applyMixins } from './modules/_';
 export {
 	DidExtension,
@@ -168,6 +171,19 @@ export {
 	setupResourceExtension,
 	isMsgCreateResourceEncodeObject,
 } from './modules/resource';
+export {
+	FeemarketExtension,
+	MinimalImportableFeemarketModule,
+	defaultFeemarketExtensionKey,
+	protobufLiterals as protobufLiteralsFeemarket,
+	typeUrlGasPriceResponse,
+	typeUrlGasPricesResponse,
+	typeUrlParamsResponse,
+	setupFeemarketExtension,
+	isGasPriceEncodeObject,
+	isGasPricesEncodeObject,
+	isParamsEncodeObject,
+} from './modules/feemarket';
 export * from './signer';
 export * from './querier';
 export * from './registry';

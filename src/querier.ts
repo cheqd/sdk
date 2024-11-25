@@ -33,7 +33,11 @@ export class CheqdQuerier extends QueryClient {
 		}
 
 		const tmClient = await Tendermint37Client.connect(url);
-		const tupleLike = extensions as [QueryExtensionSetup<CheqdExtensions>, QueryExtensionSetup<CheqdExtensions>];
+		const tupleLike = extensions as [
+			QueryExtensionSetup<CheqdExtensions>,
+			QueryExtensionSetup<CheqdExtensions>,
+			QueryExtensionSetup<CheqdExtensions>,
+		];
 		return CheqdQuerier.withExtensions(tmClient, ...tupleLike);
 	}
 }

@@ -88,6 +88,7 @@ export const setupResourceExtension = (base: QueryClient): ResourceExtension => 
 };
 
 export class ResourceModule extends AbstractCheqdSDKModule {
+	//@ts-expect-error the underlying type is intentionally wider
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
 		[typeUrlMsgCreateResource, MsgCreateResource],
 		[typeUrlMsgCreateResourceResponse, MsgCreateResourceResponse],
@@ -232,7 +233,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceImageFee],
-			gas: '1200000',
+			gas: '2000000',
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
@@ -241,7 +242,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	static async generateCreateResourceJsonFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceJsonFee],
-			gas: '1200000',
+			gas: '2000000',
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
@@ -250,7 +251,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	static async generateCreateResourceDefaultFees(feePayer: string, granter?: string): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceDefaultFee],
-			gas: '1200000',
+			gas: '2000000',
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;

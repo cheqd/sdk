@@ -45,6 +45,7 @@ describe('CheqdSigningStargateClient', () => {
 		it('can be constructed with cheqd custom registry', async () => {
 			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic);
 			const registry = new Registry();
+			//@ts-expect-error the underlying type is intentionally wider
 			registry.register(typeUrlMsgCreateDidDoc, MsgCreateDidDoc);
 			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, { registry });
 			expect(signer.registry.lookupType(typeUrlMsgCreateDidDoc)).toBe(MsgCreateDidDoc);
