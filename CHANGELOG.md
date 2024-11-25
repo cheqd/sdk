@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/cheqd/sdk/compare/2.5.1...2.6.0) (2024-11-25)
+
+
+### Features
+
+* Backport v3 protocol release proto API ([77bf258](https://github.com/cheqd/sdk/commit/77bf258f0bc0594b3ff17d8f35069431f6ac34ef))
+
 ## [2.5.1](https://github.com/cheqd/sdk/compare/2.5.0...2.5.1) (2024-09-10)
 
 
