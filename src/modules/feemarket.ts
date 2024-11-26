@@ -7,10 +7,10 @@ import {
 } from '@cheqd/ts-proto/feemarket/feemarket/v1/index.js';
 import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing';
 import { createProtobufRpcClient, QueryClient } from '@cosmjs/stargate';
-import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
-import { IContext, QueryExtensionSetup } from '../types';
-import { CheqdQuerier } from '../querier';
-import { CheqdSigningStargateClient } from '../signer';
+import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_.js';
+import { IContext, QueryExtensionSetup } from '../types.js';
+import { CheqdQuerier } from '../querier.js';
+import { CheqdSigningStargateClient } from '../signer.js';
 
 export const defaultFeemarketExtensionKey = 'feemarket' as const;
 
