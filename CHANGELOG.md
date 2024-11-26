@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.0.1-develop.1](https://github.com/cheqd/sdk/compare/5.0.0...5.0.1-develop.1) (2024-11-26)
+
+### Bug Fixes
+
+* Fix esm imports to include file extensions ([#397](https://github.com/cheqd/sdk/issues/397)) ([30cfb71](https://github.com/cheqd/sdk/commit/30cfb712dbed6d1ecb088010f46cfd7a862ac015))
+
 ## [5.0.0](https://github.com/cheqd/sdk/compare/4.0.5...5.0.0) (2024-11-21)
 
 ### ⚠ BREAKING CHANGES
