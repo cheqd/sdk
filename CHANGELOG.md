@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.1](https://github.com/cheqd/sdk/compare/5.0.1...5.1.0-develop.1) (2025-02-03)
+
+
+### Features
+
+* Build esm and cjs using workspaces ([#401](https://github.com/cheqd/sdk/issues/401)) ([385155b](https://github.com/cheqd/sdk/commit/385155be30a45ae902311d65d004294a45a3d8b0))
+
 ## [5.0.1](https://github.com/cheqd/sdk/compare/5.0.0...5.0.1) (2024-11-27)
 
 ### Bug Fixes
