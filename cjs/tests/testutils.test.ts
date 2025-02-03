@@ -1,5 +1,5 @@
 import { GasPrice } from '@cosmjs/stargate';
-import { CheqdNetwork } from '../src';
+import { CheqdNetwork } from '../src/types';
 
 export const faucet = {
 	prefix: 'cheqd',
@@ -12,7 +12,7 @@ export const faucet = {
 export const localnet = {
 	network: CheqdNetwork.Testnet,
 	rpcUrl: 'https://rpc.cheqd.network:443',
-	gasPrice: GasPrice.fromString(`50${faucet.minimalDenom}`),
+	gasPrice: GasPrice.fromString(`5000${faucet.minimalDenom}`),
 };
 
 export const json_content = '{"message": "hello world"}';

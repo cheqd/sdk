@@ -21,7 +21,7 @@ jobs:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
-      
+
       - name: "Obtain Github App token"
         id: app-token
         uses: getsentry/action-github-app-token@v3.0.0

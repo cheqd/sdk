@@ -1,0 +1,58 @@
+{
+	"name": "@cheqd/sdk-cjs",
+	"private": true,
+	"version": "2.6.0",
+	"description": "A TypeScript SDK built with CosmJS to interact with cheqd network ledger",
+	"license": "Apache-2.0",
+	"author": "Cheqd Foundation Limited (https://github.com/cheqd)",
+	"exports": {
+		".": {
+			"types": "./build/types/index.d.ts",
+			"require": "./build/index.js",
+			"default": "./build/index.js"
+		},
+		"./*": {
+			"types": "./build/types/*.d.ts",
+			"require": "./build/*.js",
+			"default": "./build/*.js"
+		}
+	},
+	"scripts": {
+		"test": "jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
+		"test:watch": "jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1 --watch",
+		"build": "npm run build:types && npm run build:cjs",
+		"build:types": "tsc -p tsconfig.types.json",
+		"build:cjs": "tsc -p tsconfig.json",
+		"format": "prettier --write '**/*.{js,ts,cjs,mjs,json}'"
+	},
+	"dependencies": {
+		"@cheqd/ts-proto": "^2.4.0",
+		"@cosmjs/amino": "~0.30.1",
+		"@cosmjs/crypto": "~0.30.1",
+		"@cosmjs/encoding": "~0.30.1",
+		"@cosmjs/math": "~0.30.1",
+		"@cosmjs/proto-signing": "~0.30.1",
+		"@cosmjs/stargate": "~0.30.1",
+		"@cosmjs/tendermint-rpc": "~0.30.1",
+		"@cosmjs/utils": "~0.30.1",
+		"@stablelib/ed25519": "^1.0.3",
+		"@types/secp256k1": "^4.0.6",
+		"cosmjs-types": "^0.7.2",
+		"did-jwt": "^8.0.4",
+		"did-resolver": "^4.1.0",
+		"exponential-backoff": "^3.1.1",
+		"file-type": "^16.5.4",
+		"long": "^4.0.0",
+		"multiformats": "^9.9.0",
+		"secp256k1": "^5.0.0",
+		"uuid": "^10.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^18.19.47",
+		"@types/uuid": "^10.0.0",
+		"uint8arrays": "^3.1.1"
+	},
+	"engines": {
+		"node": ">=18"
+	}
+}
