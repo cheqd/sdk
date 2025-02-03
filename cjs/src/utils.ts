@@ -34,6 +34,7 @@ import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
 import { toBech32 } from '@cosmjs/encoding';
 import { StargateClient } from '@cosmjs/stargate';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { backOff, BackoffOptions } from 'exponential-backoff';
 
 export type TImportableEd25519Key = {
 	publicKeyHex: string;
@@ -334,4 +335,33 @@ export function isJSON(input: any): boolean {
 	} catch (e) {
 		return false;
 	}
+}
+
+export const DefaultBackoffOptions: BackoffOptions = {
+	jitter: 'full',
+	timeMultiple: 1,
+	delayFirstAttempt: false,
+	maxDelay: 100,
+	startingDelay: 100,
+	numOfAttempts: 3,
+} as const;
+
+export async function retry<T>(fn: () => Promise<T>, options?: BackoffOptions): Promise<T | undefined> {
+	// set default options
+	if (!options) {
+		options = DefaultBackoffOptions;
+	} else {
+		// overwrite defaults with user supplied options
+		options = { ...DefaultBackoffOptions, ...options };
+	}
+
+	let result: T | undefined;
+
+	try {
+		result = await backOff(fn, options);
+	} catch (e) {
+		console.error(e);
+	}
+
+	return result;
 }

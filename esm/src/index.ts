@@ -1,7 +1,12 @@
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing';
 import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did.js';
 import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource.js';
-import { FeemarketModule, FeemarketExtension, MinimalImportableFeemarketModule } from './modules/feemarket.js';
+import {
+	FeemarketModule,
+	FeemarketExtension,
+	MinimalImportableFeemarketModule,
+	defaultGasPriceTiers,
+} from './modules/feemarket.js';
 import {
 	AbstractCheqdSDKModule,
 	applyMixins,
@@ -109,12 +114,25 @@ export class CheqdSDK {
 		const registry = this.loadRegistry();
 
 		this.querier = await this.loadQuerierExtensions();
+
+		const sdk = await this.loadModules(this.options.modules);
+
+		// define gas price
+		this.options.gasPrice =
+			this.options.gasPrice ||
+			(await this.generateSafeGasPriceWithExponentialBackoff(
+				DIDModule.baseMinimalDenom,
+				defaultGasPriceTiers.Low,
+				undefined,
+				{ sdk }
+			));
+
 		this.signer = await CheqdSigningStargateClient.connectWithSigner(this.options.rpcUrl, this.options.wallet, {
 			registry,
-			gasPrice: this.options?.gasPrice,
+			gasPrice: this.options.gasPrice,
 		});
 
-		return await this.loadModules(this.options.modules);
+		return sdk;
 	}
 }
 
@@ -176,7 +194,9 @@ export {
 export {
 	FeemarketExtension,
 	MinimalImportableFeemarketModule,
+	DefaultGasPriceTiers,
 	defaultFeemarketExtensionKey,
+	defaultGasPriceTiers,
 	protobufLiterals as protobufLiteralsFeemarket,
 	setupFeemarketExtension,
 	isGasPriceEncodeObject,

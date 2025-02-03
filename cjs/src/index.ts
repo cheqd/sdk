@@ -14,7 +14,12 @@ import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
 import { GasPrice, QueryClient } from '@cosmjs/stargate';
 import { CheqdQuerier } from './querier';
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
-import { FeemarketExtension, FeemarketModule } from './modules/feemarket';
+import {
+	defaultGasPriceTiers,
+	FeemarketExtension,
+	FeemarketModule,
+	MinimalImportableFeemarketModule,
+} from './modules/feemarket';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -26,7 +31,9 @@ export interface ICheqdSDKOptions {
 	readonly wallet: OfflineSigner;
 }
 
-export type DefaultCheqdSDKModules = MinimalImportableDIDModule & MinimalImportableResourceModule;
+export type DefaultCheqdSDKModules = MinimalImportableDIDModule &
+	MinimalImportableResourceModule &
+	MinimalImportableFeemarketModule;
 
 export interface CheqdSDK extends DefaultCheqdSDKModules {}
 
@@ -107,12 +114,25 @@ export class CheqdSDK {
 		const registry = this.loadRegistry();
 
 		this.querier = await this.loadQuerierExtensions();
+
+		const sdk = await this.loadModules(this.options.modules);
+
+		// define gas price
+		this.options.gasPrice =
+			this.options.gasPrice ||
+			(await this.generateSafeGasPriceWithExponentialBackoff(
+				DIDModule.baseMinimalDenom,
+				defaultGasPriceTiers.Low,
+				undefined,
+				{ sdk }
+			));
+
 		this.signer = await CheqdSigningStargateClient.connectWithSigner(this.options.rpcUrl, this.options.wallet, {
 			registry,
-			gasPrice: this.options?.gasPrice,
+			gasPrice: this.options.gasPrice,
 		});
 
-		return await this.loadModules(this.options.modules);
+		return sdk;
 	}
 }
 
@@ -174,7 +194,9 @@ export {
 export {
 	FeemarketExtension,
 	MinimalImportableFeemarketModule,
+	DefaultGasPriceTiers,
 	defaultFeemarketExtensionKey,
+	defaultGasPriceTiers,
 	protobufLiterals as protobufLiteralsFeemarket,
 	typeUrlGasPriceResponse,
 	typeUrlGasPricesResponse,
