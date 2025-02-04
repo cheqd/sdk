@@ -15,26 +15,26 @@ import {
 	JsonWebKey,
 } from './types';
 import { fromString, toString } from 'uint8arrays';
-import { bases } from 'multiformats/basics';
-import { base64ToBytes } from 'did-jwt';
-import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519';
-import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-signing';
-import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto';
-import { rawSecp256k1PubkeyToRawAddress } from '@cosmjs/amino';
-import pkg from 'secp256k1';
+import { bases } from 'multiformats-cjs/basics';
+import { base64ToBytes } from 'did-jwt-cjs';
+import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519-cjs';
+import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-signing-cjs';
+import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto-cjs';
+import { rawSecp256k1PubkeyToRawAddress } from '@cosmjs/amino-cjs';
+import pkg from 'secp256k1-cjs';
 import { v4 } from 'uuid';
 import {
 	VerificationMethod as ProtoVerificationMethod,
 	Service as ProtoService,
 	MsgCreateDidDocPayload,
 	MsgDeactivateDidDocPayload,
-} from '@cheqd/ts-proto/cheqd/did/v2';
+} from '@cheqd/ts-proto-cjs/cheqd/did/v2';
 import { DIDModule } from './modules/did';
-import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
-import { toBech32 } from '@cosmjs/encoding';
-import { StargateClient } from '@cosmjs/stargate';
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import { backOff, BackoffOptions } from 'exponential-backoff';
+import { MsgCreateResourcePayload } from '@cheqd/ts-proto-cjs/cheqd/resource/v2';
+import { toBech32 } from '@cosmjs/encoding-cjs';
+import { StargateClient } from '@cosmjs/stargate-cjs';
+import { Coin } from 'cosmjs-types-cjs/cosmos/base/v1beta1/coin';
+import { backOff, BackoffOptions } from 'exponential-backoff-cjs';
 
 export type TImportableEd25519Key = {
 	publicKeyHex: string;

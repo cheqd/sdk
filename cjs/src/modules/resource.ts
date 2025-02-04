@@ -1,6 +1,6 @@
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
 import { CheqdSigningStargateClient } from '../signer';
-import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing';
+import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
 import { DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types';
 import {
 	Metadata,
@@ -11,13 +11,13 @@ import {
 	QueryCollectionResourcesResponse,
 	ResourceWithMetadata,
 	protobufPackage,
-} from '@cheqd/ts-proto/cheqd/resource/v2';
-import { DeliverTxResponse, QueryClient, createPagination, createProtobufRpcClient } from '@cosmjs/stargate';
+} from '@cheqd/ts-proto-cjs/cheqd/resource/v2';
+import { DeliverTxResponse, QueryClient, createPagination, createProtobufRpcClient } from '@cosmjs/stargate-cjs';
 import { toString } from 'uint8arrays';
-import { fromBuffer } from 'file-type/browser';
-import { SignInfo } from '@cheqd/ts-proto/cheqd/did/v2/index';
-import { assert } from '@cosmjs/utils';
-import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
+import { fromBuffer } from 'file-type-cjs/browser';
+import { SignInfo } from '@cheqd/ts-proto-cjs/cheqd/did/v2/index';
+import { assert } from '@cosmjs/utils-cjs';
+import { PageRequest } from '@cheqd/ts-proto-cjs/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
 import { isJSON } from '../utils';
 

@@ -1,4 +1,4 @@
-import { createPagination, createProtobufRpcClient, DeliverTxResponse, QueryClient } from '@cosmjs/stargate';
+import { createPagination, createProtobufRpcClient, DeliverTxResponse, QueryClient } from '@cosmjs/stargate-cjs';
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
 import { CheqdSigningStargateClient } from '../signer';
 import {
@@ -31,13 +31,13 @@ import {
 	DidDocWithMetadata,
 	DidDoc,
 	Metadata,
-} from '@cheqd/ts-proto/cheqd/did/v2/index';
-import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing';
+} from '@cheqd/ts-proto-cjs/cheqd/did/v2/index';
+import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
 import { v4 } from 'uuid';
-import { assert } from '@cosmjs/utils';
-import { PageRequest } from '@cheqd/ts-proto/cosmos/base/query/v1beta1/pagination';
+import { assert } from '@cosmjs/utils-cjs';
+import { PageRequest } from '@cheqd/ts-proto-cjs/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
-import { DIDDocumentMetadata } from 'did-resolver';
+import { DIDDocumentMetadata } from 'did-resolver-cjs';
 
 export const defaultDidExtensionKey = 'did' as const;
 

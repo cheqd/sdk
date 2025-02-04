@@ -1,4 +1,4 @@
-import { GasPrice } from '@cosmjs/stargate';
+import { GasPrice } from '@cosmjs/stargate-cjs';
 import { CheqdNetwork } from '../src/types';
 
 export const faucet = {

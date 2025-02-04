@@ -1,4 +1,4 @@
-import { OfflineSigner, Registry } from '@cosmjs/proto-signing';
+import { OfflineSigner, Registry } from '@cosmjs/proto-signing-cjs';
 import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did';
 import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource';
 import {
@@ -11,9 +11,9 @@ import {
 import { createDefaultCheqdRegistry } from './registry';
 import { CheqdSigningStargateClient } from './signer';
 import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
-import { GasPrice, QueryClient } from '@cosmjs/stargate';
+import { GasPrice, QueryClient } from '@cosmjs/stargate-cjs';
 import { CheqdQuerier } from './querier';
-import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc-cjs';
 import {
 	defaultGasPriceTiers,
 	FeemarketExtension,

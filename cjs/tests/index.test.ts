@@ -1,4 +1,4 @@
-import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing';
+import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing-cjs';
 import { createCheqdSDK, DIDModule, ICheqdSDKOptions, ResourceModule } from '../src/index';
 import { localnet, faucet } from './testutils.test';
 import { AbstractCheqdSDKModule } from '../src/modules/_';

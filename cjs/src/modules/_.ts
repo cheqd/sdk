@@ -1,5 +1,5 @@
-import { GeneratedType } from '@cosmjs/proto-signing';
-import { QueryClient } from '@cosmjs/stargate';
+import { GeneratedType } from '@cosmjs/proto-signing-cjs';
+import { QueryClient } from '@cosmjs/stargate-cjs';
 import { CheqdSigningStargateClient } from '../signer';
 import { IModuleMethodMap, QueryExtensionSetup } from '../types';
 import { CheqdQuerier } from '../querier';

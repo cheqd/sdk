@@ -4,15 +4,15 @@ import {
 	ParamsResponse,
 	QueryClientImpl,
 	protobufPackage,
-} from '@cheqd/ts-proto/feemarket/feemarket/v1/index.js';
-import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing';
-import { createProtobufRpcClient, GasPrice, QueryClient } from '@cosmjs/stargate';
+} from '@cheqd/ts-proto-cjs/feemarket/feemarket/v1/index.js';
+import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
+import { createProtobufRpcClient, GasPrice, QueryClient } from '@cosmjs/stargate-cjs';
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
 import { IContext, QueryExtensionSetup } from '../types';
 import { CheqdQuerier } from '../querier';
 import { CheqdSigningStargateClient } from '../signer';
 import { DefaultBackoffOptions, retry } from '../utils';
-import { Decimal, Uint32 } from '@cosmjs/math';
+import { Decimal, Uint32 } from '@cosmjs/math-cjs';
 
 export const defaultFeemarketExtensionKey = 'feemarket' as const;
 

@@ -5,7 +5,7 @@ import {
 	encodePubkey,
 	TxBodyEncodeObject,
 	makeSignDoc,
-} from '@cosmjs/proto-signing';
+} from '@cosmjs/proto-signing-cjs';
 import {
 	DeliverTxResponse,
 	GasPrice,
@@ -14,8 +14,8 @@ import {
 	SigningStargateClientOptions,
 	calculateFee,
 	SignerData,
-} from '@cosmjs/stargate';
-import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
+} from '@cosmjs/stargate-cjs';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc-cjs';
 import { createDefaultCheqdRegistry } from './registry';
 import {
 	MsgCreateDidDocPayload,
@@ -23,17 +23,17 @@ import {
 	MsgUpdateDidDocPayload,
 	MsgDeactivateDidDocPayload,
 	VerificationMethod,
-} from '@cheqd/ts-proto/cheqd/did/v2';
+} from '@cheqd/ts-proto-cjs/cheqd/did/v2';
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
-import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
-import { assert, assertDefined } from '@cosmjs/utils';
-import { encodeSecp256k1Pubkey } from '@cosmjs/amino';
-import { Int53 } from '@cosmjs/math';
-import { fromBase64 } from '@cosmjs/encoding';
-import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
-import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing';
-import { Any } from 'cosmjs-types/google/protobuf/any';
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt-cjs';
+import { assert, assertDefined } from '@cosmjs/utils-cjs';
+import { encodeSecp256k1Pubkey } from '@cosmjs/amino-cjs';
+import { Int53 } from '@cosmjs/math-cjs';
+import { fromBase64 } from '@cosmjs/encoding-cjs';
+import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types-cjs/cosmos/tx/v1beta1/tx';
+import { SignMode } from 'cosmjs-types-cjs/cosmos/tx/signing/v1beta1/signing';
+import { Any } from 'cosmjs-types-cjs/google/protobuf/any';
+import { Coin } from 'cosmjs-types-cjs/cosmos/base/v1beta1/coin';
 import Long from 'long';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {

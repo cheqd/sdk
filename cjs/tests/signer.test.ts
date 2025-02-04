@@ -1,6 +1,6 @@
-import { MsgCreateDidDoc, MsgCreateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto/cheqd/did/v2';
-import { DirectSecp256k1HdWallet, Registry } from '@cosmjs/proto-signing';
-import { EdDSASigner } from 'did-jwt';
+import { MsgCreateDidDoc, MsgCreateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto-cjs/cheqd/did/v2';
+import { DirectSecp256k1HdWallet, Registry } from '@cosmjs/proto-signing-cjs';
+import { EdDSASigner } from 'did-jwt-cjs';
 import { typeUrlMsgCreateDidDoc } from '../src/modules/did';
 import { CheqdSigningStargateClient } from '../src/signer';
 import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../src/types';
@@ -13,7 +13,7 @@ import {
 	validateSpecCompliantPayload,
 } from '../src/utils';
 import { localnet, faucet } from './testutils.test';
-import { verify } from '@stablelib/ed25519';
+import { verify } from '@stablelib/ed25519-cjs';
 import { v4 } from 'uuid';
 
 const nonExistingDid = 'did:cHeQd:fantasticnet:123';
