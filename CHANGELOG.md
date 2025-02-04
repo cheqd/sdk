@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.2](https://github.com/cheqd/sdk/compare/5.1.0-develop.1...5.1.0-develop.2) (2025-02-04)
+
+
+### Bug Fixes
+
+* Added pre-install hook ([623ee5b](https://github.com/cheqd/sdk/commit/623ee5b516cded54b6938842e21e20126754c426))
+
 ## [5.1.0-develop.1](https://github.com/cheqd/sdk/compare/5.0.1...5.1.0-develop.1) (2025-02-03)
 
 
