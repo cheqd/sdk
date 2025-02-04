@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.1.0-develop.4](https://github.com/cheqd/sdk/compare/5.1.0-develop.3...5.1.0-develop.4) (2025-02-04)
+
+
+### Bug Fixes
+
+* Added deep script references ([194685c](https://github.com/cheqd/sdk/commit/194685c77bb7e76fc7d3b6dff25f7e97f3e1569c))
+* Added script reference ([c642d19](https://github.com/cheqd/sdk/commit/c642d19db6220397e41c200e326183ffc355e764))
+
 ## [5.1.0-develop.3](https://github.com/cheqd/sdk/compare/5.1.0-develop.2...5.1.0-develop.3) (2025-02-04)
 
 
