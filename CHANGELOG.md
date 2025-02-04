@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.3](https://github.com/cheqd/sdk/compare/5.1.0-develop.2...5.1.0-develop.3) (2025-02-04)
+
+
+### Bug Fixes
+
+* Added files reference ([53a06f8](https://github.com/cheqd/sdk/commit/53a06f8716d0269020f3d77a2ba6a45c69e63916))
+
 ## [5.1.0-develop.2](https://github.com/cheqd/sdk/compare/5.1.0-develop.1...5.1.0-develop.2) (2025-02-04)
 
 
