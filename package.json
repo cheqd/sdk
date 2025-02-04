@@ -53,6 +53,7 @@
         "build",
         "LICENSE",
         "package.json",
+        "preinstall.js",
         "README.md"
     ],
     "devDependencies": {
