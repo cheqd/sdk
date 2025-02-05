@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.6](https://github.com/cheqd/sdk/compare/5.1.0-develop.5...5.1.0-develop.6) (2025-02-05)
+
+
+### Bug Fixes
+
+* Added precommit hooks ([c8bf8de](https://github.com/cheqd/sdk/commit/c8bf8decf7eff0c91d8b6ed124e990d9d0ab8f46))
+
 ## [5.1.0-develop.5](https://github.com/cheqd/sdk/compare/5.1.0-develop.4...5.1.0-develop.5) (2025-02-05)
 
 
