@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.5](https://github.com/cheqd/sdk/compare/5.1.0-develop.4...5.1.0-develop.5) (2025-02-05)
+
+
+### Bug Fixes
+
+* Added explicit carryover ([da23b86](https://github.com/cheqd/sdk/commit/da23b8637e7cff613a25aff7294cab0ebcb02f01))
+
 ## [5.1.0-develop.4](https://github.com/cheqd/sdk/compare/5.1.0-develop.3...5.1.0-develop.4) (2025-02-04)
 
 
