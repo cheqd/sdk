@@ -23,8 +23,8 @@
     "scripts": {
         "clean": "rm -rf node_modules && rm -rf esm/node_modules && rm -rf cjs/node_modules && rm -f package-lock.json",
         "build": "rm -rf build && npm run build:esm && npm run build:cjs && npm run build:types && cp preinstall.js build/preinstall.js && cp preinstall.js build/esm/preinstall.js && cp preinstall.js build/cjs/preinstall.js",
-        "build:esm": "cd esm && tsc -p tsconfig.json",
-        "build:cjs": "cd cjs && tsc -p tsconfig.json",
+        "build:esm": "cd esm && tsc -p tsconfig.json && cp package.json ../build/esm/package.json",
+        "build:cjs": "cd cjs && tsc -p tsconfig.json && cp package.json ../build/cjs/package.json",
         "build:types": "cd esm && tsc -p tsconfig.types.json",
         "test": "npm run test:esm && npm run test:cjs",
         "test:esm": "cd esm && npm test",
