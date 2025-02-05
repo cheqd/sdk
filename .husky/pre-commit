@@ -1,0 +1,1 @@
+node tidy-dependencies.js && npm i --save && sleep 5
