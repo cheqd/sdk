@@ -9,12 +9,19 @@ function addSuffixedDependencies(packageJsonPath, suffix = '') {
 	const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, 'utf-8'));
 	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 	const dependencies = packageJson.dependencies || {};
+	const devDependencies = packageJson.devDependencies || {};
 
 	rootPackageJson.dependencies = rootPackageJson.dependencies || {};
+	rootPackageJson.devDependencies = rootPackageJson.devDependencies || {};
 
 	for (const [dep, version] of Object.entries(dependencies)) {
 		const suffixedDep = suffix ? `${dep}${suffix}` : dep;
 		rootPackageJson.dependencies[suffixedDep] = suffix ? `npm:${dep}@${version}` : version;
+	}
+
+	for (const [dep, version] of Object.entries(devDependencies)) {
+		const suffixedDep = suffix ? `${dep}${suffix}` : dep;
+		rootPackageJson.devDependencies[suffixedDep] = suffix ? `npm:${dep}@${version}` : version;
 	}
 
 	fs.writeFileSync(rootPackageJsonPath, JSON.stringify(rootPackageJson, null, 4));

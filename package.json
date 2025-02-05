@@ -70,7 +70,14 @@
         "prettier": "^3.3.3",
         "semantic-release": "^22.0.12",
         "ts-jest": "^29.2.5",
-        "typescript": "^5.5.4"
+        "typescript": "^5.5.4",
+        "@types/node": "^20.16.5",
+        "@types/uuid": "^10.0.0",
+        "cross-env": "^7.0.3",
+        "uint8arrays": "^5.1.0",
+        "@types/node-cjs": "npm:@types/node@^18.19.47",
+        "@types/uuid-cjs": "npm:@types/uuid@^10.0.0",
+        "uint8arrays-cjs": "npm:uint8arrays@^3.1.1"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
