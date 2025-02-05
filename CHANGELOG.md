@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.8](https://github.com/cheqd/sdk/compare/5.1.0-develop.7...5.1.0-develop.8) (2025-02-05)
+
+
+### Bug Fixes
+
+* Added distinct versioning for ambiguous dependency paths ([a3a0c55](https://github.com/cheqd/sdk/commit/a3a0c553284e18a0187df11c9dbd48fe1179d0cc))
+
 ## [5.1.0-develop.7](https://github.com/cheqd/sdk/compare/5.1.0-develop.6...5.1.0-develop.7) (2025-02-05)
 
 
