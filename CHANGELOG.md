@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.7](https://github.com/cheqd/sdk/compare/5.1.0-develop.6...5.1.0-develop.7) (2025-02-05)
+
+
+### Bug Fixes
+
+* Incorporated dev dependency multiversioning ([e0a946c](https://github.com/cheqd/sdk/commit/e0a946c515c7e6965517b22ac083c921c90dce76))
+
 ## [5.1.0-develop.6](https://github.com/cheqd/sdk/compare/5.1.0-develop.5...5.1.0-develop.6) (2025-02-05)
 
 
