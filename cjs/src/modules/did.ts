@@ -33,7 +33,7 @@ import {
 	Metadata,
 } from '@cheqd/ts-proto-cjs/cheqd/did/v2/index';
 import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
-import { v4 } from 'uuid';
+import { v4 } from 'uuid-cjs';
 import { assert } from '@cosmjs/utils-cjs';
 import { PageRequest } from '@cheqd/ts-proto-cjs/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';

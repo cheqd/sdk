@@ -8,7 +8,7 @@ import {
 	createKeyPairRaw,
 	getCosmosAccount,
 } from '../src/utils';
-import { toString } from 'uint8arrays/to-string';
+import { toString } from 'uint8arrays-cjs/to-string';
 import { IKeyPair, MethodSpecificIdAlgo, VerificationMethods } from '../src/types';
 import { faucet_address, pubkey_hex, testnet_rpc } from './testutils.test';
 

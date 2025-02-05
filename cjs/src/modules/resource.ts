@@ -13,7 +13,7 @@ import {
 	protobufPackage,
 } from '@cheqd/ts-proto-cjs/cheqd/resource/v2';
 import { DeliverTxResponse, QueryClient, createPagination, createProtobufRpcClient } from '@cosmjs/stargate-cjs';
-import { toString } from 'uint8arrays';
+import { toString } from 'uint8arrays-cjs';
 import { fromBuffer } from 'file-type-cjs/browser';
 import { SignInfo } from '@cheqd/ts-proto-cjs/cheqd/did/v2/index';
 import { assert } from '@cosmjs/utils-cjs';

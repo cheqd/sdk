@@ -22,7 +22,7 @@ import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-si
 import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto-cjs';
 import { rawSecp256k1PubkeyToRawAddress } from '@cosmjs/amino-cjs';
 import pkg from 'secp256k1-cjs';
-import { v4 } from 'uuid';
+import { v4 } from 'uuid-cjs';
 import {
 	VerificationMethod as ProtoVerificationMethod,
 	Service as ProtoService,

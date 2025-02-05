@@ -77,7 +77,8 @@
         "uint8arrays": "^5.1.0",
         "@types/node-cjs": "npm:@types/node@^18.19.47",
         "@types/uuid-cjs": "npm:@types/uuid@^10.0.0",
-        "uint8arrays-cjs": "npm:uint8arrays@^3.1.1"
+        "uint8arrays-cjs": "npm:uint8arrays@^3.1.1",
+        "@types/long-cjs": "npm:@types/long@^4.0.0"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",

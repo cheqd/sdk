@@ -1,6 +1,6 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing-cjs';
 import { DeliverTxResponse } from '@cosmjs/stargate-cjs';
-import { fromString, toString } from 'uint8arrays';
+import { fromString, toString } from 'uint8arrays-cjs';
 import { DIDModule, ResourceModule } from '../../src';
 import { createDefaultCheqdRegistry } from '../../src/registry';
 import { CheqdSigningStargateClient } from '../../src/signer';
@@ -25,12 +25,12 @@ import {
 	json_content,
 	containsAllButOmittedFields,
 } from '../testutils.test';
-import { AlternativeUri, Metadata, MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2';
-import { v4 } from 'uuid';
+import { AlternativeUri, Metadata, MsgCreateResourcePayload } from '@cheqd/ts-proto-cjs/cheqd/resource/v2';
+import { v4 } from 'uuid-cjs';
 import { CheqdQuerier } from '../../src/querier';
 import { setupResourceExtension, ResourceExtension } from '../../src/modules/resource';
 import { DidExtension, setupDidExtension } from '../../src/modules/did';
-import { sha256 } from '@cosmjs/crypto';
+import { sha256 } from '@cosmjs/crypto-cjs';
 
 const defaultAsyncTxTimeout = 30000;
 

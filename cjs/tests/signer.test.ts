@@ -4,7 +4,7 @@ import { EdDSASigner } from 'did-jwt-cjs';
 import { typeUrlMsgCreateDidDoc } from '../src/modules/did';
 import { CheqdSigningStargateClient } from '../src/signer';
 import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../src/types';
-import { fromString, toString } from 'uint8arrays';
+import { fromString, toString } from 'uint8arrays-cjs';
 import {
 	createDidPayload,
 	createDidVerificationMethod,
@@ -14,7 +14,7 @@ import {
 } from '../src/utils';
 import { localnet, faucet } from './testutils.test';
 import { verify } from '@stablelib/ed25519-cjs';
-import { v4 } from 'uuid';
+import { v4 } from 'uuid-cjs';
 
 const nonExistingDid = 'did:cHeQd:fantasticnet:123';
 const nonExistingKeyId = 'did:cHeQd:fantasticnet:123#key-678';

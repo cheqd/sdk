@@ -34,7 +34,7 @@ import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types-cjs/cosmos/tx/v1beta1/
 import { SignMode } from 'cosmjs-types-cjs/cosmos/tx/signing/v1beta1/signing';
 import { Any } from 'cosmjs-types-cjs/google/protobuf/any';
 import { Coin } from 'cosmjs-types-cjs/cosmos/base/v1beta1/coin';
-import Long from 'long';
+import Long from 'long-cjs';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice);

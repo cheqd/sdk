@@ -1,6 +1,6 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing-cjs';
 import { DeliverTxResponse } from '@cosmjs/stargate-cjs';
-import { fromString, toString } from 'uint8arrays';
+import { fromString, toString } from 'uint8arrays-cjs';
 import { DIDModule } from '../../src';
 import { createDefaultCheqdRegistry } from '../../src/registry';
 import { CheqdSigningStargateClient } from '../../src/signer';
@@ -14,7 +14,7 @@ import {
 import { localnet, faucet, containsAll } from '../testutils.test';
 import { CheqdQuerier } from '../../src/querier';
 import { setupDidExtension, DidExtension } from '../../src/modules/did';
-import { v4 } from 'uuid';
+import { v4 } from 'uuid-cjs';
 
 const defaultAsyncTxTimeout = 30000;
 
