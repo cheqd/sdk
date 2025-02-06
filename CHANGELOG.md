@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.9](https://github.com/cheqd/sdk/compare/5.1.0-develop.8...5.1.0-develop.9) (2025-02-06)
+
+
+### Bug Fixes
+
+* Switched to explicit NPM script ([91ba6ee](https://github.com/cheqd/sdk/commit/91ba6eed32f0f9bb070816d902404341c02bcbe2))
+
 ## [5.1.0-develop.8](https://github.com/cheqd/sdk/compare/5.1.0-develop.7...5.1.0-develop.8) (2025-02-05)
 
 
