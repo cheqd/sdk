@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.11](https://github.com/cheqd/sdk/compare/5.1.0-develop.10...5.1.0-develop.11) (2025-02-13)
+
+
+### Bug Fixes
+
+* Replaced stale reference ([bbb384c](https://github.com/cheqd/sdk/commit/bbb384c7cc6ba2c538bfe7d80d5efce4b33c6bc4))
+
 ## [5.1.0-develop.10](https://github.com/cheqd/sdk/compare/5.1.0-develop.9...5.1.0-develop.10) (2025-02-13)
 
 
