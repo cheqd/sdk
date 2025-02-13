@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0-develop.10](https://github.com/cheqd/sdk/compare/5.1.0-develop.9...5.1.0-develop.10) (2025-02-13)
+
+
+### Bug Fixes
+
+* Moved runtime dependencies to direct records ([6837b13](https://github.com/cheqd/sdk/commit/6837b13afd5123f4d7bebf22b2174ec02996193f))
+
 ## [5.1.0-develop.9](https://github.com/cheqd/sdk/compare/5.1.0-develop.8...5.1.0-develop.9) (2025-02-06)
 
 
