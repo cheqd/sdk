@@ -75,10 +75,8 @@
         "@types/node": "^20.16.5",
         "@types/uuid": "^10.0.0",
         "cross-env": "^7.0.3",
-        "uint8arrays": "^5.1.0",
         "@types/node-cjs": "npm:@types/node@^18.19.47",
         "@types/uuid-cjs": "npm:@types/uuid@^10.0.0",
-        "uint8arrays-cjs": "npm:uint8arrays@^3.1.1",
         "@types/long-cjs": "npm:@types/long@^4.0.0"
     },
     "publishConfig": {
@@ -124,6 +122,8 @@
         "secp256k1": "^5.0.0",
         "secp256k1-cjs": "npm:secp256k1@^5.0.0",
         "uuid": "^10.0.0",
-        "uuid-cjs": "npm:uuid@^10.0.0"
+        "uuid-cjs": "npm:uuid@^10.0.0",
+        "uint8arrays": "^5.1.0",
+        "uint8arrays-cjs": "npm:uint8arrays@^3.1.1"
     }
 }
