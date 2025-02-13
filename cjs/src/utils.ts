@@ -14,7 +14,7 @@ import {
 	SpecValidationResult,
 	JsonWebKey,
 } from './types';
-import { fromString, toString } from 'uint8arrays';
+import { fromString, toString } from 'uint8arrays-cjs';
 import { bases } from 'multiformats-cjs/basics';
 import { base64ToBytes } from 'did-jwt-cjs';
 import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519-cjs';
