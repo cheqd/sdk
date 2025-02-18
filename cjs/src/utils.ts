@@ -13,27 +13,28 @@ import {
 	DIDDocument,
 	SpecValidationResult,
 	JsonWebKey,
-} from './types.js';
-import { fromString, toString } from 'uint8arrays';
-import { bases } from 'multiformats/basics';
-import { base64ToBytes } from 'did-jwt';
-import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519';
-import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-signing';
-import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto';
-import { rawSecp256k1PubkeyToRawAddress } from '@cosmjs/amino';
-import pkg from 'secp256k1';
-import { v4 } from 'uuid';
+} from './types';
+import { fromString, toString } from 'uint8arrays-cjs';
+import { bases } from 'multiformats-cjs/basics';
+import { base64ToBytes } from 'did-jwt-cjs';
+import { generateKeyPair, generateKeyPairFromSeed, KeyPair } from '@stablelib/ed25519-cjs';
+import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from '@cosmjs/proto-signing-cjs';
+import { EnglishMnemonic as _, sha256 } from '@cosmjs/crypto-cjs';
+import { rawSecp256k1PubkeyToRawAddress } from '@cosmjs/amino-cjs';
+import pkg from 'secp256k1-cjs';
+import { v4 } from 'uuid-cjs';
 import {
 	VerificationMethod as ProtoVerificationMethod,
 	Service as ProtoService,
 	MsgCreateDidDocPayload,
 	MsgDeactivateDidDocPayload,
-} from '@cheqd/ts-proto/cheqd/did/v2/index.js';
-import { DIDModule } from './modules/did.js';
-import { MsgCreateResourcePayload } from '@cheqd/ts-proto/cheqd/resource/v2/index.js';
-import { toBech32 } from '@cosmjs/encoding';
-import { StargateClient } from '@cosmjs/stargate';
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
+} from '@cheqd/ts-proto-cjs/cheqd/did/v2';
+import { DIDModule } from './modules/did';
+import { MsgCreateResourcePayload } from '@cheqd/ts-proto-cjs/cheqd/resource/v2';
+import { toBech32 } from '@cosmjs/encoding-cjs';
+import { StargateClient } from '@cosmjs/stargate-cjs';
+import { Coin } from 'cosmjs-types-cjs/cosmos/base/v1beta1/coin';
+import { backOff, BackoffOptions } from 'exponential-backoff-cjs';
 
 export type TImportableEd25519Key = {
 	publicKeyHex: string;
@@ -129,9 +130,7 @@ export function createVerificationKeys(
 	switch (algo) {
 		case MethodSpecificIdAlgo.Base58:
 			methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey));
-			didUrl = `did:cheqd:${network}:${bases['base58btc']
-				.encode(sha256(base64ToBytes(publicKey)).slice(0, 16))
-				.slice(1)}`;
+			didUrl = `did:cheqd:${network}:${bases['base58btc'].encode(sha256(base64ToBytes(publicKey)).slice(0, 16)).slice(1)}`;
 			return {
 				methodSpecificId,
 				didUrl,
@@ -257,7 +256,11 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
 		});
 	});
 
-	return { valid: true, protobufVerificationMethod: protoVerificationMethod, protobufService: protoService };
+	return {
+		valid: true,
+		protobufVerificationMethod: protoVerificationMethod,
+		protobufService: protoService,
+	};
 }
 
 export function createCosmosPayerWallet(
@@ -314,11 +317,13 @@ export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourc
 
 export function getCosmosAccount(publicKeyHex: string): string {
 	const { publicKeyConvert } = pkg;
+
 	return toBech32('cheqd', rawSecp256k1PubkeyToRawAddress(publicKeyConvert(fromString(publicKeyHex, 'hex'), true)));
 }
 
 export async function checkBalance(address: string, rpcAddress: string): Promise<readonly Coin[]> {
 	const client = await StargateClient.connect(rpcAddress);
+
 	return await client.getAllBalances(address);
 }
 
@@ -330,4 +335,33 @@ export function isJSON(input: any): boolean {
 	} catch (e) {
 		return false;
 	}
+}
+
+export const DefaultBackoffOptions: BackoffOptions = {
+	jitter: 'full',
+	timeMultiple: 1,
+	delayFirstAttempt: false,
+	maxDelay: 100,
+	startingDelay: 100,
+	numOfAttempts: 3,
+} as const;
+
+export async function retry<T>(fn: () => Promise<T>, options?: BackoffOptions): Promise<T | undefined> {
+	// set default options
+	if (!options) {
+		options = DefaultBackoffOptions;
+	} else {
+		// overwrite defaults with user supplied options
+		options = { ...DefaultBackoffOptions, ...options };
+	}
+
+	let result: T | undefined;
+
+	try {
+		result = await backOff(fn, options);
+	} catch (e) {
+		console.error(e);
+	}
+
+	return result;
 }

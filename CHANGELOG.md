@@ -1,5 +1,83 @@
 # Changelog
 
+## [5.1.0-develop.11](https://github.com/cheqd/sdk/compare/5.1.0-develop.10...5.1.0-develop.11) (2025-02-13)
+
+
+### Bug Fixes
+
+* Replaced stale reference ([bbb384c](https://github.com/cheqd/sdk/commit/bbb384c7cc6ba2c538bfe7d80d5efce4b33c6bc4))
+
+## [5.1.0-develop.10](https://github.com/cheqd/sdk/compare/5.1.0-develop.9...5.1.0-develop.10) (2025-02-13)
+
+
+### Bug Fixes
+
+* Moved runtime dependencies to direct records ([6837b13](https://github.com/cheqd/sdk/commit/6837b13afd5123f4d7bebf22b2174ec02996193f))
+
+## [5.1.0-develop.9](https://github.com/cheqd/sdk/compare/5.1.0-develop.8...5.1.0-develop.9) (2025-02-06)
+
+
+### Bug Fixes
+
+* Switched to explicit NPM script ([91ba6ee](https://github.com/cheqd/sdk/commit/91ba6eed32f0f9bb070816d902404341c02bcbe2))
+
+## [5.1.0-develop.8](https://github.com/cheqd/sdk/compare/5.1.0-develop.7...5.1.0-develop.8) (2025-02-05)
+
+
+### Bug Fixes
+
+* Added distinct versioning for ambiguous dependency paths ([a3a0c55](https://github.com/cheqd/sdk/commit/a3a0c553284e18a0187df11c9dbd48fe1179d0cc))
+
+## [5.1.0-develop.7](https://github.com/cheqd/sdk/compare/5.1.0-develop.6...5.1.0-develop.7) (2025-02-05)
+
+
+### Bug Fixes
+
+* Incorporated dev dependency multiversioning ([e0a946c](https://github.com/cheqd/sdk/commit/e0a946c515c7e6965517b22ac083c921c90dce76))
+
+## [5.1.0-develop.6](https://github.com/cheqd/sdk/compare/5.1.0-develop.5...5.1.0-develop.6) (2025-02-05)
+
+
+### Bug Fixes
+
+* Added precommit hooks ([c8bf8de](https://github.com/cheqd/sdk/commit/c8bf8decf7eff0c91d8b6ed124e990d9d0ab8f46))
+
+## [5.1.0-develop.5](https://github.com/cheqd/sdk/compare/5.1.0-develop.4...5.1.0-develop.5) (2025-02-05)
+
+
+### Bug Fixes
+
+* Added explicit carryover ([da23b86](https://github.com/cheqd/sdk/commit/da23b8637e7cff613a25aff7294cab0ebcb02f01))
+
+## [5.1.0-develop.4](https://github.com/cheqd/sdk/compare/5.1.0-develop.3...5.1.0-develop.4) (2025-02-04)
+
+
+### Bug Fixes
+
+* Added deep script references ([194685c](https://github.com/cheqd/sdk/commit/194685c77bb7e76fc7d3b6dff25f7e97f3e1569c))
+* Added script reference ([c642d19](https://github.com/cheqd/sdk/commit/c642d19db6220397e41c200e326183ffc355e764))
+
+## [5.1.0-develop.3](https://github.com/cheqd/sdk/compare/5.1.0-develop.2...5.1.0-develop.3) (2025-02-04)
+
+
+### Bug Fixes
+
+* Added files reference ([53a06f8](https://github.com/cheqd/sdk/commit/53a06f8716d0269020f3d77a2ba6a45c69e63916))
+
+## [5.1.0-develop.2](https://github.com/cheqd/sdk/compare/5.1.0-develop.1...5.1.0-develop.2) (2025-02-04)
+
+
+### Bug Fixes
+
+* Added pre-install hook ([623ee5b](https://github.com/cheqd/sdk/commit/623ee5b516cded54b6938842e21e20126754c426))
+
+## [5.1.0-develop.1](https://github.com/cheqd/sdk/compare/5.0.1...5.1.0-develop.1) (2025-02-03)
+
+
+### Features
+
+* Build esm and cjs using workspaces ([#401](https://github.com/cheqd/sdk/issues/401)) ([385155b](https://github.com/cheqd/sdk/commit/385155be30a45ae902311d65d004294a45a3d8b0))
+
 ## [5.0.1](https://github.com/cheqd/sdk/compare/5.0.0...5.0.1) (2024-11-27)
 
 ### Bug Fixes

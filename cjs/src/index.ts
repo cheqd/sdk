@@ -1,20 +1,25 @@
-import { OfflineSigner, Registry } from '@cosmjs/proto-signing';
-import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did.js';
-import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource.js';
-import { FeemarketModule, FeemarketExtension, MinimalImportableFeemarketModule } from './modules/feemarket.js';
+import { OfflineSigner, Registry } from '@cosmjs/proto-signing-cjs';
+import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/did';
+import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource';
 import {
 	AbstractCheqdSDKModule,
 	applyMixins,
 	instantiateCheqdSDKModule,
 	instantiateCheqdSDKModuleRegistryTypes,
 	instantiateCheqdSDKModuleQuerierExtensionSetup,
-} from './modules/_.js';
-import { createDefaultCheqdRegistry } from './registry.js';
-import { CheqdSigningStargateClient } from './signer.js';
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types.js';
-import { GasPrice, QueryClient } from '@cosmjs/stargate';
-import { CheqdQuerier } from './querier.js';
-import { CometClient } from '@cosmjs/tendermint-rpc';
+} from './modules/_';
+import { createDefaultCheqdRegistry } from './registry';
+import { CheqdSigningStargateClient } from './signer';
+import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
+import { GasPrice, QueryClient } from '@cosmjs/stargate-cjs';
+import { CheqdQuerier } from './querier';
+import { Tendermint37Client } from '@cosmjs/tendermint-rpc-cjs';
+import {
+	defaultGasPriceTiers,
+	FeemarketExtension,
+	FeemarketModule,
+	MinimalImportableFeemarketModule,
+} from './modules/feemarket';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -52,7 +57,7 @@ export class CheqdSDK {
 
 		this.methods = {};
 		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, {});
-		this.querier = <any>new QueryClient({} as unknown as CometClient);
+		this.querier = <any>new QueryClient({} as unknown as Tendermint37Client);
 	}
 
 	async execute<P = any, R = any>(method: string, ...params: P[]): Promise<R> {
@@ -109,12 +114,25 @@ export class CheqdSDK {
 		const registry = this.loadRegistry();
 
 		this.querier = await this.loadQuerierExtensions();
+
+		const sdk = await this.loadModules(this.options.modules);
+
+		// define gas price
+		this.options.gasPrice =
+			this.options.gasPrice ||
+			(await this.generateSafeGasPriceWithExponentialBackoff(
+				DIDModule.baseMinimalDenom,
+				defaultGasPriceTiers.Low,
+				undefined,
+				{ sdk }
+			));
+
 		this.signer = await CheqdSigningStargateClient.connectWithSigner(this.options.rpcUrl, this.options.wallet, {
 			registry,
-			gasPrice: this.options?.gasPrice,
+			gasPrice: this.options.gasPrice,
 		});
 
-		return await this.loadModules(this.options.modules);
+		return sdk;
 	}
 }
 
@@ -139,7 +157,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 }
 
 export { DIDModule, ResourceModule, FeemarketModule };
-export { AbstractCheqdSDKModule, applyMixins } from './modules/_.js';
+export { AbstractCheqdSDKModule, applyMixins } from './modules/_';
 export {
 	DidExtension,
 	MinimalImportableDIDModule,
@@ -162,7 +180,7 @@ export {
 	isMsgCreateDidDocEncodeObject,
 	isMsgUpdateDidDocEncodeObject,
 	isMsgDeactivateDidDocEncodeObject,
-} from './modules/did.js';
+} from './modules/did';
 export {
 	ResourceExtension,
 	MinimalImportableResourceModule,
@@ -172,21 +190,26 @@ export {
 	typeUrlMsgCreateResourceResponse,
 	setupResourceExtension,
 	isMsgCreateResourceEncodeObject,
-} from './modules/resource.js';
+} from './modules/resource';
 export {
 	FeemarketExtension,
 	MinimalImportableFeemarketModule,
+	DefaultGasPriceTiers,
 	defaultFeemarketExtensionKey,
+	defaultGasPriceTiers,
 	protobufLiterals as protobufLiteralsFeemarket,
+	typeUrlGasPriceResponse,
+	typeUrlGasPricesResponse,
+	typeUrlParamsResponse,
 	setupFeemarketExtension,
 	isGasPriceEncodeObject,
 	isGasPricesEncodeObject,
 	isParamsEncodeObject,
-} from './modules/feemarket.js';
-export * from './signer.js';
-export * from './querier.js';
-export * from './registry.js';
-export * from './types.js';
+} from './modules/feemarket';
+export * from './signer';
+export * from './querier';
+export * from './registry';
+export * from './types';
 export {
 	TImportableEd25519Key,
 	createKeyPairRaw,
@@ -202,4 +225,4 @@ export {
 	getCosmosAccount,
 	checkBalance,
 	toMultibaseRaw,
-} from './utils.js';
+} from './utils';
