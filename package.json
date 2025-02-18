@@ -88,7 +88,7 @@
         "did-resolver-cjs": "npm:did-resolver@^4.1.0",
         "exponential-backoff": "^3.1.2",
         "exponential-backoff-cjs": "npm:exponential-backoff@^3.1.2",
-        "file-type": "^19.6.0",
+        "file-type": "^20.1.0",
         "file-type-cjs": "npm:file-type@^16.5.4",
         "long-cjs": "npm:long@^4.0.0",
         "multiformats": "^13.3.2",
