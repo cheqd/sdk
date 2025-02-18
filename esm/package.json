@@ -46,7 +46,7 @@
 		"multiformats": "^13.3.2",
 		"secp256k1": "^5.0.1",
 		"uint8arrays": "^5.1.0",
-		"uuid": "^10.0.0"
+		"uuid": "^11.0.5"
 	},
 	"devDependencies": {
 		"@types/node": "^20.17.19",
