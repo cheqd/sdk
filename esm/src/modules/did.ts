@@ -57,12 +57,15 @@ export const protobufLiterals = {
 	MsgDeactivateDidDoc: 'MsgDeactivateDidDoc',
 	MsgDeactivateDidDocResponse: 'MsgDeactivateDidDocResponse',
 } as const;
-export const typeUrlMsgCreateDidDoc = `/${protobufPackage}.${protobufLiterals.MsgCreateDidDoc}`;
-export const typeUrlMsgCreateDidDocResponse = `/${protobufPackage}.${protobufLiterals.MsgCreateDidDocResponse}`;
-export const typeUrlMsgUpdateDidDoc = `/${protobufPackage}.${protobufLiterals.MsgUpdateDidDoc}`;
-export const typeUrlMsgUpdateDidDocResponse = `/${protobufPackage}.${protobufLiterals.MsgUpdateDidDocResponse}`;
-export const typeUrlMsgDeactivateDidDoc = `/${protobufPackage}.${protobufLiterals.MsgDeactivateDidDoc}`;
-export const typeUrlMsgDeactivateDidDocResponse = `/${protobufPackage}.${protobufLiterals.MsgDeactivateDidDocResponse}`;
+export const typeUrlMsgCreateDidDoc = `/${protobufPackage}.${protobufLiterals.MsgCreateDidDoc}` as const;
+export const typeUrlMsgCreateDidDocResponse =
+	`/${protobufPackage}.${protobufLiterals.MsgCreateDidDocResponse}` as const;
+export const typeUrlMsgUpdateDidDoc = `/${protobufPackage}.${protobufLiterals.MsgUpdateDidDoc}` as const;
+export const typeUrlMsgUpdateDidDocResponse =
+	`/${protobufPackage}.${protobufLiterals.MsgUpdateDidDocResponse}` as const;
+export const typeUrlMsgDeactivateDidDoc = `/${protobufPackage}.${protobufLiterals.MsgDeactivateDidDoc}` as const;
+export const typeUrlMsgDeactivateDidDocResponse =
+	`/${protobufPackage}.${protobufLiterals.MsgDeactivateDidDocResponse}` as const;
 
 export interface MsgCreateDidDocEncodeObject extends EncodeObject {
 	readonly typeUrl: typeof typeUrlMsgCreateDidDoc;

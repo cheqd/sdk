@@ -37,6 +37,7 @@ export class CheqdQuerier extends QueryClient {
 			QueryExtensionSetup<CheqdExtensions>,
 			QueryExtensionSetup<CheqdExtensions>,
 			QueryExtensionSetup<CheqdExtensions>,
+			QueryExtensionSetup<CheqdExtensions>,
 		];
 		return CheqdQuerier.withExtensions(tmClient, ...tupleLike);
 	}

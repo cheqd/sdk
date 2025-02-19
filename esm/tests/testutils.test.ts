@@ -1,4 +1,4 @@
-import { GasPrice } from '@cosmjs/stargate';
+import { Attribute, Event, GasPrice } from '@cosmjs/stargate';
 import { CheqdNetwork } from '../src';
 
 export const faucet = {
@@ -45,4 +45,24 @@ export function containsAllButOmittedFields<T extends Record<string, any>>(
 	return values.every((value) =>
 		array.some((item) => JSON.stringify(item, replacer) === JSON.stringify(value, replacer))
 	);
+}
+
+export function getEventByType(events: readonly Event[], type: string) {
+	return events.find((event) => event.type === type);
+}
+
+export function getAttributeByKey(attributes: Attribute[], key: string) {
+	return attributes.find((attribute) => attribute.key === key);
+}
+
+export function getEventByTypeAndAttributeKey(events: readonly Event[], type: string, key: string, value: string) {
+	return events.find(
+		(event) =>
+			event.type === type &&
+			event.attributes.some((attribute) => attribute.key === key && attribute.value === value)
+	);
+}
+
+export function eventContainsAttribute(event: Event, key: string, value: string) {
+	return event.attributes.some((attribute) => attribute.key === key && attribute.value === value);
 }

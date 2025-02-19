@@ -10,6 +10,7 @@ import { DIDResolutionResult } from 'did-resolver-cjs';
 import { DidExtension } from './modules/did';
 import { ResourceExtension } from './modules/resource';
 import { FeemarketExtension } from './modules/feemarket';
+import { FeeabstractionExtension } from './modules/feeabstraction';
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from 'did-resolver-cjs';
 
 export enum CheqdNetwork {
@@ -23,7 +24,7 @@ export type CheqdExtension<K extends string, V = any> = {
 	[P in K]: Record<P, V> & Partial<Record<Exclude<K, P>, never>> extends infer O ? { [Q in keyof O]: O[Q] } : never;
 }[K];
 
-export type CheqdExtensions = DidExtension | ResourceExtension | FeemarketExtension;
+export type CheqdExtensions = DidExtension | ResourceExtension | FeemarketExtension | FeeabstractionExtension;
 
 export interface IModuleMethod {
 	(...args: any[]): Promise<any>;

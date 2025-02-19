@@ -8,7 +8,7 @@ import {
 import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
 import { createProtobufRpcClient, GasPrice, QueryClient } from '@cosmjs/stargate-cjs';
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
-import { IContext, QueryExtensionSetup } from '../types';
+import { DidStdFee, IContext, QueryExtensionSetup } from '../types';
 import { CheqdQuerier } from '../querier';
 import { CheqdSigningStargateClient } from '../signer';
 import { DefaultBackoffOptions, retry } from '../utils';
@@ -22,9 +22,9 @@ export const protobufLiterals = {
 	ParamsResponse: 'ParamsResponse',
 } as const;
 
-export const typeUrlGasPriceResponse = `/${protobufPackage}.${protobufLiterals.GasPriceResponse}`;
-export const typeUrlGasPricesResponse = `/${protobufPackage}.${protobufLiterals.GasPricesResponse}`;
-export const typeUrlParamsResponse = `/${protobufPackage}.${protobufLiterals.ParamsResponse}`;
+export const typeUrlGasPriceResponse = `/${protobufPackage}.${protobufLiterals.GasPriceResponse}` as const;
+export const typeUrlGasPricesResponse = `/${protobufPackage}.${protobufLiterals.GasPricesResponse}` as const;
+export const typeUrlParamsResponse = `/${protobufPackage}.${protobufLiterals.ParamsResponse}` as const;
 
 export const defaultGasPriceTiers = {
 	Low: 'DefaultLowTier',
@@ -106,6 +106,10 @@ export class FeemarketModule extends AbstractCheqdSDKModule {
 	};
 
 	static readonly gasOffsetFactor = 10 ** 4;
+
+	static readonly feeCollectorAddress = 'cheqd13pxn9n3qw79e03844rdadagmg0nshmwfszqu0g' as const;
+
+	static readonly moduleAccountAddress = 'cheqd1el68mjnzv87uurqks8u29tec0cj3297047g2dl' as const;
 
 	static readonly querierExtensionSetup: QueryExtensionSetup<FeemarketExtension> = setupFeemarketExtension;
 
@@ -243,5 +247,20 @@ export class FeemarketModule extends AbstractCheqdSDKModule {
 
 		// otherwise, generate offline gas price
 		return await this.generateOfflineGasPrice(denom, tier);
+	}
+
+	/**
+	 * Generate fees from gas price. Use with live polling for gas price.
+	 * @param gasPrice
+	 * @param payer
+	 * @param gas
+	 * @returns DidStdFee
+	 */
+	static generateFeesFromGasPrice(gasPrice: GasPrice, payer: string, gas = '200000'): DidStdFee {
+		return {
+			amount: [{ denom: gasPrice.denom, amount: gasPrice.amount.multiply(Uint32.fromString(gas)).toString() }],
+			gas,
+			payer,
+		} satisfies DidStdFee;
 	}
 }

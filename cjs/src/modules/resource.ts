@@ -28,8 +28,9 @@ export const protobufLiterals = {
 	MsgCreateResourceResponse: 'MsgCreateResourceResponse',
 } as const;
 
-export const typeUrlMsgCreateResource = `/${protobufPackage}.${protobufLiterals.MsgCreateResource}`;
-export const typeUrlMsgCreateResourceResponse = `/${protobufPackage}.${protobufLiterals.MsgCreateResourceResponse}`;
+export const typeUrlMsgCreateResource = `/${protobufPackage}.${protobufLiterals.MsgCreateResource}` as const;
+export const typeUrlMsgCreateResourceResponse =
+	`/${protobufPackage}.${protobufLiterals.MsgCreateResourceResponse}` as const;
 
 export interface MsgCreateResourceEncodeObject extends EncodeObject {
 	readonly typeUrl: typeof typeUrlMsgCreateResource;
