@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.0-develop.12 (2025-02-19)
+
+* build: Bump ts-proto-cjs ([df98b01](https://github.com/cheqd/sdk/commit/df98b01))
+* feat: Added feeabstraction toolset + enhanced exports ([ebee743](https://github.com/cheqd/sdk/commit/ebee743))
+* chore(deps-dev): Bump @semantic-release/github from 10.3.5 to 11.0.1 (#395) ([d5a796c](https://github.com/cheqd/sdk/commit/d5a796c)), closes [#395](https://github.com/cheqd/sdk/issues/395)
+* chore(deps-dev): Bump @types/node from 20.16.5 to 20.17.10 (#399) ([53a29bc](https://github.com/cheqd/sdk/commit/53a29bc)), closes [#399](https://github.com/cheqd/sdk/issues/399)
+* chore(deps-dev): Bump semantic-release from 22.0.12 to 24.2.3 (#402) ([427d284](https://github.com/cheqd/sdk/commit/427d284)), closes [#402](https://github.com/cheqd/sdk/issues/402)
+* chore(deps): Bump uuid from 10.0.0 to 11.0.5 (#404) ([eaeceeb](https://github.com/cheqd/sdk/commit/eaeceeb)), closes [#404](https://github.com/cheqd/sdk/issues/404)
+
 ## [5.1.0-develop.11](https://github.com/cheqd/sdk/compare/5.1.0-develop.10...5.1.0-develop.11) (2025-02-13)
 
 
