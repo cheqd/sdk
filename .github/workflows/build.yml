@@ -75,13 +75,12 @@ jobs:
 
       - name: Run CJS tests
         run: |
-          ls -la
+          npm run build
           mkdir -p import-tests
           cp -r build import-tests
           cp -r node_modules import-tests
           cd import-tests
           npm init -y
-          # initialise index.js
           echo "require('./build/cjs/index.js')" > index.js
           node index.js
 
