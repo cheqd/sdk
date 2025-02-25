@@ -235,7 +235,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return signInfos;
 	}
 
-	async signupdateDidDocTx(signInputs: ISignInputs[], payload: MsgUpdateDidDocPayload): Promise<SignInfo[]> {
+	async signUpdateDidDocTx(signInputs: ISignInputs[], payload: MsgUpdateDidDocPayload): Promise<SignInfo[]> {
 		await this.checkDidSigners(payload?.verificationMethod);
 
 		const signBytes = MsgUpdateDidDocPayload.encode(payload).finish();

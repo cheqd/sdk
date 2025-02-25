@@ -308,6 +308,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			this._signer = context!.sdk!.signer;
 		}
 
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier;
+		}
+
 		if (!versionId || versionId === '') {
 			versionId = v4();
 		}
@@ -342,7 +346,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		});
 		let signatures: SignInfo[];
 		if (ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signupdateDidDocTx(signInputs, payload);
+			signatures = await this._signer.signUpdateDidDocTx(signInputs, payload);
 		} else {
 			signatures = signInputs;
 		}
