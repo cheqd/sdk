@@ -75,6 +75,7 @@ jobs:
 
       - name: Run CJS tests
         run: |
+          ls -la
           mkdir -p import-tests
           cp -r build import-tests
           cp -r node_modules import-tests
