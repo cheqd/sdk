@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.0-develop.13 (2025-02-25)
+
+* fix: Enhanced authentication-based validation + signature necessity  (#410) ([5693691](https://github.com/cheqd/sdk/commit/5693691)), closes [#410](https://github.com/cheqd/sdk/issues/410)
+
 ## 5.1.0-develop.12 (2025-02-19)
 
 * build: Bump ts-proto-cjs ([df98b01](https://github.com/cheqd/sdk/commit/df98b01))
