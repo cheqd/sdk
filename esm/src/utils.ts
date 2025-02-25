@@ -169,7 +169,9 @@ export function createDidVerificationMethod(
 						id: verificationKeys[_].keyId,
 						type,
 						controller: verificationKeys[_].didUrl,
-						publicKeyBase58: verificationKeys[_].methodSpecificId.slice(1),
+						publicKeyBase58: bases['base58btc']
+							.encode(base64ToBytes(verificationKeys[_].publicKey))
+							.slice(1),
 					} as VerificationMethod;
 				case VerificationMethods.JWK:
 					return {
@@ -189,7 +191,8 @@ export function createDidVerificationMethod(
 
 export function createDidPayload(
 	verificationMethods: VerificationMethod[],
-	verificationKeys: IVerificationKeys[]
+	verificationKeys: IVerificationKeys[],
+	controller: string[] = []
 ): DIDDocument {
 	if (!verificationMethods || verificationMethods.length === 0) throw new Error('No verification methods provided');
 	if (!verificationKeys || verificationKeys.length === 0) throw new Error('No verification keys provided');
@@ -197,7 +200,7 @@ export function createDidPayload(
 	const did = verificationKeys[0].didUrl;
 	return {
 		id: did,
-		controller: Array.from(new Set(verificationKeys.map((key) => key.didUrl))),
+		controller: controller.length ? controller : Array.from(new Set(verificationKeys.map((key) => key.didUrl))),
 		verificationMethod: verificationMethods,
 		authentication: verificationKeys.map((key) => key.keyId),
 	} as DIDDocument;

@@ -4,7 +4,14 @@ import { fromString, toString } from 'uint8arrays';
 import { DIDModule } from '../../src';
 import { createDefaultCheqdRegistry } from '../../src/registry';
 import { CheqdSigningStargateClient } from '../../src/signer';
-import { CheqdNetwork, DIDDocument, ISignInputs, IVerificationKeys, MethodSpecificIdAlgo, VerificationMethods } from '../../src/types';
+import {
+	CheqdNetwork,
+	DIDDocument,
+	ISignInputs,
+	IVerificationKeys,
+	MethodSpecificIdAlgo,
+	VerificationMethods,
+} from '../../src/types';
 import {
 	createDidPayload,
 	createDidVerificationMethod,
@@ -500,7 +507,7 @@ describe('DIDModule', () => {
 					[VerificationMethods.Ed255192020],
 					[verificationKeys]
 				);
-				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys], [verificationKeys.didUrl]);
 				const signInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -519,7 +526,9 @@ describe('DIDModule', () => {
 				// deactivate the did document
 				const deactivateDidPayload = {
 					id: didPayload.id,
+					controller: didPayload.controller,
 					verificationMethod: didPayload.verificationMethod,
+					authentication: didPayload.authentication,
 				} as DIDDocument;
 
 				const feeDeactivate = await DIDModule.generateDeactivateDidDocFees(feePayer);
@@ -563,7 +572,7 @@ describe('DIDModule', () => {
 					[VerificationMethods.Ed255192018],
 					[verificationKeys]
 				);
-				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys], [verificationKeys.didUrl]);
 				const signInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -582,7 +591,9 @@ describe('DIDModule', () => {
 				// deactivate the did document
 				const deactivateDidPayload = {
 					id: didPayload.id,
+					controller: didPayload.controller,
 					verificationMethod: didPayload.verificationMethod,
+					authentication: didPayload.authentication,
 				} as DIDDocument;
 
 				const feeDeactivate = await DIDModule.generateDeactivateDidDocFees(feePayer);
@@ -623,7 +634,7 @@ describe('DIDModule', () => {
 					'key-1'
 				);
 				const verificationMethods = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys]);
-				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys], [verificationKeys.didUrl]);
 				const signInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -642,7 +653,9 @@ describe('DIDModule', () => {
 				// deactivate the did document
 				const deactivateDidPayload = {
 					id: didPayload.id,
+					controller: didPayload.controller,
 					verificationMethod: didPayload.verificationMethod,
+					authentication: didPayload.authentication,
 				} as DIDDocument;
 
 				const feeDeactivate = await DIDModule.generateDeactivateDidDocFees(feePayer);
@@ -1220,560 +1233,620 @@ describe('DIDModule', () => {
 	});
 
 	describe('validateAuthenticationAgainstSignatures', () => {
-		it('should accept valid signatures necessary as per the authentication field - no external controller', async () => {
-			const querier = (await CheqdQuerier.connectWithExtension(
-				localnet.rpcUrl,
-				setupDidExtension
-			)) as CheqdQuerier & DidExtension;
+		it(
+			'should accept valid signatures necessary as per the authentication field - no external controller',
+			async () => {
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupDidExtension
+				)) as CheqdQuerier & DidExtension;
 
-			const keyPair = createKeyPairBase64();
-			const verificationKeys = createVerificationKeys(
-				keyPair.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1'
-			);
-			const keyPair2 = createKeyPairBase64();
-			const verificationKeys2 = createVerificationKeys(
-				keyPair2.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-2',
-				CheqdNetwork.Testnet,
-				verificationKeys.methodSpecificId,
-				verificationKeys.didUrl
-			);
-			const verificationMethods = createDidVerificationMethod(
-				[VerificationMethods.Ed255192018, VerificationMethods.Ed255192020],
-				[verificationKeys, verificationKeys2]
-			);
-			const didPayload = createDidPayload(verificationMethods, [verificationKeys, verificationKeys2]);
-			const signInputs: ISignInputs[] = [
-				{
-					verificationMethodId: didPayload.verificationMethod![0].id,
-					privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
-				},
-				{
-					verificationMethodId: didPayload.verificationMethod![1].id,
-					privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
-				},
-			];
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const keyPair2 = createKeyPairBase64();
+				const verificationKeys2 = createVerificationKeys(
+					keyPair2.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-2',
+					CheqdNetwork.Testnet,
+					verificationKeys.methodSpecificId,
+					verificationKeys.didUrl
+				);
+				const verificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018, VerificationMethods.Ed255192020],
+					[verificationKeys, verificationKeys2]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys, verificationKeys2]);
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+					{
+						verificationMethodId: didPayload.verificationMethod![1].id,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
 
-			// shallow validate on client
-			const { valid, error } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signInputs.map((signInput) => {
+				// shallow validate on client
+				const { valid, error } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signInputs.map((signInput) => {
+						return {
+							verificationMethodId: signInput.verificationMethodId,
+							signature: new Uint8Array(), // empty signature, no interest
+						};
+					}),
+					querier
+				);
+
+				expect(valid).toBe(true);
+				expect(error).toBeUndefined();
+
+				// pop the last signature
+				const lastSignature = signInputs.pop();
+
+				// shallow validate on client
+				const { valid: valid2, error: error2 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signInputs.map((signInput) => {
+						return {
+							verificationMethodId: signInput.verificationMethodId,
+							signature: new Uint8Array(), // empty signature, no interest
+						};
+					}),
+					querier
+				);
+
+				expect(valid2).toBe(false);
+				expect(error2).toBeDefined();
+				expect(error2).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys2.keyId} is missing`
+				);
+
+				// push back the last signature
+				signInputs.push(lastSignature!);
+
+				// create additional verification method
+				const keyPair3 = createKeyPairBase64();
+				const verificationKeys3 = createVerificationKeys(
+					keyPair3.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-3',
+					CheqdNetwork.Testnet,
+					verificationKeys.methodSpecificId,
+					verificationKeys.didUrl
+				);
+				const [verificationMethod3] = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018],
+					[verificationKeys3]
+				);
+
+				// add the additional verification method
+				didPayload.verificationMethod?.push(verificationMethod3);
+
+				// add the excessive signature
+				signInputs.push({
+					verificationMethodId: verificationMethod3.id,
+					privateKeyHex: toString(fromString(keyPair3.privateKey, 'base64'), 'hex'),
+				});
+
+				// shallow validate on client
+				const { valid: valid3, error: error3 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signInputs.map((signInput) => {
+						return {
+							verificationMethodId: signInput.verificationMethodId,
+							signature: new Uint8Array(), // empty signature, no interest
+						};
+					}),
+					querier
+				);
+
+				expect(valid3).toBe(false);
+				expect(error3).toBeDefined();
+				expect(error3).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is not required`
+				);
+
+				// remove the excessive signature
+				signInputs.pop();
+
+				// define did url component literals
+				const [didLiteral, methodLiteral, methodNameLiteral, namespaceLiteral] = didPayload.id.split(':');
+
+				// generate invalid authentication key reference
+				const invalidAuthenticationKeyReference = `${didLiteral}:${methodLiteral}:${methodNameLiteral}:${namespaceLiteral}:${v4()}#key-1`;
+
+				// push	invalid authentication key reference
+				didPayload.authentication!.push(invalidAuthenticationKeyReference);
+
+				// shallow validate on client
+				const { valid: valid4, error: error4 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signInputs.map((signInput) => {
+						return {
+							verificationMethodId: signInput.verificationMethodId,
+							signature: new Uint8Array(), // empty signature, no interest
+						};
+					}),
+					querier
+				);
+
+				expect(valid4).toBe(false);
+				expect(error4).toBeDefined();
+				expect(error4).toContain(
+					`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`
+				);
+
+				// pop the invalid authentication key reference
+				didPayload.authentication!.pop();
+
+				// push authentication key reference duplicate
+				didPayload.authentication!.push(didPayload.authentication![0]);
+
+				// shallow validate on client
+				const { valid: valid5, error: error5 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signInputs.map((signInput) => {
+						return {
+							verificationMethodId: signInput.verificationMethodId,
+							signature: new Uint8Array(), // empty signature, no interest
+						};
+					}),
+					querier
+				);
+
+				expect(valid5).toBe(false);
+				expect(error5).toBeDefined();
+				expect(error5).toContain(
+					`authentication contains duplicate key references: duplicate key reference ${didPayload.authentication![0]}`
+				);
+
+				// pop the duplicate authentication key reference
+				didPayload.authentication!.pop();
+
+				// push signature duplicate
+				signInputs.push(signInputs[0]);
+
+				// shallow validate on client
+				const { valid: valid6, error: error6 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signInputs.map((signInput) => {
+						return {
+							verificationMethodId: signInput.verificationMethodId,
+							signature: new Uint8Array(), // empty signature, no interest
+						};
+					}),
+					querier
+				);
+
+				expect(valid6).toBe(false);
+				expect(error6).toBeDefined();
+				expect(error6).toContain(
+					`signatures contain duplicates: duplicate signature for key reference ${verificationKeys.keyId}`
+				);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should accept valid signatures necessary as per the authentication field - with external controller',
+			async () => {
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupDidExtension
+				)) as CheqdQuerier & DidExtension;
+
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018],
+					[verificationKeys]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const keyPair2 = createKeyPairBase64();
+				const verificationKeys2 = createVerificationKeys(
+					keyPair2.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods2 = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018],
+					[verificationKeys2]
+				);
+				const didPayload2 = createDidPayload(verificationMethods2, [verificationKeys2]);
+				const signInputs2: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload2.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				// push external controller
+				(didPayload.controller as string[]).push(verificationKeys2.didUrl);
+
+				// define signatures
+				const signatures = signInputs.concat(signInputs2).map((signInput) => {
 					return {
 						verificationMethodId: signInput.verificationMethodId,
 						signature: new Uint8Array(), // empty signature, no interest
 					};
-				}),
-				querier
-			);
+				});
 
-			expect(valid).toBe(true);
-			expect(error).toBeUndefined();
+				// shallow validate on client
+				const { valid, error } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signatures,
+					querier,
+					[didPayload2]
+				);
 
-			// pop the last signature
-			const lastSignature = signInputs.pop();
+				expect(valid).toBe(true);
+				expect(error).toBeUndefined();
 
-			// shallow validate on client
-			const { valid: valid2, error: error2 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signInputs.map((signInput) => {
-					return {
-						verificationMethodId: signInput.verificationMethodId,
-						signature: new Uint8Array(), // empty signature, no interest
-					};
-				}),
-				querier
-			);
+				// pop the last signature
+				const lastSignature = signatures.pop();
 
-			expect(valid2).toBe(false);
-			expect(error2).toBeDefined();
-			expect(error2).toContain(`authentication does not match signatures: signature from key ${verificationKeys2.keyId} is missing`)
+				// shallow validate on client
+				const { valid: valid2, error: error2 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signatures,
+					querier,
+					[didPayload2]
+				);
 
-			// push back the last signature
-			signInputs.push(lastSignature!);
+				expect(valid2).toBe(false);
+				expect(error2).toBeDefined();
+				expect(error2).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys2.keyId} is missing`
+				);
 
-			// create additional verification method
-			const keyPair3 = createKeyPairBase64();
-			const verificationKeys3 = createVerificationKeys(
-				keyPair3.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-3',
-				CheqdNetwork.Testnet,
-				verificationKeys.methodSpecificId,
-				verificationKeys.didUrl
-			);
-			const [verificationMethod3] = createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys3]);
+				// push back the last signature
+				signatures.push(lastSignature!);
 
-			// add the additional verification method
-			didPayload.verificationMethod?.push(verificationMethod3);
+				// create additional verification method
+				const keyPair3 = createKeyPairBase64();
+				const verificationKeys3 = createVerificationKeys(
+					keyPair3.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-3',
+					CheqdNetwork.Testnet,
+					verificationKeys2.methodSpecificId,
+					verificationKeys2.didUrl
+				);
+				const [verificationMethod3] = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018],
+					[verificationKeys3]
+				);
 
-			// add the excessive signature
-			signInputs.push({
-				verificationMethodId: verificationMethod3.id,
-				privateKeyHex: toString(fromString(keyPair3.privateKey, 'base64'), 'hex'),
-			});
+				// add the additional verification method
+				didPayload2.verificationMethod?.push(verificationMethod3);
 
-			// shallow validate on client
-			const { valid: valid3, error: error3 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signInputs.map((signInput) => {
-					return {
-						verificationMethodId: signInput.verificationMethodId,
-						signature: new Uint8Array(), // empty signature, no interest
-					};
-				}),
-				querier
-			);
-
-			expect(valid3).toBe(false);
-			expect(error3).toBeDefined();
-			expect(error3).toContain(`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is not required`);
-
-			// remove the excessive signature
-			signInputs.pop();
-
-			// define did url component literals
-			const [didLiteral, methodLiteral, methodNameLiteral, namespaceLiteral] = didPayload.id.split(':');
-
-			// generate invalid authentication key reference
-			const invalidAuthenticationKeyReference = `${didLiteral}:${methodLiteral}:${methodNameLiteral}:${namespaceLiteral}:${v4()}#key-1`;
-
-			// push	invalid authentication key reference
-			didPayload.authentication!.push(invalidAuthenticationKeyReference);
-
-			// shallow validate on client
-			const { valid: valid4, error: error4 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signInputs.map((signInput) => {
-					return {
-						verificationMethodId: signInput.verificationMethodId,
-						signature: new Uint8Array(), // empty signature, no interest
-					};
-				}),
-				querier
-			);
-
-			expect(valid4).toBe(false);
-			expect(error4).toBeDefined();
-			expect(error4).toContain(`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`);
-
-			// pop the invalid authentication key reference
-			didPayload.authentication!.pop();
-
-			// push authentication key reference duplicate
-			didPayload.authentication!.push(didPayload.authentication![0]);
-
-			// shallow validate on client
-			const { valid: valid5, error: error5 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signInputs.map((signInput) => {
-					return {
-						verificationMethodId: signInput.verificationMethodId,
-						signature: new Uint8Array(), // empty signature, no interest
-					};
-				}),
-				querier
-			);
-
-			expect(valid5).toBe(false);
-			expect(error5).toBeDefined();
-			expect(error5).toContain(`authentication contains duplicate key references: duplicate key reference ${didPayload.authentication![0]}`);
-
-			// pop the duplicate authentication key reference
-			didPayload.authentication!.pop();
-
-			// push signature duplicate
-			signInputs.push(signInputs[0]);
-
-			// shallow validate on client
-			const { valid: valid6, error: error6 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signInputs.map((signInput) => {
-					return {
-						verificationMethodId: signInput.verificationMethodId,
-						signature: new Uint8Array(), // empty signature, no interest
-					};
-				}),
-				querier
-			);
-
-			expect(valid6).toBe(false);
-			expect(error6).toBeDefined();
-			expect(error6).toContain(`signatures contain duplicates: duplicate signature for key reference ${verificationKeys.keyId}`);
-		}, defaultAsyncTxTimeout);
-
-		it('should accept valid signatures necessary as per the authentication field - with external controller', async () => {
-			const querier = (await CheqdQuerier.connectWithExtension(
-				localnet.rpcUrl,
-				setupDidExtension
-			)) as CheqdQuerier & DidExtension;
-
-			const keyPair = createKeyPairBase64();
-			const verificationKeys = createVerificationKeys(
-				keyPair.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1'
-			);
-			const verificationMethods = createDidVerificationMethod(
-				[VerificationMethods.Ed255192018],
-				[verificationKeys]
-			);
-			const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
-			const signInputs: ISignInputs[] = [
-				{
-					verificationMethodId: didPayload.verificationMethod![0].id,
-					privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
-				},
-			];
-			const keyPair2 = createKeyPairBase64();
-			const verificationKeys2 = createVerificationKeys(
-				keyPair2.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1',
-			);
-			const verificationMethods2 = createDidVerificationMethod(
-				[VerificationMethods.Ed255192018],
-				[verificationKeys2]
-			);
-			const didPayload2 = createDidPayload(verificationMethods2, [verificationKeys2]);
-			const signInputs2: ISignInputs[] = [
-				{
-					verificationMethodId: didPayload2.verificationMethod![0].id,
-					privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
-				},
-			];
-
-			// push external controller
-			(didPayload.controller as string[]).push(verificationKeys2.didUrl);
-
-			// define signatures
-			const signatures = signInputs.concat(signInputs2).map((signInput) => {
-				return {
-					verificationMethodId: signInput.verificationMethodId,
+				// add the excessive signature
+				signatures.push({
+					verificationMethodId: verificationMethod3.id,
 					signature: new Uint8Array(), // empty signature, no interest
+				});
+
+				// shallow validate on client
+				const { valid: valid3, error: error3 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signatures,
+					querier,
+					[didPayload2]
+				);
+
+				expect(valid3).toBe(false);
+				expect(error3).toBeDefined();
+				expect(error3).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is not required`
+				);
+
+				// remove the excessive signature
+				signatures.pop();
+
+				// define did url component literals
+				const [didLiteral, methodLiteral, methodNameLiteral, namespaceLiteral] = didPayload.id.split(':');
+
+				// generate invalid authentication key reference
+				const invalidAuthenticationKeyReference = `${didLiteral}:${methodLiteral}:${methodNameLiteral}:${namespaceLiteral}:${v4()}#key-1`;
+
+				// push	invalid authentication key reference
+				didPayload.authentication!.push(invalidAuthenticationKeyReference);
+
+				// shallow validate on client
+				const { valid: valid4, error: error4 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signatures,
+					querier,
+					[didPayload2]
+				);
+
+				expect(valid4).toBe(false);
+				expect(error4).toBeDefined();
+				expect(error4).toContain(
+					`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`
+				);
+
+				// pop the invalid authentication key reference
+				didPayload.authentication!.pop();
+
+				// push authentication key reference duplicate
+				didPayload.authentication!.push(didPayload.authentication![0]);
+
+				// shallow validate on client
+				const { valid: valid5, error: error5 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signatures,
+					querier,
+					[didPayload2]
+				);
+
+				expect(valid5).toBe(false);
+				expect(error5).toBeDefined();
+				expect(error5).toContain(
+					`authentication contains duplicate key references: duplicate key reference ${didPayload.authentication![0]}`
+				);
+
+				// pop the duplicate authentication key reference
+				didPayload.authentication!.pop();
+
+				// push signature duplicate, intentionally use the external controller signature
+				signatures.push(lastSignature!);
+
+				// shallow validate on client
+				const { valid: valid6, error: error6 } = await DIDModule.validateAuthenticationAgainstSignatures(
+					didPayload,
+					signatures,
+					querier,
+					[didPayload2]
+				);
+
+				expect(valid6).toBe(false);
+				expect(error6).toBeDefined();
+				expect(error6).toContain(
+					`signatures contain duplicates: duplicate signature for key reference ${verificationKeys2.keyId}`
+				);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should accept valid signatures necessary as per the authentication field - no external controller, with key rotation',
+			async () => {
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupDidExtension
+				)) as CheqdQuerier & DidExtension;
+
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const keyPair2 = createKeyPairBase64();
+				const verificationKeys2 = createVerificationKeys(
+					keyPair2.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-2',
+					CheqdNetwork.Testnet,
+					verificationKeys.methodSpecificId,
+					verificationKeys.didUrl
+				);
+				const verificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018, VerificationMethods.Ed255192020],
+					[verificationKeys, verificationKeys2]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys, verificationKeys2]);
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+					{
+						verificationMethodId: didPayload.verificationMethod![1].id,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const keyPair3 = createKeyPairBase64();
+				const verificationKeys3 = createVerificationKeys(
+					keyPair3.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1',
+					CheqdNetwork.Testnet,
+					verificationKeys.methodSpecificId,
+					verificationKeys.didUrl
+				);
+				const [verificationMethod3] = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[verificationKeys3]
+				);
+
+				const signInputs3 = {
+					verificationMethodId: verificationMethod3.id,
+					privateKeyHex: toString(fromString(keyPair3.privateKey, 'base64'), 'hex'),
 				};
-			});
 
-			// shallow validate on client
-			const { valid, error } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signatures,
-				querier,
-				[didPayload2]
-			);
+				// define rotated document, deep clone initial
+				const rotatedDidPayload = JSON.parse(JSON.stringify(didPayload)) as DIDDocument;
 
-			expect(valid).toBe(true);
-			expect(error).toBeUndefined();
+				// rotate the verification method
+				rotatedDidPayload.verificationMethod![0] = verificationMethod3;
 
-			// pop the last signature
-			const lastSignature = signatures.pop();
+				// rotate the authentication
+				rotatedDidPayload.authentication![0] = verificationKeys3.keyId;
 
-			// shallow validate on client
-			const { valid: valid2, error: error2 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signatures,
-				querier,
-				[didPayload2]
-			);
+				// define signatures
+				const signatures = signInputs.concat(signInputs3).map((signInput, i) => {
+					return {
+						verificationMethodId: signInput.verificationMethodId,
+						signature: fromString(i.toString(), 'utf-8'), // empty signature, no interest
+					};
+				});
 
-			expect(valid2).toBe(false);
-			expect(error2).toBeDefined();
-			expect(error2).toContain(`authentication does not match signatures: signature from key ${verificationKeys2.keyId} is missing`)
+				// shallow validate on client
+				const { valid, error } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+					rotatedDidPayload,
+					signatures,
+					querier,
+					didPayload
+				);
 
-			// push back the last signature
-			signatures.push(lastSignature!);
+				console.warn('previous document:', didPayload);
 
-			// create additional verification method
-			const keyPair3 = createKeyPairBase64();
-			const verificationKeys3 = createVerificationKeys(
-				keyPair3.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-3',
-				CheqdNetwork.Testnet,
-				verificationKeys2.methodSpecificId,
-				verificationKeys2.didUrl
-			);
-			const [verificationMethod3] = createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys3]);
+				console.warn('rotated document:', rotatedDidPayload);
 
-			// add the additional verification method
-			didPayload2.verificationMethod?.push(verificationMethod3);
+				expect(valid).toBe(true);
+				expect(error).toBeUndefined();
 
-			// add the excessive signature
-			signatures.push({
-				verificationMethodId: verificationMethod3.id,
-				signature: new Uint8Array(), // empty signature, no interest
-			});
+				// pop the last signature
+				const lastSignature = signatures.pop();
 
-			// shallow validate on client
-			const { valid: valid3, error: error3 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signatures,
-				querier,
-				[didPayload2]
-			);
+				// shallow validate on client
+				const { valid: valid2, error: error2 } =
+					await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+						rotatedDidPayload,
+						signatures,
+						querier,
+						didPayload
+					);
 
-			expect(valid3).toBe(false);
-			expect(error3).toBeDefined();
-			expect(error3).toContain(`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is not required`);
+				expect(valid2).toBe(false);
+				expect(error2).toBeDefined();
+				expect(error2).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is missing`
+				);
 
-			// remove the excessive signature
-			signatures.pop();
+				// push back the last signature
+				signatures.push(lastSignature!);
 
-			// define did url component literals
-			const [didLiteral, methodLiteral, methodNameLiteral, namespaceLiteral] = didPayload.id.split(':');
+				// create additional verification method
+				const keyPair4 = createKeyPairBase64();
+				const verificationKeys4 = createVerificationKeys(
+					keyPair4.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-3',
+					CheqdNetwork.Testnet,
+					verificationKeys.methodSpecificId,
+					verificationKeys.didUrl
+				);
+				const [verificationMethod4] = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[verificationKeys4]
+				);
 
-			// generate invalid authentication key reference
-			const invalidAuthenticationKeyReference = `${didLiteral}:${methodLiteral}:${methodNameLiteral}:${namespaceLiteral}:${v4()}#key-1`;
+				// add the additional verification method
+				rotatedDidPayload.verificationMethod?.push(verificationMethod4);
 
-			// push	invalid authentication key reference
-			didPayload.authentication!.push(invalidAuthenticationKeyReference);
+				// add the excessive signature
+				signatures.push({
+					verificationMethodId: verificationMethod4.id,
+					signature: new Uint8Array(), // empty signature, no interest
+				});
 
-			// shallow validate on client
-			const { valid: valid4, error: error4 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signatures,
-				querier,
-				[didPayload2]
-			);
+				// shallow validate on client
+				const { valid: valid3, error: error3 } =
+					await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+						rotatedDidPayload,
+						signatures,
+						querier,
+						didPayload
+					);
 
-			expect(valid4).toBe(false);
-			expect(error4).toBeDefined();
-			expect(error4).toContain(`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`);
+				expect(valid3).toBe(false);
+				expect(error3).toBeDefined();
+				expect(error3).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys4.keyId} is not required`
+				);
 
-			// pop the invalid authentication key reference
-			didPayload.authentication!.pop();
+				// remove the excessive signature
+				signatures.pop();
 
-			// push authentication key reference duplicate
-			didPayload.authentication!.push(didPayload.authentication![0]);
+				// define did url component literals
+				const [didLiteral, methodLiteral, methodNameLiteral, namespaceLiteral] =
+					rotatedDidPayload.id.split(':');
 
-			// shallow validate on client
-			const { valid: valid5, error: error5 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signatures,
-				querier,
-				[didPayload2]
-			);
+				// generate invalid authentication key reference
+				const invalidAuthenticationKeyReference = `${didLiteral}:${methodLiteral}:${methodNameLiteral}:${namespaceLiteral}:${v4()}#key-1`;
 
-			expect(valid5).toBe(false);
-			expect(error5).toBeDefined();
-			expect(error5).toContain(`authentication contains duplicate key references: duplicate key reference ${didPayload.authentication![0]}`);
+				// push	invalid authentication key reference
+				rotatedDidPayload.authentication!.push(invalidAuthenticationKeyReference);
 
-			// pop the duplicate authentication key reference
-			didPayload.authentication!.pop();
+				// shallow validate on client
+				const { valid: valid4, error: error4 } =
+					await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+						rotatedDidPayload,
+						signatures,
+						querier,
+						didPayload
+					);
 
-			// push signature duplicate, intentionally use the external controller signature
-			signatures.push(lastSignature!);
+				expect(valid4).toBe(false);
+				expect(error4).toBeDefined();
+				expect(error4).toContain(
+					`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`
+				);
 
-			// shallow validate on client
-			const { valid: valid6, error: error6 } = await DIDModule.validateAuthenticationAgainstSignatures(
-				didPayload,
-				signatures,
-				querier,
-				[didPayload2]
-			);
+				// pop the invalid authentication key reference
+				rotatedDidPayload.authentication!.pop();
 
-			expect(valid6).toBe(false);
-			expect(error6).toBeDefined();
-			expect(error6).toContain(`signatures contain duplicates: duplicate signature for key reference ${verificationKeys2.keyId}`);
-		}, defaultAsyncTxTimeout);
+				// push authentication key reference duplicate
+				rotatedDidPayload.authentication!.push(rotatedDidPayload.authentication![0]);
 
-		it('should accept valid signatures necessary as per the authentication field - no external controller, with key rotation', async () => {
-			const querier = (await CheqdQuerier.connectWithExtension(
-				localnet.rpcUrl,
-				setupDidExtension
-			)) as CheqdQuerier & DidExtension;
+				// shallow validate on client
+				const { valid: valid5, error: error5 } =
+					await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+						rotatedDidPayload,
+						signatures,
+						querier,
+						didPayload
+					);
 
-			const keyPair = createKeyPairBase64();
-			const verificationKeys = createVerificationKeys(
-				keyPair.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1'
-			);
-			const keyPair2 = createKeyPairBase64();
-			const verificationKeys2 = createVerificationKeys(
-				keyPair2.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-2',
-				CheqdNetwork.Testnet,
-				verificationKeys.methodSpecificId,
-				verificationKeys.didUrl
-			);
-			const verificationMethods = createDidVerificationMethod(
-				[VerificationMethods.Ed255192018, VerificationMethods.Ed255192020],
-				[verificationKeys, verificationKeys2]
-			);
-			const didPayload = createDidPayload(verificationMethods, [verificationKeys, verificationKeys2]);
-			const signInputs: ISignInputs[] = [
-				{
-					verificationMethodId: didPayload.verificationMethod![0].id,
-					privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
-				},
-				{
-					verificationMethodId: didPayload.verificationMethod![1].id,
-					privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
-				},
-			];
-			const keyPair3 = createKeyPairBase64();
-			const verificationKeys3 = createVerificationKeys(
-				keyPair3.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1',
-				CheqdNetwork.Testnet,
-				verificationKeys.methodSpecificId,
-				verificationKeys.didUrl
-			);
-			const [verificationMethod3] = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys3]);
+				expect(valid5).toBe(false);
+				expect(error5).toBeDefined();
+				expect(error5).toContain(
+					`authentication contains duplicate key references: duplicate key reference ${rotatedDidPayload.authentication![0]}`
+				);
 
-			const signInputs3 = {
-				verificationMethodId: verificationMethod3.id,
-				privateKeyHex: toString(fromString(keyPair3.privateKey, 'base64'), 'hex'),
-			};
+				// pop the duplicate authentication key reference
+				rotatedDidPayload.authentication!.pop();
 
-			// define rotated document, deep clone initial
-			const rotatedDidPayload = JSON.parse(JSON.stringify(didPayload)) as DIDDocument;
+				// push signature duplicate
+				signatures.push(lastSignature!);
 
-			// rotate the verification method
-			rotatedDidPayload.verificationMethod![0] = verificationMethod3;
+				// shallow validate on client
+				const { valid: valid6, error: error6 } =
+					await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+						rotatedDidPayload,
+						signatures,
+						querier,
+						didPayload
+					);
 
-			// rotate the authentication
-			rotatedDidPayload.authentication![0] = verificationKeys3.keyId;
-
-			// define signatures
-			const signatures = signInputs.concat(signInputs3).map((signInput, i) => {
-				return {
-					verificationMethodId: signInput.verificationMethodId,
-					signature: fromString(i.toString(), 'utf-8'), // empty signature, no interest
-				};
-			});
-
-			// shallow validate on client
-			const { valid, error } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				rotatedDidPayload,
-				signatures,
-				querier,
-				didPayload
-			);
-
-			console.warn('previous document:', didPayload);
-
-			console.warn('rotated document:', rotatedDidPayload);
-
-			expect(valid).toBe(true);
-			expect(error).toBeUndefined();
-
-			// pop the last signature
-			const lastSignature = signatures.pop();
-
-			// shallow validate on client
-			const { valid: valid2, error: error2 } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				rotatedDidPayload,
-				signatures,
-				querier,
-				didPayload
-			);
-
-			expect(valid2).toBe(false);
-			expect(error2).toBeDefined();
-			expect(error2).toContain(`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is missing`)
-
-			// push back the last signature
-			signatures.push(lastSignature!);
-
-			// create additional verification method
-			const keyPair4 = createKeyPairBase64();
-			const verificationKeys4 = createVerificationKeys(
-				keyPair4.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-3',
-				CheqdNetwork.Testnet,
-				verificationKeys.methodSpecificId,
-				verificationKeys.didUrl
-			);
-			const [verificationMethod4] = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys4]);
-
-			// add the additional verification method
-			rotatedDidPayload.verificationMethod?.push(verificationMethod4);
-
-			// add the excessive signature
-			signatures.push({
-				verificationMethodId: verificationMethod4.id,
-				signature: new Uint8Array(), // empty signature, no interest
-			});
-
-			// shallow validate on client
-			const { valid: valid3, error: error3 } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				rotatedDidPayload,
-				signatures,
-				querier,
-				didPayload
-			);
-
-			expect(valid3).toBe(false);
-			expect(error3).toBeDefined();
-			expect(error3).toContain(`authentication does not match signatures: signature from key ${verificationKeys4.keyId} is not required`);
-
-			// remove the excessive signature
-			signatures.pop();
-
-			// define did url component literals
-			const [didLiteral, methodLiteral, methodNameLiteral, namespaceLiteral] = rotatedDidPayload.id.split(':');
-
-			// generate invalid authentication key reference
-			const invalidAuthenticationKeyReference = `${didLiteral}:${methodLiteral}:${methodNameLiteral}:${namespaceLiteral}:${v4()}#key-1`;
-
-			// push	invalid authentication key reference
-			rotatedDidPayload.authentication!.push(invalidAuthenticationKeyReference);
-
-			// shallow validate on client
-			const { valid: valid4, error: error4 } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				rotatedDidPayload,
-				signatures,
-				querier,
-				didPayload
-			);
-
-			expect(valid4).toBe(false);
-			expect(error4).toBeDefined();
-			expect(error4).toContain(`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`);
-
-			// pop the invalid authentication key reference
-			rotatedDidPayload.authentication!.pop();
-
-			// push authentication key reference duplicate
-			rotatedDidPayload.authentication!.push(rotatedDidPayload.authentication![0]);
-
-			// shallow validate on client
-			const { valid: valid5, error: error5 } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				rotatedDidPayload,
-				signatures,
-				querier,
-				didPayload
-			);
-
-			expect(valid5).toBe(false);
-			expect(error5).toBeDefined();
-			expect(error5).toContain(`authentication contains duplicate key references: duplicate key reference ${rotatedDidPayload.authentication![0]}`);
-
-			// pop the duplicate authentication key reference
-			rotatedDidPayload.authentication!.pop();
-
-			// push signature duplicate
-			signatures.push(lastSignature!);
-
-			// shallow validate on client
-			const { valid: valid6, error: error6 } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				rotatedDidPayload,
-				signatures,
-				querier,
-				didPayload
-			);
-
-			expect(valid6).toBe(false);
-			expect(error6).toBeDefined();
-			expect(error6).toContain(`authentication does not match signatures: signature from key ${verificationKeys.keyId} is not required`);
-		}, defaultAsyncTxTimeout);
+				expect(valid6).toBe(false);
+				expect(error6).toBeDefined();
+				expect(error6).toContain(
+					`authentication does not match signatures: signature from key ${verificationKeys.keyId} is not required`
+				);
+			},
+			defaultAsyncTxTimeout
+		);
 
 		it('should accept valid signatures necessary as per the authentication field - with external controller, with key rotation', async () => {
 			const querier = (await CheqdQuerier.connectWithExtension(
@@ -1782,11 +1855,7 @@ describe('DIDModule', () => {
 			)) as CheqdQuerier & DidExtension;
 
 			const keyPair = createKeyPairBase64();
-			const verificationKeys = createVerificationKeys(
-				keyPair.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1'
-			);
+			const verificationKeys = createVerificationKeys(keyPair.publicKey, MethodSpecificIdAlgo.Base58, 'key-1');
 			const verificationMethods = createDidVerificationMethod(
 				[VerificationMethods.Ed255192018],
 				[verificationKeys]
@@ -1799,11 +1868,7 @@ describe('DIDModule', () => {
 				},
 			];
 			const keyPair2 = createKeyPairBase64();
-			const verificationKeys2 = createVerificationKeys(
-				keyPair2.publicKey,
-				MethodSpecificIdAlgo.Base58,
-				'key-1',
-			);
+			const verificationKeys2 = createVerificationKeys(keyPair2.publicKey, MethodSpecificIdAlgo.Base58, 'key-1');
 			const verificationMethods2 = createDidVerificationMethod(
 				[VerificationMethods.Ed255192018],
 				[verificationKeys2]
@@ -1826,7 +1891,10 @@ describe('DIDModule', () => {
 				verificationKeys.methodSpecificId,
 				verificationKeys.didUrl
 			);
-			const [verificationMethod3] = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys3]);
+			const [verificationMethod3] = createDidVerificationMethod(
+				[VerificationMethods.Ed255192020],
+				[verificationKeys3]
+			);
 			const signInputs3 = {
 				verificationMethodId: verificationMethod3.id,
 				privateKeyHex: toString(fromString(keyPair3.privateKey, 'base64'), 'hex'),
@@ -1845,12 +1913,15 @@ describe('DIDModule', () => {
 			rotatedDidPayload.authentication![0] = verificationKeys3.keyId;
 
 			// define signatures
-			const signatures = signInputs.concat(signInputs2).concat(signInputs3).map((signInput, i) => {
-				return {
-					verificationMethodId: signInput.verificationMethodId,
-					signature: fromString(i.toString(), 'utf-8'), // empty signature, no interest
-				};
-			});
+			const signatures = signInputs
+				.concat(signInputs2)
+				.concat(signInputs3)
+				.map((signInput, i) => {
+					return {
+						verificationMethodId: signInput.verificationMethodId,
+						signature: fromString(i.toString(), 'utf-8'), // empty signature, no interest
+					};
+				});
 
 			// shallow validate on client
 			const { valid, error } = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
@@ -1882,7 +1953,9 @@ describe('DIDModule', () => {
 
 			expect(valid2).toBe(false);
 			expect(error2).toBeDefined();
-			expect(error2).toContain(`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is missing`)
+			expect(error2).toContain(
+				`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is missing`
+			);
 
 			// push back the last signature
 			signatures.push(lastSignature!);
@@ -1897,7 +1970,10 @@ describe('DIDModule', () => {
 				verificationKeys.methodSpecificId,
 				verificationKeys.didUrl
 			);
-			const [verificationMethod4] = createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys4]);
+			const [verificationMethod4] = createDidVerificationMethod(
+				[VerificationMethods.Ed255192020],
+				[verificationKeys4]
+			);
 
 			// add the additional verification method
 			rotatedDidPayload.verificationMethod?.push(verificationMethod4);
@@ -1919,7 +1995,9 @@ describe('DIDModule', () => {
 
 			expect(valid3).toBe(false);
 			expect(error3).toBeDefined();
-			expect(error3).toContain(`authentication does not match signatures: signature from key ${verificationKeys4.keyId} is not required`);
+			expect(error3).toContain(
+				`authentication does not match signatures: signature from key ${verificationKeys4.keyId} is not required`
+			);
 
 			// remove the excessive signature
 			signatures.pop();
@@ -1944,7 +2022,9 @@ describe('DIDModule', () => {
 
 			expect(valid4).toBe(false);
 			expect(error4).toBeDefined();
-			expect(error4).toContain(`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`);
+			expect(error4).toContain(
+				`authentication contains invalid key references: invalid key reference ${invalidAuthenticationKeyReference}`
+			);
 
 			// pop the invalid authentication key reference
 			rotatedDidPayload.authentication!.pop();
@@ -1963,7 +2043,9 @@ describe('DIDModule', () => {
 
 			expect(valid5).toBe(false);
 			expect(error5).toBeDefined();
-			expect(error5).toContain(`authentication contains duplicate key references: duplicate key reference ${rotatedDidPayload.authentication![0]}`);
+			expect(error5).toContain(
+				`authentication contains duplicate key references: duplicate key reference ${rotatedDidPayload.authentication![0]}`
+			);
 
 			// pop the duplicate authentication key reference
 			rotatedDidPayload.authentication!.pop();
@@ -1982,7 +2064,9 @@ describe('DIDModule', () => {
 
 			expect(valid6).toBe(false);
 			expect(error6).toBeDefined();
-			expect(error6).toContain(`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is not required`);
+			expect(error6).toContain(
+				`authentication does not match signatures: signature from key ${verificationKeys3.keyId} is not required`
+			);
 		});
 	});
 });
