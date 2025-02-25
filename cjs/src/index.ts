@@ -20,6 +20,7 @@ import {
 	FeemarketModule,
 	MinimalImportableFeemarketModule,
 } from './modules/feemarket';
+import { FeeabstractionExtension, FeeabstractionModule, MinimalImportableFeeabstractionModule } from './modules/feeabstraction';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -33,14 +34,14 @@ export interface ICheqdSDKOptions {
 
 export type DefaultCheqdSDKModules = MinimalImportableDIDModule &
 	MinimalImportableResourceModule &
-	MinimalImportableFeemarketModule;
+	MinimalImportableFeemarketModule & MinimalImportableFeeabstractionModule;
 
 export interface CheqdSDK extends DefaultCheqdSDKModules {}
 
 export class CheqdSDK {
 	methods: IModuleMethodMap;
 	signer: CheqdSigningStargateClient;
-	querier: CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension;
+	querier: CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension;
 	options: ICheqdSDKOptions;
 	private protectedMethods: string[] = ['constructor', 'build', 'loadModules', 'loadRegistry'];
 
@@ -101,13 +102,13 @@ export class CheqdSDK {
 	}
 
 	private async loadQuerierExtensions(): Promise<
-		CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension
+		CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension
 	> {
 		const querierExtensions = this.options.modules.map((module) =>
 			instantiateCheqdSDKModuleQuerierExtensionSetup(module)
 		);
 		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, ...querierExtensions);
-		return <CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension>querier;
+		return <CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension>querier;
 	}
 
 	async build(): Promise<CheqdSDK> {
@@ -116,6 +117,11 @@ export class CheqdSDK {
 		this.querier = await this.loadQuerierExtensions();
 
 		const sdk = await this.loadModules(this.options.modules);
+
+		// ensure feemarket module is loaded, if not already
+		if (!this.options.modules.find((module) => module instanceof FeemarketModule)) {
+			this.options.modules.push(FeemarketModule as unknown as AbstractCheqdSDKModule);
+		}
 
 		// define gas price
 		this.options.gasPrice =
@@ -156,7 +162,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 	return await new CheqdSDK(options).build();
 }
 
-export { DIDModule, ResourceModule, FeemarketModule };
+export { DIDModule, ResourceModule, FeemarketModule, FeeabstractionModule };
 export { AbstractCheqdSDKModule, applyMixins } from './modules/_';
 export {
 	DidExtension,
@@ -209,7 +215,6 @@ export {
 export {
 	FeeabstractionExtension,
 	MinimalImportableFeeabstractionModule,
-	FeeabstractionModule,
 	defaultExtensionKey,
 	protobufLiterals as protobufLiteralsFeeabstraction,
 	typeUrlMsgAddHostZone,

@@ -45,6 +45,11 @@ export type SpecValidationResult = {
 	protobufService?: ProtobufService[];
 };
 
+export type AuthenticationValidationResult = {
+	valid: boolean;
+	error?: string;
+};
+
 export enum VerificationMethods {
 	Ed255192020 = 'Ed25519VerificationKey2020',
 	Ed255192018 = 'Ed25519VerificationKey2018',
