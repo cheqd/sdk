@@ -1685,7 +1685,7 @@ describe('DIDModule', () => {
 				const signatures = signInputs.concat(signInputs3).map((signInput, i) => {
 					return {
 						verificationMethodId: signInput.verificationMethodId,
-						signature: fromString(i.toString(), 'utf-8'), // empty signature, no interest
+						signature: new Uint8Array(), // empty signature, no interest
 					};
 				});
 
@@ -1904,7 +1904,7 @@ describe('DIDModule', () => {
 				.map((signInput, i) => {
 					return {
 						verificationMethodId: signInput.verificationMethodId,
-						signature: fromString(i.toString(), 'utf-8'), // empty signature, no interest
+						signature: new Uint8Array(), // empty signature, no interest
 					};
 				});
 
