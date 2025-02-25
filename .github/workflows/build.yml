@@ -55,3 +55,32 @@ jobs:
 
       - name: Run Tests
         run: npm test
+
+  import-tests:
+    name: "Import Tests"
+    runs-on: ubuntu-20.04
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Clean install dependencies
+        run: npm ci
+
+      - name: Run CJS tests
+        run: |
+          mkdir -p import-tests
+          cp -r build import-tests
+          cp -r node_modules import-tests
+          cd import-tests
+          npm init -y
+          # initialise index.js
+          echo "require('./build/cjs/index.js')" > index.js
+          node index.js
+
