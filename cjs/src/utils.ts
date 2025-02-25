@@ -120,30 +120,31 @@ export function createKeyPairHex(seed?: string): IKeyPair {
 export function createVerificationKeys(
 	publicKey: string,
 	algo: MethodSpecificIdAlgo,
-	key: TVerificationKey<TVerificationKeyPrefix, number>,
-	network: CheqdNetwork = CheqdNetwork.Testnet
+	keyFragment: TVerificationKey<TVerificationKeyPrefix, number>,
+	network: CheqdNetwork = CheqdNetwork.Testnet,
+	methodSpecificId?: TMethodSpecificId,
+	didUrl?: string
 ): IVerificationKeys {
-	let methodSpecificId: TMethodSpecificId;
-	let didUrl: IVerificationKeys['didUrl'];
-
 	publicKey = publicKey.length == 43 ? publicKey : toString(fromString(publicKey, 'hex'), 'base64');
 	switch (algo) {
 		case MethodSpecificIdAlgo.Base58:
-			methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey));
-			didUrl = `did:cheqd:${network}:${bases['base58btc'].encode(sha256(base64ToBytes(publicKey)).slice(0, 16)).slice(1)}`;
+			methodSpecificId ||= bases['base58btc'].encode(base64ToBytes(publicKey));
+			didUrl ||= `did:cheqd:${network}:${bases['base58btc']
+				.encode(sha256(base64ToBytes(publicKey)).slice(0, 16))
+				.slice(1)}`;
 			return {
 				methodSpecificId,
 				didUrl,
-				keyId: `${didUrl}#${key}`,
+				keyId: `${didUrl}#${keyFragment}`,
 				publicKey,
 			};
 		case MethodSpecificIdAlgo.Uuid:
-			methodSpecificId = bases['base58btc'].encode(base64ToBytes(publicKey));
-			didUrl = `did:cheqd:${network}:${v4()}`;
+			methodSpecificId ||= v4();
+			didUrl ||= `did:cheqd:${network}:${methodSpecificId}`;
 			return {
 				methodSpecificId,
 				didUrl,
-				keyId: `${didUrl}#${key}`,
+				keyId: `${didUrl}#${keyFragment}`,
 				publicKey,
 			};
 	}
@@ -196,7 +197,7 @@ export function createDidPayload(
 	const did = verificationKeys[0].didUrl;
 	return {
 		id: did,
-		controller: verificationKeys.map((key) => key.didUrl),
+		controller: Array.from(new Set(verificationKeys.map((key) => key.didUrl))),
 		verificationMethod: verificationMethods,
 		authentication: verificationKeys.map((key) => key.keyId),
 	} as DIDDocument;

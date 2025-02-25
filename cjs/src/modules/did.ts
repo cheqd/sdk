@@ -11,6 +11,7 @@ import {
 	VerificationMethods,
 	DIDDocumentWithMetadata,
 	ServiceType,
+	AuthenticationValidationResult,
 } from '../types';
 import {
 	MsgCreateDidDoc,
@@ -269,7 +270,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		let signatures: SignInfo[];
 		if (ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signcreateDidDocTx(signInputs, payload);
+			signatures = await this._signer.signCreateDidDocTx(signInputs, payload);
 		} else {
 			signatures = signInputs;
 		}
@@ -605,6 +606,254 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			nextVersionId: protobufDidDocument?.nextVersionId,
 			previousVersionId: protobufDidDocument?.previousVersionId,
 		};
+	}
+
+	static async validateAuthenticationAgainstSignatures(
+		didDocument: DIDDocument,
+		signatures: readonly SignInfo[],
+		querier?: CheqdQuerier & DidExtension,
+		externalControllersDidDocuments?: DIDDocument[]
+	): Promise<AuthenticationValidationResult> {
+		// validate signatures - case: no signatures
+		if (!signatures || !signatures.length) return { valid: false, error: 'signatures are required' };
+
+		// validate authentication - case: no authentication when at least one verificationMethod
+		if ((!didDocument.authentication || !didDocument.authentication.length) && didDocument.verificationMethod?.length)
+			return { valid: false, error: 'authentication is required' };
+
+		// define unique authentication
+		const uniqueAuthentication = new Set<string>(didDocument.authentication as string[]);
+
+		// validate authentication - case: authentication contains duplicates
+		if (uniqueAuthentication.size < didDocument.authentication!.length)
+			return { valid: false, error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => didDocument.authentication!.filter((aa) => aa === a).length > 1)}` };
+
+		// define unique signatures - shallow, only verificationMethodId, no signature
+		const uniqueSignatures = new Set(signatures.map((s) => s.verificationMethodId));
+
+		// validate signatures - case: signatures contain duplicates
+		if (uniqueSignatures.size < signatures.length)
+			return { valid: false, error: `signatures contain duplicates: duplicate signature for key reference ${Array.from(uniqueSignatures).find((s) => signatures.filter((ss) => ss.verificationMethodId === s).length > 1)}` };
+
+		// validate authentication - case: authentication contains invalid key references
+		if (!Array.from(uniqueAuthentication).every((a) => didDocument.verificationMethod?.some((vm) => vm.id === a)))
+			return { valid: false, error: `authentication contains invalid key references: invalid key reference ${Array.from(uniqueAuthentication).find((a) => !didDocument.verificationMethod?.some((vm) => vm.id === a))}` };
+
+		// define whether external controller or not
+		const externalController = (didDocument.controller as string[]).some((c) => c !== didDocument.id);
+
+		// validate authentication - case: authentication matches signatures, unique, if no external controller
+		if (!Array.from(uniqueAuthentication).every((a) => uniqueSignatures.has(a)) && !externalController)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueAuthentication).find((a) => !uniqueSignatures.has(a))} is missing` };
+
+		// validate signatures - case: authentication matches signatures, unique, excessive signatures, no external controller
+		if (!Array.from(uniqueSignatures).every((s) => uniqueAuthentication.has(s)) && !externalController)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignatures).find((s) => !uniqueAuthentication.has(s))} is not required` };
+
+		// return, if no external controller
+		if (!externalController) return { valid: true };
+
+		// require querier
+		if (!querier) throw new Error('querier is required for external controller validation');
+
+		// get external controllers
+		const externalControllers = (didDocument.controller as string[])?.filter((c) => c !== didDocument.id);
+
+		// get external controllers' documents
+		const externalControllersDocuments = await Promise.all(
+			externalControllers?.map(async (c) => {
+				// compute index of external controller's document, if provided
+				const externalControllerDocumentIndex = externalControllersDidDocuments?.findIndex((d) => d.id === c);
+
+				// get external controller's document, if provided
+				if (externalControllerDocumentIndex !== undefined && externalControllerDocumentIndex !== -1)
+					return externalControllersDidDocuments?.[externalControllerDocumentIndex];
+
+				// fetch external controller's document
+				const protobufDocument = await querier[defaultDidExtensionKey].didDoc(c)
+
+				// throw, if not found
+				if (!protobufDocument || !protobufDocument.didDoc) throw new Error(`Document for controller ${c} not found`)
+
+				// convert to spec compliant payload
+				return await DIDModule.toSpecCompliantPayload(protobufDocument.didDoc)
+			})
+		);
+
+		// define unique required signatures
+		const uniqueRequiredSignatures = new Set([...didDocument.authentication as string[], ...externalControllersDocuments!.flatMap((d) => d!.authentication as string[])]);
+
+		// validate authentication - case: authentication matches signatures, unique, if external controller
+		if (
+			!Array.from(uniqueRequiredSignatures).every((a) =>
+				uniqueSignatures.has(a)
+			)
+		)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueRequiredSignatures).find((a) => !uniqueSignatures.has(a))} is missing` };
+
+		// validate authentication - case: authentication matches signatures, unique, excessive signatures, if external controller
+		if (uniqueRequiredSignatures.size < uniqueSignatures.size)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignatures).find((s) => !uniqueRequiredSignatures.has(s))} is not required` };
+
+		// return valid
+		return { valid: true };
+	}
+
+	static async validateAuthenticationAgainstSignaturesKeyRotation(
+		didDocument: DIDDocument,
+		signatures: readonly SignInfo[],
+		querier: CheqdQuerier & DidExtension,
+		previousDidDocument?: DIDDocument,
+		externalControllersDidDocuments?: DIDDocument[]
+	): Promise<AuthenticationValidationResult> {
+		// validate signatures - case: no signatures
+		if (!signatures || !signatures.length) return { valid: false, error: 'signatures are required' };
+
+		// validate authentication - case: no authentication when at least one verificationMethod
+		if ((!didDocument.authentication || !didDocument.authentication.length) && didDocument.verificationMethod?.length)
+			return { valid: false, error: 'authentication is required' };
+
+		// define unique authentication
+		const uniqueAuthentication = new Set<string>(didDocument.authentication as string[]);
+
+		// validate authentication - case: authentication contains duplicates
+		if (uniqueAuthentication.size < didDocument.authentication!.length)
+			return { valid: false, error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => didDocument.authentication!.filter((aa) => aa === a).length > 1)}` };
+
+		// define unique signatures
+		const uniqueSignatures = new Set(signatures.map((s) => s.verificationMethodId));
+
+		// validate authentication - case: authentication contains invalid key references
+		if (!Array.from(uniqueAuthentication).every((a) => didDocument.verificationMethod?.some((vm) => vm.id === a)))
+			return { valid: false, error: `authentication contains invalid key references: invalid key reference ${Array.from(uniqueAuthentication).find((a) => !didDocument.verificationMethod?.some((vm) => vm.id === a))}` };
+
+		// lookup previous document
+		if (!previousDidDocument) {
+			// get previous document
+			const previousDocument = await querier[defaultDidExtensionKey].didDoc(didDocument.id);
+
+			// throw, if not found
+			if (!previousDocument || !previousDocument.didDoc) throw new Error('Previous did document not found');
+
+			previousDidDocument = await DIDModule.toSpecCompliantPayload(previousDocument.didDoc);
+		}
+
+		// define whether external controller or not
+		const externalController = (didDocument.controller as string[]).concat(previousDidDocument.controller as string[]).some((c) => c !== didDocument.id);
+
+		// define whether key rotation or not, of any short
+		const keyRotation = !!didDocument.verificationMethod?.some((vm) => previousDidDocument?.verificationMethod?.some((pvm) => pvm.id === vm.id && (pvm.publicKeyBase58 !== vm.publicKeyBase58 || pvm.publicKeyMultibase !== vm.publicKeyMultibase || pvm.publicKeyJwk !== vm.publicKeyJwk)));
+
+		// define unique union of authentication
+		const uniqueUnionAuthentication = new Set<string>([...uniqueAuthentication, ...previousDidDocument.authentication as string[]]);
+
+		// validate authentication - case: authentication matches signatures, unique, if no external controller, no key rotation
+		if (!Array.from(uniqueUnionAuthentication).every((a) => uniqueSignatures.has(a)) && !externalController && !keyRotation)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueAuthentication).find((a) => !uniqueSignatures.has(a))} is missing` };
+
+		// define rotated keys
+		const rotatedKeys = keyRotation
+			? didDocument.verificationMethod?.filter((vm) => previousDidDocument?.verificationMethod?.some((pvm) => pvm.id === vm.id && (pvm.publicKeyBase58 !== vm.publicKeyBase58 || pvm.publicKeyMultibase !== vm.publicKeyMultibase || pvm.publicKeyJwk !== vm.publicKeyJwk)))
+			: [];
+
+		// define unique union of signatures required, delimited
+		const uniqueUnionSignaturesRequired = new Set([...(didDocument.authentication as string[]).filter((a) => rotatedKeys?.find((rk) => a === rk.id)).map((a) => `${a}(document0)`), ...(previousDidDocument.authentication as string[]).map((a) => `${a}(document1)`)]);
+
+		// define frequency of unique union of signatures required
+		const uniqueUnionSignaturesRequiredFrequency = new Map([...uniqueUnionSignaturesRequired].map((s) => [s.replace(new RegExp(/\(document\d+\)/), ''), 0]));
+
+		// count frequency of unique union of signatures required
+		uniqueUnionSignaturesRequired.forEach((s) => {
+			// define key
+			const key = s.replace(new RegExp(/\(document\d+\)/), '');
+
+			// increment frequency
+			uniqueUnionSignaturesRequiredFrequency.set(key, uniqueUnionSignaturesRequiredFrequency.get(key)! + 1);
+		})
+
+		// define frequency of signatures provided
+		const uniqueSignaturesFrequency = new Map(signatures.map((s) => [s.verificationMethodId, 0]));
+
+		// count frequency of signatures provided
+		signatures.forEach((s) => {
+			// increment frequency
+			uniqueSignaturesFrequency.set(s.verificationMethodId, uniqueSignaturesFrequency.get(s.verificationMethodId)! + 1);
+		});
+
+		// validate signatures - case: authentication matches signatures, unique, excessive signatures, no external controller
+		if (Array.from(uniqueSignaturesFrequency).filter(([k, f]) => uniqueUnionSignaturesRequiredFrequency.get(k) === undefined || (uniqueUnionSignaturesRequiredFrequency.get(k) && uniqueUnionSignaturesRequiredFrequency.get(k)! < f)).length && !externalController)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignaturesFrequency).find(([k, f]) => uniqueUnionSignaturesRequiredFrequency.get(k) === undefined || uniqueUnionSignaturesRequiredFrequency.get(k)! < f)?.[0]} is not required` };
+
+		// validate signatures - case: authentication matches signatures, unique, missing signatures, no external controller
+		if (Array.from(uniqueSignaturesFrequency).filter(([k, f]) => uniqueUnionSignaturesRequiredFrequency.get(k) && uniqueUnionSignaturesRequiredFrequency.get(k)! > f).length && !externalController)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignaturesFrequency).find(([k, f]) => uniqueUnionSignaturesRequiredFrequency.get(k)! > f)?.[0]} is missing` };
+
+		// return, if no external controller
+		if (!externalController) return { valid: true };
+
+		// require querier
+		if (!querier) throw new Error('querier is required for external controller validation');
+
+		// get external controllers
+		const externalControllers = (didDocument.controller as string[])?.filter((c) => c !== didDocument.id);
+
+		// get external controllers' documents
+		const externalControllersDocuments = await Promise.all(
+			externalControllers?.map(async (c) => {
+				// compute index of external controller's document, if provided
+				const externalControllerDocumentIndex = externalControllersDidDocuments?.findIndex((d) => d.id === c);
+
+				// get external controller's document, if provided
+				if (externalControllerDocumentIndex !== undefined && externalControllerDocumentIndex !== -1)
+					return externalControllersDidDocuments?.[externalControllerDocumentIndex];
+
+				// fetch external controller's document
+				const protobufDocument = await querier[defaultDidExtensionKey].didDoc(c)
+
+				// throw, if not found
+				if (!protobufDocument || !protobufDocument.didDoc) throw new Error(`Document for controller ${c} not found`)
+
+				// convert to spec compliant payload
+				return await DIDModule.toSpecCompliantPayload(protobufDocument.didDoc)
+			})
+		);
+
+		// define unique required signatures, delimited, with external controllers
+		const uniqueUnionSignaturesRequiredWithExternalControllers = new Set<string>([...uniqueUnionSignaturesRequired, ...externalControllersDocuments!.flatMap((d) => d!.authentication as string[]).map((a) => `${a}(document${externalControllersDocuments!.findIndex((d) => d?.authentication?.includes(a))})`)]);
+
+		// define frequency of unique union of signatures required, with external controllers
+		const uniqueUnionSignaturesRequiredWithExternalControllersFrequency = new Map([...uniqueUnionSignaturesRequiredWithExternalControllers].map((s) => [s.replace(new RegExp(/\(document\d+\)/), ''), 0]));
+
+		// count frequency of unique union of signatures required, with external controllers
+		uniqueUnionSignaturesRequiredWithExternalControllers.forEach((s) => {
+			// define key
+			const key = s.replace(new RegExp(/\(document\d+\)/), '');
+
+			// increment frequency
+			uniqueUnionSignaturesRequiredWithExternalControllersFrequency.set(key, uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(key)! + 1);
+		})
+
+		// define frequency of signatures provided, with external controllers
+		const uniqueSignaturesFrequencyWithExternalControllers = new Map(signatures.map((s) => [s.verificationMethodId, 0]));
+
+		// count frequency of signatures provided, with external controllers
+		signatures.forEach((s) => {
+			// increment frequency
+			uniqueSignaturesFrequencyWithExternalControllers.set(s.verificationMethodId, uniqueSignaturesFrequencyWithExternalControllers.get(s.verificationMethodId)! + 1);
+		});
+
+		// validate signatures - case: authentication matches signatures, unique, excessive signatures, with external controllers
+		if (Array.from(uniqueSignaturesFrequencyWithExternalControllers).filter(([k, f]) => uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k) === undefined || (uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k) && uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k)! < f)).length
+			&& externalController)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignaturesFrequencyWithExternalControllers).find(([k, f]) => uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k) === undefined || uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k)! < f)?.[0]} is not required` };
+
+		// validate signatures - case: authentication matches signatures, unique, missing signatures, with external controllers
+		if (Array.from(uniqueSignaturesFrequencyWithExternalControllers).filter(([k, f]) => uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k) && uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k)! > f).length
+			&& externalController)
+			return { valid: false, error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignaturesFrequencyWithExternalControllers).find(([k, f]) => uniqueUnionSignaturesRequiredWithExternalControllersFrequency.get(k)! > f)?.[0]} is missing` };
+
+		// return valid
+		return { valid: true };
 	}
 
 	static async generateCreateDidDocFees(feePayer: string, granter?: string): Promise<DidStdFee> {
