@@ -1708,10 +1708,6 @@ describe('DIDModule', () => {
 					didPayload
 				);
 
-				console.warn('previous document:', didPayload);
-
-				console.warn('rotated document:', rotatedDidPayload);
-
 				expect(valid).toBe(true);
 				expect(error).toBeUndefined();
 
@@ -1931,10 +1927,6 @@ describe('DIDModule', () => {
 				didPayload,
 				[didPayload2]
 			);
-
-			console.warn('previous document:', didPayload);
-
-			console.warn('rotated document:', rotatedDidPayload);
 
 			expect(valid).toBe(true);
 			expect(error).toBeUndefined();
