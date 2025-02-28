@@ -19,10 +19,7 @@ updates:
   # Maintain dependencies for NPM
   - package-ecosystem: "npm"
     target-branch: "develop"
-    directories:
-      - "/"
-      - "esm/*"
-      - "!cjs/*"
+    directory: "esm/*"
     schedule:
       interval: "weekly"
     ignore:
