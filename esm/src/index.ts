@@ -20,7 +20,11 @@ import { CheqdNetwork, IContext, IModuleMethodMap } from './types.js';
 import { GasPrice, QueryClient } from '@cosmjs/stargate';
 import { CheqdQuerier } from './querier.js';
 import { CometClient } from '@cosmjs/tendermint-rpc';
-import { FeeabstractionExtension, FeeabstractionModule, MinimalImportableFeeabstractionModule } from './modules/feeabstraction.js';
+import {
+	FeeabstractionExtension,
+	FeeabstractionModule,
+	MinimalImportableFeeabstractionModule,
+} from './modules/feeabstraction.js';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -34,7 +38,8 @@ export interface ICheqdSDKOptions {
 
 export type DefaultCheqdSDKModules = MinimalImportableDIDModule &
 	MinimalImportableResourceModule &
-	MinimalImportableFeemarketModule & MinimalImportableFeeabstractionModule;
+	MinimalImportableFeemarketModule &
+	MinimalImportableFeeabstractionModule;
 
 export interface CheqdSDK extends DefaultCheqdSDKModules {}
 

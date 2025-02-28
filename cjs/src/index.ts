@@ -20,7 +20,11 @@ import {
 	FeemarketModule,
 	MinimalImportableFeemarketModule,
 } from './modules/feemarket';
-import { FeeabstractionExtension, FeeabstractionModule, MinimalImportableFeeabstractionModule } from './modules/feeabstraction';
+import {
+	FeeabstractionExtension,
+	FeeabstractionModule,
+	MinimalImportableFeeabstractionModule,
+} from './modules/feeabstraction';
 
 export interface ICheqdSDKOptions {
 	modules: AbstractCheqdSDKModule[];
@@ -34,7 +38,8 @@ export interface ICheqdSDKOptions {
 
 export type DefaultCheqdSDKModules = MinimalImportableDIDModule &
 	MinimalImportableResourceModule &
-	MinimalImportableFeemarketModule & MinimalImportableFeeabstractionModule;
+	MinimalImportableFeemarketModule &
+	MinimalImportableFeeabstractionModule;
 
 export interface CheqdSDK extends DefaultCheqdSDKModules {}
 
