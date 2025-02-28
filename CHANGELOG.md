@@ -1,5 +1,14 @@
 # Changelog
 
+## <small>5.1.1 (2025-02-28)</small>
+
+* build(deps): Bump @stablelib/ed25519 from 1.0.3 to 2.0.2 in /esm (#417) ([2be5c6c](https://github.com/cheqd/sdk/commit/2be5c6c)), closes [#417](https://github.com/cheqd/sdk/issues/417)
+* chore(deps-dev): Bump @semantic-release/commit-analyzer from 11.1.0 to 13.0.1 (#416) ([84b457d](https://github.com/cheqd/sdk/commit/84b457d)), closes [#416](https://github.com/cheqd/sdk/issues/416)
+* chore(deps): Bump @cosmjs/encoding from 0.30.1 to 0.33.0 (#407) ([54d194d](https://github.com/cheqd/sdk/commit/54d194d)), closes [#407](https://github.com/cheqd/sdk/issues/407)
+* chore(deps): Bump uint8arrays from 3.1.1 to 5.1.0 (#409) ([2f24584](https://github.com/cheqd/sdk/commit/2f24584)), closes [#409](https://github.com/cheqd/sdk/issues/409)
+* ci: Update dependabot config ([074ccb6](https://github.com/cheqd/sdk/commit/074ccb6))
+* revert: "chore(deps): Bump uint8arrays from 3.1.1 to 5.1.0 (#409)" ([4ec1566](https://github.com/cheqd/sdk/commit/4ec1566)), closes [#409](https://github.com/cheqd/sdk/issues/409)
+
 ## 5.1.0 (2025-02-25)
 
 * chore(deps-dev): Bump @semantic-release/github from 10.3.5 to 11.0.1 (#395) ([d5a796c](https://github.com/cheqd/sdk/commit/d5a796c)), closes [#395](https://github.com/cheqd/sdk/issues/395)
