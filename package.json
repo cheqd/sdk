@@ -109,7 +109,7 @@
 		"@semantic-release/release-notes-generator": "^12.1.0",
 		"@types/jest": "^29.5.14",
 		"@types/long-cjs": "npm:@types/long@^4.0.2",
-		"@types/node": "^20.17.19",
+		"@types/node": "^22.13.5",
 		"@types/node-cjs": "npm:@types/node@^18.19.47",
 		"@types/uuid": "^10.0.0",
 		"@types/uuid-cjs": "npm:@types/uuid@^10.0.0",
