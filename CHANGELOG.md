@@ -1,6 +1,6 @@
 # Changelog
 
-## <small>5.1.1 (2025-02-28)</small>
+## 5.1.1 (2025-02-28)
 
 * build(deps): Bump @stablelib/ed25519 from 1.0.3 to 2.0.2 in /esm (#417) ([2be5c6c](https://github.com/cheqd/sdk/commit/2be5c6c)), closes [#417](https://github.com/cheqd/sdk/issues/417)
 * chore(deps-dev): Bump @semantic-release/commit-analyzer from 11.1.0 to 13.0.1 (#416) ([84b457d](https://github.com/cheqd/sdk/commit/84b457d)), closes [#416](https://github.com/cheqd/sdk/issues/416)
