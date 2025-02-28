@@ -64,7 +64,7 @@
 		"@cosmjs/amino-cjs": "npm:@cosmjs/amino@~0.30.1",
 		"@cosmjs/crypto": "^0.32.4",
 		"@cosmjs/crypto-cjs": "npm:@cosmjs/crypto@~0.30.1",
-		"@cosmjs/encoding": "^0.32.4",
+		"@cosmjs/encoding": "^0.33.0",
 		"@cosmjs/encoding-cjs": "npm:@cosmjs/encoding@~0.30.1",
 		"@cosmjs/math": "^0.32.4",
 		"@cosmjs/math-cjs": "npm:@cosmjs/math@~0.30.1",
