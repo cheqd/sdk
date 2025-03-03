@@ -43,7 +43,7 @@
 		"exponential-backoff": "^3.1.2",
 		"file-type": "^16.5.4",
 		"long": "^4.0.0",
-		"multiformats": "^9.9.0",
+		"multiformats": "^13.3.2",
 		"secp256k1": "^5.0.1",
 		"uint8arrays": "^3.1.1",
 		"uuid": "~10.0.0"
