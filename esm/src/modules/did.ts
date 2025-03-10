@@ -348,9 +348,27 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			alsoKnownAs: <string[]>didPayload.alsoKnownAs,
 			versionId: versionId,
 		});
+
+		// check whether external controller or not
+		const externalController = (didPayload.controller as string[]).some((c) => c !== didPayload.id);
+
+		// get external controllers' documents, if any
+		const externalControllersDocuments = externalController
+			? (
+					await Promise.all(
+						(didPayload.controller as string[])
+							.filter((c) => c !== didPayload.id)
+							.map(async (c) => {
+								const { didDoc } = await this.querier[defaultDidExtensionKey].didDoc(c);
+								return didDoc;
+							})
+					)
+				).filter((d) => d !== undefined) || []
+			: [];
+
 		let signatures: SignInfo[];
 		if (ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signUpdateDidDocTx(signInputs, payload);
+			signatures = await this._signer.signUpdateDidDocTx(signInputs, payload, externalControllersDocuments);
 		} else {
 			signatures = signInputs;
 		}
@@ -413,7 +431,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		let signatures: SignInfo[];
 		if (ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signdeactivateDidDocTx(signInputs, payload, protobufVerificationMethod!);
+			signatures = await this._signer.signDeactivateDidDocTx(signInputs, payload, protobufVerificationMethod!);
 		} else {
 			signatures = signInputs;
 		}

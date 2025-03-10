@@ -23,6 +23,7 @@ import {
 	MsgUpdateDidDocPayload,
 	MsgDeactivateDidDocPayload,
 	VerificationMethod,
+	DidDoc,
 } from '@cheqd/ts-proto-cjs/cheqd/did/v2';
 import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt-cjs';
@@ -235,7 +236,11 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return signInfos;
 	}
 
-	async signUpdateDidDocTx(signInputs: ISignInputs[], payload: MsgUpdateDidDocPayload): Promise<SignInfo[]> {
+	async signUpdateDidDocTx(
+		signInputs: ISignInputs[],
+		payload: MsgUpdateDidDocPayload,
+		externalControllers?: DidDoc[]
+	): Promise<SignInfo[]> {
 		await this.checkDidSigners(payload?.verificationMethod);
 
 		const signBytes = MsgUpdateDidDocPayload.encode(payload).finish();
@@ -245,7 +250,12 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 					verificationMethodId: signInput.verificationMethodId,
 					signature: base64ToBytes(
 						(await (
-							await this.getDidSigner(signInput.verificationMethodId, payload.verificationMethod)
+							await this.getDidSigner(
+								signInput.verificationMethodId,
+								payload.verificationMethod.concat(
+									externalControllers?.flatMap((controller) => controller.verificationMethod) ?? []
+								)
+							)
 						)(hexToBytes(signInput.privateKeyHex))(signBytes)) as string
 					),
 				};
@@ -255,7 +265,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return signInfos;
 	}
 
-	async signdeactivateDidDocTx(
+	async signDeactivateDidDocTx(
 		signInputs: ISignInputs[],
 		payload: MsgDeactivateDidDocPayload,
 		verificationMethod: VerificationMethod[]
