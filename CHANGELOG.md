@@ -1,5 +1,14 @@
 # Changelog
 
+## <small>5.1.2 (2025-03-11)</small>
+
+* chore: Tidy changelog ([fba3057](https://github.com/cheqd/sdk/commit/fba3057))
+* chore(deps): Bump file-type from 19.6.0 to 20.4.0 in /esm (#424) ([02d8eb9](https://github.com/cheqd/sdk/commit/02d8eb9)), closes [#424](https://github.com/cheqd/sdk/issues/424)
+* chore(release): 5.1.2-develop.1 [skip ci] ([61ddc26](https://github.com/cheqd/sdk/commit/61ddc26))
+* chore(release): v5.1.2 ([6447461](https://github.com/cheqd/sdk/commit/6447461))
+* fix: Coordinated sign input to signature match in case of external controllers present ([da08e01](https://github.com/cheqd/sdk/commit/da08e01))
+* ci: Update Dependabot config [skip ci] ([555ff33](https://github.com/cheqd/sdk/commit/555ff33))
+
 ## 5.1.2-develop.1 (2025-03-10)
 
 * fix: Coordinated sign input to signature match in case of external controllers present ([da08e01](https://github.com/cheqd/sdk/commit/da08e01))
