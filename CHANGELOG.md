@@ -1,6 +1,6 @@
 # Changelog
 
-## <small>5.1.2 (2025-03-11)</small>
+## 5.1.2 (2025-03-11)
 
 * chore: Tidy changelog ([fba3057](https://github.com/cheqd/sdk/commit/fba3057))
 * chore(deps): Bump file-type from 19.6.0 to 20.4.0 in /esm (#424) ([02d8eb9](https://github.com/cheqd/sdk/commit/02d8eb9)), closes [#424](https://github.com/cheqd/sdk/issues/424)
