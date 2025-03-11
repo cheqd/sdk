@@ -1,6 +1,6 @@
 # Changelog
 
-## <small>5.1.2-develop.1 (2025-03-10)</small>
+## 5.1.2-develop.1 (2025-03-10)
 
 * fix: Coordinated sign input to signature match in case of external controllers present ([da08e01](https://github.com/cheqd/sdk/commit/da08e01))
 * chore(deps): Bump file-type from 19.6.0 to 20.4.0 in /esm (#424) ([02d8eb9](https://github.com/cheqd/sdk/commit/02d8eb9)), closes [#424](https://github.com/cheqd/sdk/issues/424)
