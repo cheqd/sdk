@@ -335,12 +335,16 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			throw new Error(`DID payload is not spec compliant: ${error}`);
 		}
 
-		const { valid: authenticationValid, error: authenticationError } =
-			await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
-				didPayload,
-				signInputs as SignInfo[],
-				this.querier
-			);
+		const {
+			valid: authenticationValid,
+			error: authenticationError,
+			externalControllersDocuments,
+			previousDidDocument,
+		} = await DIDModule.validateAuthenticationAgainstSignaturesKeyRotation(
+			didPayload,
+			signInputs as SignInfo[],
+			this.querier
+		);
 
 		if (!authenticationValid) {
 			throw new Error(`DID authentication is not valid: ${authenticationError}`);
@@ -361,26 +365,14 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			versionId: versionId,
 		});
 
-		// check whether external controller or not
-		const externalController = (didPayload.controller as string[]).some((c) => c !== didPayload.id);
-
-		// get external controllers' documents, if any
-		const externalControllersDocuments = externalController
-			? (
-					await Promise.all(
-						(didPayload.controller as string[])
-							.filter((c) => c !== didPayload.id)
-							.map(async (c) => {
-								const { didDoc } = await this.querier[defaultDidExtensionKey].didDoc(c);
-								return didDoc;
-							})
-					)
-				).filter((d) => d !== undefined) || []
-			: [];
-
 		let signatures: SignInfo[];
 		if (ISignInputs.isSignInput(signInputs)) {
-			signatures = await this._signer.signUpdateDidDocTx(signInputs, payload, externalControllersDocuments);
+			signatures = await this._signer.signUpdateDidDocTx(
+				signInputs,
+				payload,
+				externalControllersDocuments,
+				previousDidDocument
+			);
 		} else {
 			signatures = signInputs;
 		}
@@ -838,6 +830,22 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			)
 		);
 
+		// define controller rotation
+		const controllerRotation =
+			!(didDocument.controller as string[]).every((c) =>
+				(previousDidDocument.controller as string[]).includes(c)
+			) ||
+			!(previousDidDocument.controller as string[]).every((c) =>
+				(didDocument.controller as string[]).includes(c)
+			);
+
+		// define rotated controllers
+		const rotatedControllers = controllerRotation
+			? (previousDidDocument.controller as string[]).filter(
+					(c) => !(didDocument.controller as string[]).includes(c)
+				)
+			: [];
+
 		// define unique union of authentication
 		const uniqueUnionAuthentication = new Set<string>([
 			...uniqueAuthentication,
@@ -937,7 +945,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		if (!querier) throw new Error('querier is required for external controller validation');
 
 		// get external controllers
-		const externalControllers = (didDocument.controller as string[])?.filter((c) => c !== didDocument.id);
+		const externalControllers = (didDocument.controller as string[])
+			?.filter((c) => c !== didDocument.id)
+			.concat(rotatedControllers);
 
 		// get external controllers' documents
 		const externalControllersDocuments = await Promise.all(
@@ -947,7 +957,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 				// get external controller's document, if provided
 				if (externalControllerDocumentIndex !== undefined && externalControllerDocumentIndex !== -1)
-					return externalControllersDidDocuments?.[externalControllerDocumentIndex];
+					return externalControllersDidDocuments![externalControllerDocumentIndex]!;
 
 				// fetch external controller's document
 				const protobufDocument = await querier[defaultDidExtensionKey].didDoc(c);
@@ -971,6 +981,28 @@ export class DIDModule extends AbstractCheqdSDKModule {
 						`${a}(document${externalControllersDocuments!.findIndex((d) => d?.authentication?.includes(a))})`
 				),
 		]);
+
+		// add rotated controller keys to unique required signatures, if any
+		if (controllerRotation) {
+			// walk through rotated controllers
+			rotatedControllers.forEach((c) => {
+				// get rotated controller's document index
+				const rotatedControllerDocumentIndex = externalControllersDocuments.findIndex((d) => d?.id === c);
+
+				// early return, if no document
+				if (rotatedControllerDocumentIndex === -1) return;
+
+				// get rotated controller's document
+				const rotatedControllerDocument = externalControllersDocuments[rotatedControllerDocumentIndex]!;
+
+				// add rotated controller's authentication to unique required signatures
+				rotatedControllerDocument.authentication?.forEach((a) =>
+					uniqueUnionSignaturesRequiredWithExternalControllers.add(
+						`${a}(document${rotatedControllerDocumentIndex})`
+					)
+				);
+			});
+		}
 
 		// define frequency of unique union of signatures required, with external controllers
 		const uniqueUnionSignaturesRequiredWithExternalControllersFrequency = new Map(
@@ -1036,7 +1068,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			};
 
 		// return valid
-		return { valid: true };
+		return { valid: true, previousDidDocument, externalControllersDocuments };
 	}
 
 	static async generateCreateDidDocFees(feePayer: string, granter?: string): Promise<DidStdFee> {

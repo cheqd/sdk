@@ -6,7 +6,7 @@ import { CheqdSDK } from './index.js';
 import { Coin } from '@cosmjs/proto-signing';
 import { Signer } from 'did-jwt';
 import { QueryClient } from '@cosmjs/stargate';
-import { DIDResolutionResult } from 'did-resolver';
+import { DIDDocument, DIDResolutionResult } from 'did-resolver';
 import { DidExtension } from './modules/did.js';
 import { ResourceExtension } from './modules/resource.js';
 import { FeemarketExtension } from './modules/feemarket.js';
@@ -48,6 +48,8 @@ export type SpecValidationResult = {
 export type AuthenticationValidationResult = {
 	valid: boolean;
 	error?: string;
+	externalControllersDocuments?: DIDDocument[];
+	previousDidDocument?: DIDDocument;
 };
 
 export enum VerificationMethods {

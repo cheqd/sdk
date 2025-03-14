@@ -25,7 +25,7 @@ import {
 	VerificationMethod,
 	DidDoc,
 } from '@cheqd/ts-proto/cheqd/did/v2/index.js';
-import { DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types.js';
+import { DIDDocument, DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types.js';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { assert, assertDefined } from '@cosmjs/utils';
 import { encodeSecp256k1Pubkey } from '@cosmjs/amino';
@@ -234,7 +234,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	async signUpdateDidDocTx(
 		signInputs: ISignInputs[],
 		payload: MsgUpdateDidDocPayload,
-		externalControllers?: DidDoc[]
+		externalControllers?: DIDDocument[],
+		previousDidDocument?: DIDDocument
 	): Promise<SignInfo[]> {
 		await this.checkDidSigners(payload?.verificationMethod);
 
@@ -247,9 +248,29 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 						(await (
 							await this.getDidSigner(
 								signInput.verificationMethodId,
-								payload.verificationMethod.concat(
-									externalControllers?.flatMap((controller) => controller.verificationMethod) ?? []
-								)
+								payload.verificationMethod
+									.concat(
+										externalControllers
+											?.flatMap((controller) => controller.verificationMethod)
+											.map((vm) => {
+												return {
+													id: vm!.id,
+													verificationMethodType: vm!.type,
+													controller: vm!.controller,
+													verificationMaterial: '<ignored>',
+												} satisfies VerificationMethod;
+											}) ?? []
+									)
+									.concat(
+										previousDidDocument?.verificationMethod?.map((vm) => {
+											return {
+												id: vm.id,
+												verificationMethodType: vm.type,
+												controller: vm.controller,
+												verificationMaterial: '<ignored>',
+											} satisfies VerificationMethod;
+										}) ?? []
+									)
 							)
 						)(hexToBytes(signInput.privateKeyHex))(signBytes)) as string
 					),
