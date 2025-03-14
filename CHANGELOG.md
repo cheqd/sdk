@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>5.1.3-develop.1 (2025-03-14)</small>
+
+* fix: Added consideration for switching controller edge-cases ([c73a9de](https://github.com/cheqd/sdk/commit/c73a9de))
+* chore: Tidy changelog ([8ab11a7](https://github.com/cheqd/sdk/commit/8ab11a7))
+
 ## 5.1.2 (2025-03-11)
 
 * chore: Tidy changelog ([fba3057](https://github.com/cheqd/sdk/commit/fba3057))
