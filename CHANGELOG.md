@@ -1,5 +1,13 @@
 # Changelog
 
+## <small>5.1.3 (2025-03-14)</small>
+
+* chore: Tidy changelog ([c536200](https://github.com/cheqd/sdk/commit/c536200))
+* chore: Tidy changelog ([8ab11a7](https://github.com/cheqd/sdk/commit/8ab11a7))
+* chore(release): 5.1.3-develop.1 [skip ci] ([fdc430b](https://github.com/cheqd/sdk/commit/fdc430b))
+* chore(release): v5.1.3 ([938fedc](https://github.com/cheqd/sdk/commit/938fedc))
+* fix: Added consideration for switching controller edge-cases ([c73a9de](https://github.com/cheqd/sdk/commit/c73a9de))
+
 ## 5.1.3-develop.1 (2025-03-14)
 
 * fix: Added consideration for switching controller edge-cases ([c73a9de](https://github.com/cheqd/sdk/commit/c73a9de))
