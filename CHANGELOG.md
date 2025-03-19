@@ -1,6 +1,6 @@
 # Changelog
 
-## <small>5.1.3 (2025-03-14)</small>
+## 5.1.3 (2025-03-14)
 
 * chore: Tidy changelog ([c536200](https://github.com/cheqd/sdk/commit/c536200))
 * chore: Tidy changelog ([8ab11a7](https://github.com/cheqd/sdk/commit/8ab11a7))
