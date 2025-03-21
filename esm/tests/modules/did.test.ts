@@ -4,14 +4,7 @@ import { fromString, toString } from 'uint8arrays';
 import { DIDModule } from '../../src';
 import { createDefaultCheqdRegistry } from '../../src/registry';
 import { CheqdSigningStargateClient } from '../../src/signer';
-import {
-	CheqdNetwork,
-	DIDDocument,
-	ISignInputs,
-	IVerificationKeys,
-	MethodSpecificIdAlgo,
-	VerificationMethods,
-} from '../../src/types';
+import { CheqdNetwork, DIDDocument, ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../../src/types';
 import {
 	createDidPayload,
 	createDidVerificationMethod,
