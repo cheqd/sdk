@@ -43,6 +43,21 @@ export type TImportableEd25519Key = {
 	type: 'Ed25519';
 };
 
+export const TImportableEd25519Key = {
+	isValid(key: any): key is TImportableEd25519Key {
+		return (
+			typeof key === 'object' &&
+			key !== null &&
+			typeof key.publicKeyHex === 'string' &&
+			isHex(key.publicKeyHex) &&
+			typeof key.privateKeyHex === 'string' &&
+			isHex(key.privateKeyHex) &&
+			typeof key.kid === 'string' &&
+			key.type === 'Ed25519'
+		);
+	},
+};
+
 const MULTICODEC_ED25519_HEADER = new Uint8Array([0xed, 0x01]);
 
 export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
@@ -57,12 +72,13 @@ export function createSignInputsFromImportableEd25519Key(
 	key: TImportableEd25519Key,
 	verificationMethod: VerificationMethod[]
 ): ISignInputs {
-	if (verificationMethod?.length === 0) throw new Error('No verification methods provided');
+	if (!TImportableEd25519Key.isValid(key))
+		throw new Error(`Key validation failed. Expected ${Object.values(TImportableEd25519Key).join(', ')}`);
 
 	const publicKey = fromString(key.publicKeyHex, 'hex');
 
 	for (const method of verificationMethod) {
-		switch (method?.type) {
+		switch (method.type) {
 			case VerificationMethods.Ed255192020:
 				const publicKeyMultibase = toMultibaseRaw(publicKey);
 				if (method.publicKeyMultibase === publicKeyMultibase) {
@@ -92,9 +108,13 @@ export function createSignInputsFromImportableEd25519Key(
 					};
 				}
 		}
+		throw new Error(
+			`Unsupported verification method type: ${method.type}. Expected one of: ${Object.values(VerificationMethods).join(', ')}`
+		);
 	}
-
-	throw new Error('No verification method type provided');
+	throw new Error(
+		`No verification method type provided. Expected one of: ${Object.values(VerificationMethods).join(', ')}`
+	);
 }
 
 export function createKeyPairRaw(seed?: string): KeyPair {
@@ -125,7 +145,12 @@ export function createVerificationKeys(
 	methodSpecificId?: TMethodSpecificId,
 	didUrl?: string
 ): IVerificationKeys {
-	publicKey = publicKey.length == 43 ? publicKey : toString(fromString(publicKey, 'hex'), 'base64');
+	if (isHex(publicKey)) {
+		publicKey = toString(fromString(publicKey, 'hex'), 'base64');
+	} else if (!isBase64(publicKey)) {
+		throw new Error('publicKey validation failed. PublicKey should be in base64 or hex format');
+	}
+
 	switch (algo) {
 		case MethodSpecificIdAlgo.Base58:
 			methodSpecificId ||= bases['base58btc'].encode(base64ToBytes(publicKey));
@@ -368,4 +393,20 @@ export async function retry<T>(fn: () => Promise<T>, options?: BackoffOptions): 
 	}
 
 	return result;
+}
+
+function isBase64(str: string) {
+	try {
+		return toString(fromString(str, 'base64'), 'base64') === str;
+	} catch (e) {
+		return false;
+	}
+}
+
+function isHex(str: string): boolean {
+	try {
+		return toString(fromString(str, 'hex'), 'hex') === str;
+	} catch {
+		return false;
+	}
 }
