@@ -842,6 +842,69 @@ describe('DIDModule', () => {
 			},
 			defaultAsyncTxTimeout
 		);
+
+		it(
+			'should query a DID document - case: JSON unescaped AssertionMethod',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+				});
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupDidExtension
+				)) as CheqdQuerier & DidExtension;
+				const didModule = new DIDModule(signer, querier);
+
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys]);
+				const [assertionMethod] = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018],
+					[verificationKeys]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				didPayload.assertionMethod = [JSON.stringify(JSON.stringify(assertionMethod))];
+				const expectedAssertionMethod = [assertionMethod];
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const feePayer = (await wallet.getAccounts())[0].address;
+				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+
+				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
+				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
+
+				expect(didTx.code).toBe(0);
+
+				const didDoc = await didModule.queryDidDoc(didPayload.id);
+
+				expect(didDoc.didDocument!.id).toEqual(didPayload.id);
+				expect(didDoc.didDocument!.controller).toEqual(didPayload.controller);
+				expect(didDoc.didDocument!.verificationMethod).toEqual(didPayload.verificationMethod);
+
+				// we keep 1-1 relationship of omitempty fields in proto and spec compliant json
+				// while converting from proto to spec compliant json, we remove omitempty fields
+				// as in a resolved did document
+				expect(didDoc.didDocument?.authentication).toEqual(didPayload?.authentication);
+				expect(didDoc.didDocument?.assertionMethod).toEqual(expectedAssertionMethod);
+				expect(didDoc.didDocument?.capabilityInvocation).toEqual(didPayload?.capabilityInvocation);
+				expect(didDoc.didDocument?.capabilityDelegation).toEqual(didPayload?.capabilityDelegation);
+				expect(didDoc.didDocument?.keyAgreement).toEqual(didPayload?.keyAgreement);
+				expect(didDoc.didDocument?.service).toEqual(didPayload?.service);
+				expect(didDoc.didDocument?.alsoKnownAs).toEqual(didPayload?.alsoKnownAs);
+			},
+			defaultAsyncTxTimeout
+		);
 	});
 
 	describe('queryDidDocVersion', () => {
