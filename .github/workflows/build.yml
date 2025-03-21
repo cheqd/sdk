@@ -35,7 +35,7 @@ jobs:
 
   integration-tests:
     name: "Integration Tests"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: build
 
     steps:
@@ -48,7 +48,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Start cheqd localnet
-        run: docker run --rm -d -p 26657:26657 ghcr.io/cheqd/cheqd-node:3.1.5
+        run: docker run --rm -d -p 26657:26657 ghcr.io/cheqd/cheqd-node:latest
 
       - name: "Clean install dependencies"
         run: npm ci
@@ -58,7 +58,7 @@ jobs:
 
   import-tests:
     name: "Import Tests"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: build
 
     steps:
