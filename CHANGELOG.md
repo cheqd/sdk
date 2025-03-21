@@ -1,6 +1,6 @@
 # Changelog
 
-## <small>5.1.4-develop.1 (2025-03-21)</small>
+## 5.1.4-develop.1 (2025-03-21)
 
 * fix: Deserialize JSON unescaped assertionMethod [DEV-4850] (#431) ([e9c4a9c](https://github.com/cheqd/sdk/commit/e9c4a9c)), closes [#431](https://github.com/cheqd/sdk/issues/431)
 * chore: Tidy changelog ([41c6c71](https://github.com/cheqd/sdk/commit/41c6c71))
