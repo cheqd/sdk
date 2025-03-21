@@ -603,13 +603,22 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return [contexts.W3CDIDv1, ...protobufDidDocument.context];
 		})();
 
+		const assertionMethod = protobufDidDocument.assertionMethod.map((am) => {
+			try {
+				if (!am.startsWith('did:cheqd:')) return JSON.parse(JSON.parse(am));
+				return am;
+			} catch (error) {
+				throw new Error('Unsupported assertionMethod type');
+			}
+		});
+
 		const specCompliant = {
 			'@context': context,
 			id: protobufDidDocument.id,
 			controller: protobufDidDocument.controller,
 			verificationMethod: verificationMethod,
 			authentication: protobufDidDocument.authentication,
-			assertionMethod: protobufDidDocument.assertionMethod,
+			assertionMethod: assertionMethod,
 			capabilityInvocation: protobufDidDocument.capabilityInvocation,
 			capabilityDelegation: protobufDidDocument.capabilityDelegation,
 			keyAgreement: protobufDidDocument.keyAgreement,
