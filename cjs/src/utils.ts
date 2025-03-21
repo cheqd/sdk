@@ -395,7 +395,13 @@ export async function retry<T>(fn: () => Promise<T>, options?: BackoffOptions): 
 	return result;
 }
 
-function isBase64(str: string) {
+function isBase64(str: string): boolean {
+	// Quick pattern check to filter obvious non-base64 strings
+	const base64Pattern = /^[A-Za-z0-9+/]*={0,3}$/;
+	if (!base64Pattern.test(str)) {
+		return false;
+	}
+
 	try {
 		return toString(fromString(str, 'base64'), 'base64') === str;
 	} catch (e) {
@@ -404,6 +410,12 @@ function isBase64(str: string) {
 }
 
 function isHex(str: string): boolean {
+	// Quick pattern check to filter obvious non-hex strings
+	const hexPattern = /^[0-9a-fA-F]*$/;
+	if (!hexPattern.test(str)) {
+		return false;
+	}
+
 	try {
 		return toString(fromString(str, 'hex'), 'hex') === str;
 	} catch {
