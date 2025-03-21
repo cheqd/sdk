@@ -605,10 +605,19 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		const assertionMethod = protobufDidDocument.assertionMethod.map((am) => {
 			try {
-				if (!am.startsWith('did:cheqd:')) return JSON.parse(JSON.parse(am));
+				// Check if the assertionMethod is a DID URL
+				if (!am.startsWith('did:cheqd:')) {
+					// Parse once if it's a stringified JSON
+					const parsedAm = JSON.parse(am);
+					if (typeof parsedAm === 'string') {
+						// Parse again only if necessary
+						return JSON.parse(parsedAm);
+					}
+					return parsedAm;
+				}
 				return am;
 			} catch (error) {
-				throw new Error('Unsupported assertionMethod type');
+				throw new Error(`Unsupported assertionMethod type: ${am}`);
 			}
 		});
 
