@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.4](https://github.com/cheqd/sdk/compare/5.1.3...5.1.4) (2025-03-21)
+
+### Bug Fixes
+
+* Deserialize JSON unescaped assertionMethod [DEV-4850] ([#431](https://github.com/cheqd/sdk/issues/431)) ([e9c4a9c](https://github.com/cheqd/sdk/commit/e9c4a9c517f262272ef067438f5d430c7760b40a))
+* Improve Error Handling for VerificationMethodType in utils [DEV-4853] ([#430](https://github.com/cheqd/sdk/issues/430)) ([086f3df](https://github.com/cheqd/sdk/commit/086f3df4862159fd2ed40af5eec5e9948215fbd8))
+
 ## [5.1.4-develop.2](https://github.com/cheqd/sdk/compare/5.1.4-develop.1...5.1.4-develop.2) (2025-03-21)
 
 ### Bug Fixes
