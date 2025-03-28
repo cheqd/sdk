@@ -308,8 +308,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 					return {
 						batches: [...acc.batches, acc.currentBatch],
 						gasPerBatch: [...acc.gasPerBatch, acc.currentBatchGas],
-						currentBatch: [messages[index]], // Start a new batch with the current message
-						currentBatchGas: gasUsed, // Reset the gas counter for the new batch
+						currentBatch: [messages[index]],
+						currentBatchGas: gasUsed,
 					};
 				}
 

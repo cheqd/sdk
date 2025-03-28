@@ -1,7 +1,6 @@
 import { QueryClient } from '@cosmjs/stargate-cjs';
-import { Tendermint34Client, Tendermint37Client } from '@cosmjs/tendermint-rpc-cjs';
+import { Tendermint34Client, Tendermint37Client, ConsensusParams } from '@cosmjs/tendermint-rpc-cjs';
 import { QueryExtensionSetup, CheqdExtensions } from './types';
-import { ConsensusParams } from '@cosmjs/tendermint-rpc-cjs';
 
 export class CheqdQuerier extends QueryClient {
 	constructor(tmClient: Tendermint37Client | Tendermint34Client) {
