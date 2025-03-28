@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.2.0](https://github.com/cheqd/sdk/compare/5.1.4...5.2.0) (2025-03-28)
+
+### Features
+
+* Enabled simulation + recommended transaction batching ([98387c8](https://github.com/cheqd/sdk/commit/98387c8cd5db3589467e4929cb8283bbb689cc89))
+
 ## [5.2.0-develop.1](https://github.com/cheqd/sdk/compare/5.1.4...5.2.0-develop.1) (2025-03-28)
 
 ### Features
