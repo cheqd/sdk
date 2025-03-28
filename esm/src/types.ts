@@ -3,7 +3,7 @@ import {
 	VerificationMethod as ProtobufVerificationMethod,
 } from '@cheqd/ts-proto/cheqd/did/v2/index.js';
 import { CheqdSDK } from './index.js';
-import { Coin } from '@cosmjs/proto-signing';
+import { Coin, EncodeObject } from '@cosmjs/proto-signing';
 import { Signer } from 'did-jwt';
 import { QueryClient } from '@cosmjs/stargate';
 import { DIDDocument, DIDResolutionResult } from 'did-resolver';
@@ -11,6 +11,9 @@ import { DidExtension } from './modules/did.js';
 import { ResourceExtension } from './modules/resource.js';
 import { FeemarketExtension } from './modules/feemarket.js';
 import { FeeabstractionExtension } from './modules/feeabstraction.js';
+import { GetTxResponse, SimulateResponse } from 'cosmjs-types/cosmos/tx/v1beta1/service.js';
+import { Any } from 'cosmjs-types/google/protobuf/any.js';
+import { Pubkey } from '@cosmjs/amino';
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from 'did-resolver';
 
 export enum CheqdNetwork {
@@ -25,6 +28,20 @@ export type CheqdExtension<K extends string, V = any> = {
 }[K];
 
 export type CheqdExtensions = DidExtension | ResourceExtension | FeemarketExtension | FeeabstractionExtension;
+
+export interface TxExtension {
+	readonly tx: {
+		getTx: (txId: string) => Promise<GetTxResponse>;
+		simulate: (
+			messages: readonly Any[],
+			memo: string | undefined,
+			signer: Pubkey,
+			signerAddress: string,
+			sequence: number,
+			gasLimit: number
+		) => Promise<SimulateResponse>;
+	};
+}
 
 export interface IModuleMethod {
 	(...args: any[]): Promise<any>;
@@ -50,6 +67,11 @@ export type AuthenticationValidationResult = {
 	error?: string;
 	externalControllersDocuments?: DIDDocument[];
 	previousDidDocument?: DIDDocument;
+};
+
+export type MessageBatch = {
+	readonly batches: EncodeObject[][];
+	readonly gas: number[];
 };
 
 export enum VerificationMethods {

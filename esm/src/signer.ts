@@ -14,6 +14,7 @@ import {
 	SigningStargateClientOptions,
 	calculateFee,
 	SignerData,
+	createProtobufRpcClient,
 } from '@cosmjs/stargate';
 import { CometClient, connectComet } from '@cosmjs/tendermint-rpc';
 import { createDefaultCheqdRegistry } from './registry.js';
@@ -23,18 +24,25 @@ import {
 	MsgUpdateDidDocPayload,
 	MsgDeactivateDidDocPayload,
 	VerificationMethod,
-	DidDoc,
 } from '@cheqd/ts-proto/cheqd/did/v2/index.js';
-import { DIDDocument, DidStdFee, ISignInputs, TSignerAlgo, VerificationMethods } from './types.js';
+import { DIDDocument, DidStdFee, ISignInputs, MessageBatch, TSignerAlgo, VerificationMethods } from './types.js';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { assert, assertDefined } from '@cosmjs/utils';
-import { encodeSecp256k1Pubkey } from '@cosmjs/amino';
-import { Int53 } from '@cosmjs/math';
+import { encodeSecp256k1Pubkey, Pubkey } from '@cosmjs/amino';
+import { Int53, Uint53 } from '@cosmjs/math';
 import { fromBase64 } from '@cosmjs/encoding';
-import { AuthInfo, SignerInfo, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
+import { AuthInfo, Fee, SignerInfo, Tx, TxBody, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx.js';
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
 import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin.js';
+import {
+	GetTxResponse,
+	ServiceClientImpl,
+	SimulateRequest,
+	SimulateResponse,
+} from 'cosmjs-types/cosmos/tx/v1beta1/service.js';
+import { CheqdQuerier } from './querier.js';
+import { TxExtension } from './types';
 
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice);
@@ -77,23 +85,34 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	private didSigners: TSignerAlgo = {};
 	private readonly _gasPrice: GasPrice | undefined;
 	private readonly _signer: OfflineSigner;
+	private readonly endpoint?: string;
 
 	public static async connectWithSigner(
 		endpoint: string | HttpEndpoint,
 		signer: OfflineSigner,
-		options?: SigningStargateClientOptions | undefined
+		options?: (SigningStargateClientOptions & { endpoint?: string }) | undefined
 	): Promise<CheqdSigningStargateClient> {
-		const tmClient = await connectComet(endpoint);
-		return new CheqdSigningStargateClient(tmClient, signer, {
+		const cometClient = await connectComet(endpoint);
+		return new CheqdSigningStargateClient(cometClient, signer, {
 			registry: options?.registry ? options.registry : createDefaultCheqdRegistry(),
+			endpoint: options?.endpoint
+				? typeof options.endpoint === 'string'
+					? options.endpoint
+					: (options.endpoint as HttpEndpoint).url
+				: undefined,
 			...options,
 		});
 	}
 
-	constructor(tmClient: CometClient | undefined, signer: OfflineSigner, options: SigningStargateClientOptions = {}) {
-		super(tmClient, signer, options);
+	constructor(
+		cometClient: CometClient | undefined,
+		signer: OfflineSigner,
+		options: SigningStargateClientOptions & { endpoint?: string } = {}
+	) {
+		super(cometClient, signer, options);
 		this._signer = signer;
-		if (options.gasPrice) this._gasPrice = options.gasPrice;
+		this._gasPrice = options.gasPrice;
+		this.endpoint = options.endpoint;
 	}
 
 	async signAndBroadcast(
@@ -174,6 +193,152 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			authInfoBytes: signed.authInfoBytes,
 			signatures: [fromBase64(signature.signature)],
 		});
+	}
+
+	async simulate(
+		signerAddress: string,
+		messages: readonly EncodeObject[],
+		memo: string | undefined
+	): Promise<number> {
+		if (!this.endpoint) {
+			throw new Error('querier: endpoint is not set');
+		}
+		const querier = await CheqdQuerier.connect(this.endpoint);
+		const anyMsgs = messages.map((msg) => this.registry.encodeAsAny(msg));
+		const accountFromSigner = (await this._signer.getAccounts()).find(
+			(account) => account.address === signerAddress
+		);
+		if (!accountFromSigner) {
+			throw new Error('Failed to retrieve account from signer');
+		}
+		const pubkey = encodeSecp256k1Pubkey(accountFromSigner.pubkey);
+		const { sequence } = await this.getSequence(signerAddress);
+		const gasLimit = (await CheqdQuerier.getConsensusParameters(this.endpoint))!.block.maxGas;
+		const { gasInfo } = await (
+			await this.constructSimulateExtension(querier)
+		).tx.simulate(anyMsgs, memo, pubkey, signerAddress, sequence, gasLimit);
+		assertDefined(gasInfo);
+		return Uint53.fromString(gasInfo.gasUsed.toString()).toNumber();
+	}
+
+	async constructSimulateExtension(querier: CheqdQuerier): Promise<TxExtension> {
+		// setup rpc client
+		const rpc = createProtobufRpcClient(querier);
+
+		// setup query tx query service
+		const queryService = new ServiceClientImpl(rpc);
+
+		// setup + return tx extension
+		return {
+			tx: {
+				getTx: async (txId: string): Promise<GetTxResponse> => {
+					// construct request
+					const request = { hash: txId };
+
+					// query + return tx
+					return await queryService.GetTx(request);
+				},
+				simulate: async (
+					messages: readonly Any[],
+					memo: string | undefined,
+					signer: Pubkey,
+					signerAddress: string,
+					sequence: number,
+					gasLimit: number
+				): Promise<SimulateResponse> => {
+					// encode public key
+					const publicKey = encodePubkey(signer);
+
+					// construct max gas limit
+					const maxGasLimit = Int53.fromString(gasLimit.toString()).toNumber();
+
+					// construct unsigned tx
+					const tx = Tx.fromPartial({
+						body: TxBody.fromPartial({
+							messages: Array.from(messages),
+							memo,
+						}),
+						authInfo: AuthInfo.fromPartial({
+							fee: Fee.fromPartial({
+								amount: [],
+								gasLimit: BigInt(maxGasLimit),
+								payer: signerAddress,
+							}),
+							signerInfos: [
+								{
+									publicKey,
+									modeInfo: {
+										single: { mode: SignMode.SIGN_MODE_DIRECT },
+									},
+									sequence: BigInt(sequence),
+								},
+							],
+						}),
+						signatures: [new Uint8Array()],
+					});
+
+					// construct request
+					const request = SimulateRequest.fromPartial({
+						txBytes: Tx.encode(tx).finish(),
+					});
+
+					// query + return simulation response
+					return await queryService.Simulate(request);
+				},
+			},
+		};
+	}
+
+	async batchMessages(
+		messages: readonly EncodeObject[],
+		signerAddress: string,
+		memo?: string,
+		maxGasLimit: number = 30000000 // default gas limit, use consensus params if available
+	): Promise<MessageBatch> {
+		// simulate
+		const gasEstimates = await Promise.all(
+			messages.map(async (message) => this.simulate(signerAddress, [message], memo))
+		);
+
+		// batch messages
+		const { batches, gasPerBatch, currentBatch, currentBatchGas } = gasEstimates.reduce(
+			(acc, gasUsed, index) => {
+				// finalise current batch, if limit is surpassed
+				if (acc.currentBatchGas + gasUsed > maxGasLimit) {
+					return {
+						batches: [...acc.batches, acc.currentBatch],
+						gasPerBatch: [...acc.gasPerBatch, acc.currentBatchGas],
+						currentBatch: [messages[index]], // Start a new batch with the current message
+						currentBatchGas: gasUsed, // Reset the gas counter for the new batch
+					};
+				}
+
+				// otherwise, add to current batch
+				return {
+					batches: acc.batches,
+					gasPerBatch: acc.gasPerBatch,
+					currentBatch: [...acc.currentBatch, messages[index]],
+					currentBatchGas: acc.currentBatchGas + gasUsed,
+				};
+			},
+			{
+				batches: [] as EncodeObject[][],
+				gasPerBatch: [] as number[],
+				currentBatch: [] as EncodeObject[],
+				currentBatchGas: 0,
+			}
+		);
+
+		// push final batch to batches, if not empty + return
+		return currentBatch.length > 0
+			? {
+					batches: [...batches, currentBatch],
+					gas: [...gasPerBatch, currentBatchGas],
+				}
+			: {
+					batches,
+					gas: gasPerBatch,
+				};
 	}
 
 	async checkDidSigners(verificationMethods: Partial<VerificationMethod>[] = []): Promise<TSignerAlgo> {

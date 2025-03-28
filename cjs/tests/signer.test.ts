@@ -1,7 +1,7 @@
 import { MsgCreateDidDoc, MsgCreateDidDocPayload, VerificationMethod } from '@cheqd/ts-proto-cjs/cheqd/did/v2';
 import { DirectSecp256k1HdWallet, Registry } from '@cosmjs/proto-signing-cjs';
 import { EdDSASigner } from 'did-jwt-cjs';
-import { typeUrlMsgCreateDidDoc } from '../src/modules/did';
+import { DIDModule, MsgCreateDidDocEncodeObject, typeUrlMsgCreateDidDoc } from '../src/modules/did';
 import { CheqdSigningStargateClient } from '../src/signer';
 import { ISignInputs, MethodSpecificIdAlgo, VerificationMethods } from '../src/types';
 import { fromString, toString } from 'uint8arrays-cjs';
@@ -15,6 +15,7 @@ import {
 import { localnet, faucet } from './testutils.test';
 import { verify } from '@stablelib/ed25519-cjs';
 import { v4 } from 'uuid-cjs';
+import { CheqdQuerier, createDefaultCheqdRegistry } from '../src';
 
 const nonExistingDid = 'did:cHeQd:fantasticnet:123';
 const nonExistingKeyId = 'did:cHeQd:fantasticnet:123#key-678';
@@ -33,6 +34,8 @@ const nonExistingVerificationDidDocument = {
 		},
 	],
 };
+
+const defaultAsyncTxTimeout = 30000;
 
 describe('CheqdSigningStargateClient', () => {
 	describe('constructor', () => {
@@ -205,5 +208,150 @@ describe('CheqdSigningStargateClient', () => {
 
 			expect(verified).toBe(true);
 		});
+	});
+
+	describe('simulate', () => {
+		it(
+			'should simulate a did tx',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+					endpoint: localnet.rpcUrl,
+				});
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[verificationKeys]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const { protobufVerificationMethod, protobufService } = validateSpecCompliantPayload(didPayload);
+				const versionId = v4();
+				const payload = MsgCreateDidDocPayload.fromPartial({
+					context: <string[]>didPayload?.['@context'],
+					id: didPayload.id,
+					controller: <string[]>didPayload.controller,
+					verificationMethod: protobufVerificationMethod,
+					authentication: <string[]>didPayload.authentication,
+					assertionMethod: <string[]>didPayload.assertionMethod,
+					capabilityInvocation: <string[]>didPayload.capabilityInvocation,
+					capabilityDelegation: <string[]>didPayload.capabilityDelegation,
+					keyAgreement: <string[]>didPayload.keyAgreement,
+					service: protobufService,
+					alsoKnownAs: <string[]>didPayload.alsoKnownAs,
+					versionId: versionId,
+				});
+				const signatures = await signer.signCreateDidDocTx(signInputs, payload);
+				const createDidDocMsg = MsgCreateDidDoc.fromPartial({
+					payload,
+					signatures,
+				});
+				const createDidDocEncodeObject = {
+					typeUrl: typeUrlMsgCreateDidDoc,
+					value: createDidDocMsg,
+				} satisfies MsgCreateDidDocEncodeObject;
+				const [signerAccount] = await wallet.getAccounts();
+				const simulation = await signer.simulate(signerAccount.address, [createDidDocEncodeObject], undefined);
+
+				console.warn('simulation', simulation);
+
+				expect(simulation).toBeDefined();
+				expect(simulation).toBeGreaterThan(0);
+			},
+			defaultAsyncTxTimeout
+		);
+	});
+
+	describe('batchMessages', () => {
+		it(
+			'should batch a did tx',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+					endpoint: localnet.rpcUrl,
+				});
+				// create 50 messages
+				const messages = [];
+				for (let i = 0; i < 50; i++) {
+					const keyPair = createKeyPairBase64();
+					const verificationKeys = createVerificationKeys(
+						keyPair.publicKey,
+						MethodSpecificIdAlgo.Base58,
+						`key-${i}`
+					);
+					const verificationMethods = createDidVerificationMethod(
+						[VerificationMethods.Ed255192020],
+						[verificationKeys]
+					);
+					const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+					const signInputs: ISignInputs[] = [
+						{
+							verificationMethodId: didPayload.verificationMethod![0].id,
+							privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+						},
+					];
+					const { protobufVerificationMethod, protobufService } = validateSpecCompliantPayload(didPayload);
+					const versionId = v4();
+					const payload = MsgCreateDidDocPayload.fromPartial({
+						context: <string[]>didPayload?.['@context'],
+						id: didPayload.id,
+						controller: <string[]>didPayload.controller,
+						verificationMethod: protobufVerificationMethod,
+						authentication: <string[]>didPayload.authentication,
+						assertionMethod: <string[]>didPayload.assertionMethod,
+						capabilityInvocation: <string[]>didPayload.capabilityInvocation,
+						capabilityDelegation: <string[]>didPayload.capabilityDelegation,
+						keyAgreement: <string[]>didPayload.keyAgreement,
+						service: protobufService,
+						alsoKnownAs: <string[]>didPayload.alsoKnownAs,
+						versionId: versionId,
+					});
+					const signatures = await signer.signCreateDidDocTx(signInputs, payload);
+					const createDidDocMsg = MsgCreateDidDoc.fromPartial({
+						payload,
+						signatures,
+					});
+					const createDidDocEncodeObject = {
+						typeUrl: typeUrlMsgCreateDidDoc,
+						value: createDidDocMsg,
+					} satisfies MsgCreateDidDocEncodeObject;
+					messages.push(createDidDocEncodeObject);
+				}
+				const [signerAccount] = await wallet.getAccounts();
+				const maxGasLimit = (await CheqdQuerier.getConsensusParameters(localnet.rpcUrl))!.block.maxGas;
+				const batchMessages = await signer.batchMessages(
+					messages,
+					signerAccount.address,
+					undefined,
+					maxGasLimit
+				);
+
+				console.warn('batchMessages', JSON.stringify(batchMessages, null, 2));
+
+				console.warn('batchMessages.gas', batchMessages.gas);
+
+				expect(batchMessages).toBeDefined();
+				expect(batchMessages.batches).toBeDefined();
+				expect(batchMessages.batches.length).toBeGreaterThanOrEqual(1);
+				expect(batchMessages.gas[0]).toBeDefined();
+				expect(batchMessages.gas[0]).toBeLessThanOrEqual(30000000);
+				expect(batchMessages.gas.length).toBe(batchMessages.batches.length);
+			},
+			3 * defaultAsyncTxTimeout
+		);
 	});
 });
