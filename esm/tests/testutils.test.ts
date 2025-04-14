@@ -15,7 +15,8 @@ export const localnet = {
 	gasPrice: GasPrice.fromString(`5000${faucet.minimalDenom}`),
 };
 
-export const json_content = '{"message": "hello world"}';
+export const json_content =
+	'{"StatusList2021":{"encodedList":"H4sIAAAAAAAAA-3BIQEAAAACIGf4f6kzLEAaAAAAAAAAAAAAAAAAAAAA4Gy7QfAyAEAAAA","type":"StatusList2021Suspension","validFrom":"2023-07-03T07:17:23.261Z"},"metadata":{"encoding":"base64url","encrypted":false}}';
 
 export const image_content =
 	'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAAA1BMVEW10NBjBBbqAAAAH0lEQVRoge3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAvg0hAAABmmDh1QAAAABJRU5ErkJggg' as const;

@@ -109,8 +109,8 @@ describe('ResourceModule', () => {
 					id: v4(),
 					version: '1.0',
 					alsoKnownAs: [],
-					name: 'Test Resource',
-					resourceType: 'test-resource-type',
+					name: 'testingstatuslist',
+					resourceType: 'StatusList2021Suspension',
 					data: new TextEncoder().encode(json_content),
 				};
 
