@@ -27,7 +27,7 @@
 		"build:cjs": "cd cjs && tsc -p tsconfig.json && cp package.json ../build/cjs/package.json",
 		"build:types": "cd esm && tsc -p tsconfig.types.json",
 		"tidy": "node tidy-dependencies.js && npm i --save && npm run format",
-		"test": "npm run test:cjs",
+		"test": "npm run test:esm && npm run test:cjs",
 		"test:esm": "cd esm && npm test",
 		"test:cjs": "cd cjs && npm test",
 		"format": "prettier --write '**/*.{js,ts,cjs,mjs,json}'",
