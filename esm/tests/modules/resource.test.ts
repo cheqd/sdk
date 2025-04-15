@@ -702,6 +702,8 @@ describe('ResourceModule', () => {
 					data: new TextEncoder().encode(json_content),
 				};
 
+				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
+
 				const resourceSignInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -718,7 +720,6 @@ describe('ResourceModule', () => {
 					feeResourceJson
 				);
 
-				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
 				console.warn(`Resource Tx: ${JSON.stringify(resourceTx)}`);
 
 				expect(resourceTx.code).toBe(0);
