@@ -103,11 +103,11 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			denom: ResourceModule.baseMinimalDenom,
 		} as const,
 		DefaultCreateResourceJsonFee: {
-			amount: '10000000000',
+			amount: '2500000000',
 			denom: ResourceModule.baseMinimalDenom,
 		} as const,
 		DefaultCreateResourceDefaultFee: {
-			amount: '10000000000',
+			amount: '5000000000',
 			denom: ResourceModule.baseMinimalDenom,
 		} as const,
 	} as const;
