@@ -19,7 +19,7 @@ import {
 	createVerificationKeys,
 	validateSpecCompliantPayload,
 } from '../src/utils';
-import { localnet, faucet } from './testutils.test';
+import { localnet, faucet, testnet_rpc } from './testutils.test';
 import { verify } from '@stablelib/ed25519';
 import { v4 } from 'uuid';
 import { CheqdQuerier, createDefaultCheqdRegistry } from '../src';
@@ -221,9 +221,9 @@ describe('CheqdSigningStargateClient', () => {
 			async () => {
 				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
 				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
-				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+				const signer = await CheqdSigningStargateClient.connectWithSigner(testnet_rpc, wallet, {
 					registry,
-					endpoint: localnet.rpcUrl,
+					endpoint: testnet_rpc,
 				});
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -285,9 +285,9 @@ describe('CheqdSigningStargateClient', () => {
 			async () => {
 				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
 				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
-				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+				const signer = await CheqdSigningStargateClient.connectWithSigner(testnet_rpc, wallet, {
 					registry,
-					endpoint: localnet.rpcUrl,
+					endpoint: testnet_rpc,
 				});
 				// create 50 messages
 				const messages = [];
@@ -337,7 +337,7 @@ describe('CheqdSigningStargateClient', () => {
 					messages.push(createDidDocEncodeObject);
 				}
 				const [signerAccount] = await wallet.getAccounts();
-				const maxGasLimit = (await CheqdQuerier.getConsensusParameters(localnet.rpcUrl))!.block.maxGas;
+				const maxGasLimit = (await CheqdQuerier.getConsensusParameters(testnet_rpc))!.block.maxGas;
 				const batchMessages = await signer.batchMessages(
 					messages,
 					signerAccount.address,

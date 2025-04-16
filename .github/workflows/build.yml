@@ -47,8 +47,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
-      - name: Start cheqd localnet
-        run: docker run --rm -d -p 26657:26657 ghcr.io/cheqd/cheqd-node:latest
+      - name: Setup services
+        run: docker compose -f docker-compose.yml up -d
 
       - name: "Clean install dependencies"
         run: npm ci
