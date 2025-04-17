@@ -416,3 +416,17 @@ function isHex(str: string): boolean {
 		return false;
 	}
 }
+
+export function normalizeAuthentication(authentication?: DIDDocument['authentication']): string[] {
+	if (!authentication) return [];
+
+	const authArray = Array.isArray(authentication) ? authentication : [authentication];
+
+	return authArray.map((a) => (typeof a === 'string' ? a : a.id));
+}
+
+export function normalizeController(controller?: DIDDocument['controller']): string[] {
+	if (!controller) return [];
+
+	return Array.isArray(controller) ? controller : [controller];
+}
