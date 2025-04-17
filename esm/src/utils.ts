@@ -417,16 +417,19 @@ function isHex(str: string): boolean {
 	}
 }
 
-export function normalizeAuthentication(authentication?: DIDDocument['authentication']): string[] {
-	if (!authentication) throw new Error('Invalid DID Document: Authentication section is required in DID Document');
+export function normalizeAuthentication(didDocument: DIDDocument): string[] {
+	if (!didDocument.authentication)
+		throw new Error('Invalid DID Document: Authentication section is required in DID Document');
 
-	const authArray = Array.isArray(authentication) ? authentication : [authentication];
+	const authArray = Array.isArray(didDocument.authentication)
+		? didDocument.authentication
+		: [didDocument.authentication];
 
 	return authArray.map((a) => (typeof a === 'string' ? a : a.id));
 }
 
-export function normalizeController(controller?: DIDDocument['controller']): string[] {
-	if (!controller) return [];
+export function normalizeController(didDocument: DIDDocument): string[] {
+	if (!didDocument.controller) return [didDocument.id];
 
-	return Array.isArray(controller) ? controller : [controller];
+	return Array.isArray(didDocument.controller) ? didDocument.controller : [didDocument.controller];
 }

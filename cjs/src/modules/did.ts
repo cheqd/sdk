@@ -687,13 +687,13 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return { valid: false, error: 'authentication is required' };
 
 		// define unique authentication
-		const uniqueAuthentication = new Set<string>(normalizeAuthentication(didDocument.authentication));
+		const uniqueAuthentication = new Set<string>(normalizeAuthentication(didDocument));
 
 		// validate authentication - case: authentication contains duplicates
-		if (uniqueAuthentication.size < normalizeAuthentication(didDocument.authentication).length)
+		if (uniqueAuthentication.size < normalizeAuthentication(didDocument).length)
 			return {
 				valid: false,
-				error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => normalizeAuthentication(didDocument.authentication).filter((aa) => aa === a).length > 1)}`,
+				error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => normalizeAuthentication(didDocument).filter((aa) => aa === a).length > 1)}`,
 			};
 
 		// define unique signatures - shallow, only verificationMethodId, no signature
@@ -714,7 +714,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			};
 
 		// define whether external controller or not
-		const externalController = normalizeController(didDocument.controller);
+		const externalController = normalizeController(didDocument);
 
 		// validate authentication - case: authentication matches signatures, unique, if no external controller
 		if (!Array.from(uniqueAuthentication).every((a) => uniqueSignatures.has(a)) && !externalController)
@@ -737,7 +737,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		if (!querier) throw new Error('querier is required for external controller validation');
 
 		// get external controllers
-		const externalControllers = normalizeController(didDocument.controller).filter((c) => c !== didDocument.id);
+		const externalControllers = normalizeController(didDocument).filter((c) => c !== didDocument.id);
 
 		// get external controllers' documents
 		const externalControllersDocuments = await Promise.all(
@@ -763,7 +763,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		// define unique required signatures
 		const uniqueRequiredSignatures: Set<string> = new Set(
-			externalControllersDocuments.concat(didDocument).flatMap((d) => normalizeAuthentication(d?.authentication))
+			externalControllersDocuments.concat(didDocument).flatMap((d) => (d ? normalizeAuthentication(d) : []))
 		);
 
 		// validate authentication - case: authentication matches signatures, unique, if external controller
@@ -802,13 +802,13 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return { valid: false, error: 'authentication is required' };
 
 		// define unique authentication
-		const uniqueAuthentication = new Set(normalizeAuthentication(didDocument.authentication));
+		const uniqueAuthentication = new Set(normalizeAuthentication(didDocument));
 
 		// validate authentication - case: authentication contains duplicates
-		if (uniqueAuthentication.size < normalizeAuthentication(didDocument.authentication).length)
+		if (uniqueAuthentication.size < normalizeAuthentication(didDocument).length)
 			return {
 				valid: false,
-				error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => normalizeAuthentication(didDocument.authentication).filter((aa) => aa === a).length > 1)}`,
+				error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => normalizeAuthentication(didDocument).filter((aa) => aa === a).length > 1)}`,
 			};
 
 		// define unique signatures
@@ -833,8 +833,8 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		}
 
 		// define whether external controller or not
-		const externalController = normalizeController(didDocument.controller)
-			.concat(normalizeController(previousDidDocument.controller))
+		const externalController = normalizeController(didDocument)
+			.concat(normalizeController(previousDidDocument))
 			.some((c) => c !== didDocument.id);
 
 		// define whether key rotation or not, of any short
@@ -850,24 +850,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		// define controller rotation
 		const controllerRotation =
-			!normalizeController(didDocument.controller).every((c) =>
-				normalizeController(previousDidDocument.controller).includes(c)
-			) ||
-			!normalizeController(previousDidDocument.controller).every((c) =>
-				normalizeController(didDocument.controller).includes(c)
-			);
+			!normalizeController(didDocument).every((c) => normalizeController(previousDidDocument).includes(c)) ||
+			!normalizeController(previousDidDocument).every((c) => normalizeController(didDocument).includes(c));
 
 		// define rotated controllers
 		const rotatedControllers = controllerRotation
-			? normalizeController(previousDidDocument.controller).filter(
-					(c) => !normalizeController(didDocument.controller).includes(c)
-				)
+			? normalizeController(previousDidDocument).filter((c) => !normalizeController(didDocument).includes(c))
 			: [];
 
 		// define unique union of authentication
 		const uniqueUnionAuthentication = new Set<string>([
 			...uniqueAuthentication,
-			...normalizeAuthentication(previousDidDocument.authentication),
+			...normalizeAuthentication(previousDidDocument),
 		]);
 
 		// validate authentication - case: authentication matches signatures, unique, if no external controller, no key rotation
@@ -896,10 +890,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		// define unique union of signatures required, delimited
 		const uniqueUnionSignaturesRequired = new Set([
-			...normalizeAuthentication(didDocument.authentication)
+			...normalizeAuthentication(didDocument)
 				.filter((a) => rotatedKeys?.find((rk) => a === rk.id))
 				.map((a) => `${a}(document0)`),
-			...normalizeAuthentication(previousDidDocument.authentication).map((a) => `${a}(document1)`),
+			...normalizeAuthentication(previousDidDocument).map((a) => `${a}(document1)`),
 		]);
 
 		// define frequency of unique union of signatures required
@@ -963,7 +957,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		if (!querier) throw new Error('querier is required for external controller validation');
 
 		// get external controllers
-		const externalControllers = normalizeController(didDocument.controller)
+		const externalControllers = normalizeController(didDocument)
 			?.filter((c) => c !== didDocument.id)
 			.concat(rotatedControllers);
 
@@ -993,10 +987,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		const uniqueUnionSignaturesRequiredWithExternalControllers = new Set<string>([
 			...uniqueUnionSignaturesRequired,
 			...externalControllersDocuments
-				.flatMap((d) => normalizeAuthentication(d.authentication))
+				.flatMap((d) => normalizeAuthentication(d))
 				.map(
 					(a) =>
-						`${a}(document${externalControllersDocuments.findIndex((d) => normalizeAuthentication(d.authentication).includes(a))})`
+						`${a}(document${externalControllersDocuments.findIndex((d) => normalizeAuthentication(d).includes(a))})`
 				),
 		]);
 
