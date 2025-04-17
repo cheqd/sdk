@@ -418,7 +418,7 @@ function isHex(str: string): boolean {
 }
 
 export function normalizeAuthentication(authentication?: DIDDocument['authentication']): string[] {
-	if (!authentication) return [];
+	if (!authentication) throw new Error('Invalid DID Document: Authentication section is required in DID Document');
 
 	const authArray = Array.isArray(authentication) ? authentication : [authentication];
 
