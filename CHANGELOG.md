@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.2.2-develop.1](https://github.com/cheqd/sdk/compare/5.2.1...5.2.2-develop.1) (2025-05-05)
+
+### Reverts
+
+* Revert "fix: Bump default and json resource fee ([#434](https://github.com/cheqd/sdk/issues/434))" ([655c60c](https://github.com/cheqd/sdk/commit/655c60c688644239e87cb689d738e740f433b6e4))
+
 ## [5.2.1](https://github.com/cheqd/sdk/compare/5.2.0...5.2.1) (2025-04-15)
 
 ### Bug Fixes
