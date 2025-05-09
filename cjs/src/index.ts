@@ -121,12 +121,12 @@ export class CheqdSDK {
 
 		this.querier = await this.loadQuerierExtensions();
 
-		const sdk = await this.loadModules(this.options.modules);
-
 		// ensure feemarket module is loaded, if not already
 		if (!this.options.modules.find((module) => module instanceof FeemarketModule)) {
 			this.options.modules.push(FeemarketModule as unknown as AbstractCheqdSDKModule);
 		}
+
+		const sdk = await this.loadModules(this.options.modules);
 
 		// define gas price
 		this.options.gasPrice =
