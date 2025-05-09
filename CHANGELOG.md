@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.2.2-develop.2](https://github.com/cheqd/sdk/compare/5.2.2-develop.1...5.2.2-develop.2) (2025-05-09)
+
+### Bug Fixes
+
+* Ensure feemarket module injection (CJS) ([ab156c4](https://github.com/cheqd/sdk/commit/ab156c48f77b5f7cef36a1aa183472dbfdc503e0))
+
 ## [5.2.2-develop.1](https://github.com/cheqd/sdk/compare/5.2.1...5.2.2-develop.1) (2025-05-05)
 
 ### Reverts
