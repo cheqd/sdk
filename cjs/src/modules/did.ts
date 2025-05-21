@@ -553,7 +553,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return Service.fromPartial({
 				id: s?.id,
 				serviceType: s?.type,
-				serviceEndpoint: <string[]>s?.serviceEndpoint,
+				serviceEndpoint: s ? (Array.isArray(s.serviceEndpoint) ? s.serviceEndpoint : [s.serviceEndpoint]) : [],
 				...(s?.recipientKeys && { recipientKeys: s.recipientKeys }),
 				...(s?.routingKeys && { routingKeys: s.routingKeys }),
 				...(s?.accept && { accept: s.accept }),
@@ -610,7 +610,11 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return {
 				id: s.id,
 				type: s.serviceType,
-				serviceEndpoint: s.serviceEndpoint,
+				serviceEndpoint: Array.isArray(s?.serviceEndpoint)
+					? s.serviceEndpoint.length === 1
+						? s.serviceEndpoint[0]
+						: s.serviceEndpoint
+					: s?.serviceEndpoint,
 				...(s.recipientKeys && { recipientKeys: s.recipientKeys }),
 				...(s.routingKeys && { routingKeys: s.routingKeys }),
 				...(s.accept && { accept: s.accept }),

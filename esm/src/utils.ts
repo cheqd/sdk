@@ -281,7 +281,7 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
 		return ProtoService.fromPartial({
 			id: s?.id,
 			serviceType: s?.type,
-			serviceEndpoint: <string[]>s?.serviceEndpoint,
+			serviceEndpoint: s ? (Array.isArray(s.serviceEndpoint) ? s.serviceEndpoint : [s.serviceEndpoint]) : [],
 			...(s?.recipientKeys && { recipientKeys: s.recipientKeys }),
 			...(s?.routingKeys && { routingKeys: s.routingKeys }),
 			...(s?.accept && { accept: s.accept }),
