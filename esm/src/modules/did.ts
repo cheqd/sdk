@@ -542,6 +542,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				id: s?.id,
 				serviceType: s?.type,
 				serviceEndpoint: <string[]>s?.serviceEndpoint,
+				...(s?.recipientKeys && { recipientKeys: s.recipientKeys }),
+				...(s?.routingKeys && { routingKeys: s.routingKeys }),
+				...(s?.accept && { accept: s.accept }),
+				...(s?.priority !== undefined && { priority: s.priority }),
 			});
 		});
 
@@ -595,6 +599,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				id: s.id,
 				type: s.serviceType,
 				serviceEndpoint: s.serviceEndpoint,
+				...(s.recipientKeys && { recipientKeys: s.recipientKeys }),
+				...(s.routingKeys && { routingKeys: s.routingKeys }),
+				...(s.accept && { accept: s.accept }),
+				...(s.priority !== undefined && { priority: s.priority }),
 			};
 		});
 

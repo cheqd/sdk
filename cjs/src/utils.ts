@@ -282,6 +282,10 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
 			id: s?.id,
 			serviceType: s?.type,
 			serviceEndpoint: <string[]>s?.serviceEndpoint,
+			...(s?.recipientKeys && { recipientKeys: s.recipientKeys }),
+			...(s?.routingKeys && { routingKeys: s.routingKeys }),
+			...(s?.accept && { accept: s.accept }),
+			...(s?.priority !== undefined && { priority: s.priority }),
 		});
 	});
 
