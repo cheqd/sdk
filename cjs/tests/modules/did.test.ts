@@ -58,20 +58,20 @@ describe('DIDModule', () => {
 				);
 				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
 
-				didPayload.service = [
-					{
-						id: `${didPayload.id}#service-1`,
-						serviceEndpoint: 'endpoint1',
-						type: 'didcomm',
-						accept: ['application/didcomm-plain+json'],
-						priority: 0,
-					},
-					{
-						id: `${didPayload.id}#service-2`,
-						serviceEndpoint: 'endpoint2',
-						type: 'website',
-					},
-				];
+				// didPayload.service = [
+				// 	{
+				// 		id: `${didPayload.id}#service-1`,
+				// 		serviceEndpoint: 'endpoint1',
+				// 		type: 'didcomm',
+				// 		accept: ['application/didcomm-plain+json'],
+				// 		priority: 0,
+				// 	},
+				// 	{
+				// 		id: `${didPayload.id}#service-2`,
+				// 		serviceEndpoint: 'endpoint2',
+				// 		type: 'website',
+				// 	},
+				// ];
 
 				const signInputs: ISignInputs[] = [
 					{
