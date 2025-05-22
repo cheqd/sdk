@@ -39,7 +39,7 @@ import { assert } from '@cosmjs/utils-cjs';
 import { PageRequest } from '@cheqd/ts-proto-cjs/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
 import { DIDDocumentMetadata } from 'did-resolver-cjs';
-import { normalizeAuthentication, normalizeController } from '../utils';
+import { denormalizeService, normalizeAuthentication, normalizeController, normalizeService } from '../utils';
 
 export const defaultDidExtensionKey = 'did' as const;
 
@@ -549,13 +549,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			}
 		});
 
-		const protoService = didDocument?.service?.map((s) => {
-			return Service.fromPartial({
-				id: s?.id,
-				serviceType: s?.type,
-				serviceEndpoint: <string[]>s?.serviceEndpoint,
-			});
-		});
+		const protoService = normalizeService(didDocument);
 
 		return {
 			valid: true,
@@ -599,16 +593,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			}
 		});
 
-		const service = protobufDidDocument.service.map((s) => {
-			if (s.serviceType === ServiceType.LinkedDomains)
-				protobufDidDocument.context = [...protobufDidDocument.context, contexts.LinkedDomainsContext];
-
-			return {
-				id: s.id,
-				type: s.serviceType,
-				serviceEndpoint: s.serviceEndpoint,
-			};
-		});
+		const service = denormalizeService(protobufDidDocument);
 
 		const context = (function () {
 			if (protobufDidDocument.context.includes(contexts.W3CDIDv1)) return protobufDidDocument.context;
