@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
@@ -66,14 +66,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
       - name: Clean install dependencies
         run: npm ci
 
-      - name: Run CJS tests
+      - name: Run Import Tests
         run: |
           npm run build
           mkdir -p import-tests
@@ -81,6 +81,11 @@ jobs:
           cp -r node_modules import-tests
           cd import-tests
           npm init -y
-          echo "require('./build/cjs/index.js')" > index.js
-          node index.js
+          # Test CommonJS imports
+          echo "require('./build/cjs/index.js')" > index.cjs
+          node index.cjs
+          # Test ESM imports
+          echo -e "{\n  \"type\": \"module\"\n}" > package.json
+          echo "import * as sdk from './build/esm/index.js';\nconsole.log('ESM import successful', sdk);" > index.mjs
+          node index.mjs
 

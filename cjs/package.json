@@ -50,10 +50,10 @@
 	},
 	"devDependencies": {
 		"@types/long": "^4.0.2",
-		"@types/node": "^18.19.47",
+		"@types/node": "^20.17.25",
 		"@types/uuid": "^10.0.0"
 	},
 	"engines": {
-		"node": ">=18"
+		"node": ">=22.0.0"
 	}
 }

@@ -19,8 +19,8 @@
 		}
 	},
 	"scripts": {
-		"test": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
-		"test:watch": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1 --watch",
+		"test": "jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1",
+		"test:watch": "jest --colors --passWithNoTests --maxWorkers 1 --maxConcurrency 1 --watch",
 		"build": "npm run build:types && npm run build:esm",
 		"build:types": "tsc -p tsconfig.types.json",
 		"build:esm": "tsc -p tsconfig.json",
@@ -54,6 +54,6 @@
 		"cross-env": "^7.0.3"
 	},
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=22.0.0"
 	}
 }

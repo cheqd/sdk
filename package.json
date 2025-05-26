@@ -110,7 +110,7 @@
 		"@types/jest": "^29.5.14",
 		"@types/long-cjs": "npm:@types/long@^4.0.2",
 		"@types/node": "^20.17.25",
-		"@types/node-cjs": "npm:@types/node@^18.19.47",
+		"@types/node-cjs": "npm:@types/node@^20.17.25",
 		"@types/uuid": "^10.0.0",
 		"@types/uuid-cjs": "npm:@types/uuid@^10.0.0",
 		"conventional-changelog-conventionalcommits": "^8.0.0",
@@ -127,6 +127,6 @@
 		"access": "public"
 	},
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=22.0.0"
 	}
 }
