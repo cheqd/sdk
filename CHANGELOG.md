@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.0-develop.1](https://github.com/cheqd/sdk/compare/5.2.2...5.3.0-develop.1) (2025-05-22)
+
+### Features
+
+* Immutable retrial policy (with enhanced error literals + transaction hash guarantees for asynchronous lookup) ([f67204f](https://github.com/cheqd/sdk/commit/f67204f6f330ef87870b8723f54928e07268009e))
+
 ## [5.2.2](https://github.com/cheqd/sdk/compare/5.2.1...5.2.2) (2025-05-09)
 
 ### Bug Fixes
