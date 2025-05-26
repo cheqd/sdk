@@ -416,3 +416,20 @@ function isHex(str: string): boolean {
 		return false;
 	}
 }
+
+export function normalizeAuthentication(didDocument: DIDDocument): string[] {
+	if (!didDocument.authentication)
+		throw new Error('Invalid DID Document: Authentication section is required in DID Document');
+
+	const authArray = Array.isArray(didDocument.authentication)
+		? didDocument.authentication
+		: [didDocument.authentication];
+
+	return authArray.map((a) => (typeof a === 'string' ? a : a.id));
+}
+
+export function normalizeController(didDocument: DIDDocument): string[] {
+	if (!didDocument.controller) return [didDocument.id];
+
+	return Array.isArray(didDocument.controller) ? didDocument.controller : [didDocument.controller];
+}
