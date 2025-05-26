@@ -453,7 +453,7 @@ export function denormalizeService(didDocument: DidDoc): Service[] {
 		return {
 			id: s.id,
 			type: s.serviceType,
-			serviceEndpoint: Array.isArray(s?.serviceEndpoint)
+			serviceEndpoint: Array.isArray(s.serviceEndpoint)
 				? s.serviceEndpoint.length === 1
 					? s.serviceEndpoint[0]
 					: s.serviceEndpoint
