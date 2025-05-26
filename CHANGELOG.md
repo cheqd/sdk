@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.0-develop.2](https://github.com/cheqd/sdk/compare/5.3.0-develop.1...5.3.0-develop.2) (2025-05-26)
+
+### Bug Fixes
+
+* Normalize controllers and authentication ([#435](https://github.com/cheqd/sdk/issues/435)) ([fe36409](https://github.com/cheqd/sdk/commit/fe364099f961cdbd1f81a06e09b0a7f3b1930fbf))
+
 ## [5.3.0-develop.1](https://github.com/cheqd/sdk/compare/5.2.2...5.3.0-develop.1) (2025-05-22)
 
 ### Features
