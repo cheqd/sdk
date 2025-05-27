@@ -10,6 +10,20 @@ else
   SED_EXT=''
 fi
 
+# get latest cheqd-node beta image version, where 'develop' is included in the tag
+BETA_TAG=$(curl -s https://api.github.com/repos/cheqd/cheqd-node/releases | jq -r '.[] | select(.prerelease == true) | .tag_name' | grep 'develop' | sort -V | tail -n 1)
+
+# check if BETA_TAG is empty
+if [[ -z "$BETA_TAG" ]]; then
+  echo "No beta release found with 'develop' in the tag."
+  exit 1
+fi
+
+# set beta tag as the image version in environment variable
+export CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
+
+echo "Using cheqd-node beta image: $CHEQD_NODE_BETA_IMAGE"
+
 CHAIN_ID="cheqd"
 
 # Node

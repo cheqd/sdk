@@ -1,9 +1,6 @@
 services:
   cheqd:
-    image: cheqd/cheqd-node:build-latest
-    build:
-      context: ../../
-      dockerfile: docker/Dockerfile
+    image: ${CHEQD_NODE_BETA_IMAGE}
     ports:
       - "26656:26656" # p2p
       - "26657:26657" # rpc
