@@ -13,6 +13,9 @@ fi
 # get latest cheqd-node beta image version, where 'develop' is included in the tag
 BETA_TAG=$(curl -s https://api.github.com/repos/cheqd/cheqd-node/releases | jq -r '.[] | select(.prerelease == true) | .tag_name' | grep 'develop' | sort -V | tail -n 1)
 
+# trim v prefix from the tag
+BETA_TAG=${BETA_TAG#v}
+
 # check if BETA_TAG is empty
 if [[ -z "$BETA_TAG" ]]; then
   echo "No beta release found with 'develop' in the tag."
@@ -25,7 +28,10 @@ CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
 echo "Using cheqd-node beta image: $CHEQD_NODE_BETA_IMAGE"
 
 # pull the latest cheqd-node beta image
-docker pull "$CHEQD_NODE_BETA_IMAGE" -t cheqd-node:beta-latest
+docker pull "$CHEQD_NODE_BETA_IMAGE"
+
+# tag the image as cheqd-noded beta latest
+docker tag "$CHEQD_NODE_BETA_IMAGE" cheqd-node:beta-latest
 
 CHAIN_ID="cheqd"
 
