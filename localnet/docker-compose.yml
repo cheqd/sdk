@@ -1,0 +1,9 @@
+services:
+  cheqd:
+    image: cheqd-node:beta-latest
+    ports:
+      - "26656:26656" # p2p
+      - "26657:26657" # rpc
+      - "9090:9090" # grpc
+      - "9091:9091" # grpc-web
+    entrypoint: tail -f /dev/null
