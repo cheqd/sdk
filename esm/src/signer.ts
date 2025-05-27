@@ -381,8 +381,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 					memo: string | undefined,
 					signer: Pubkey,
 					signerAddress: string,
-					sequence: number,
-					gasLimit: number
+					gasLimit: number,
+					sequence?: number
 				): Promise<SimulateResponse> => {
 					// encode public key
 					const publicKey = encodePubkey(signer);
@@ -408,7 +408,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 									modeInfo: {
 										single: { mode: SignMode.SIGN_MODE_DIRECT },
 									},
-									sequence: BigInt(sequence),
+									sequence: sequence ? BigInt(sequence) : undefined,
 								},
 							],
 						}),
