@@ -17,7 +17,7 @@ cheqd-noded init node0 --chain-id "$CHAIN_ID"
 NODE_0_VAL_PUBKEY=$(cheqd-noded tendermint show-validator)
 
 # User
-echo 'success claw flock lecture soul photo jump pause sadness enter uncle stage cherry teach inside now fun fuel oval angry unveil horn tobacco penalty' | cheqd-noded keys add cheqd-user --keyring-backend test --recover
+echo 'sketch mountain erode window enact net enrich smoke claim kangaroo another visual write meat latin bacon pulp similar forum guilt father state erase bright' | cheqd-noded keys add cheqd-user --keyring-backend test --recover
 
 CONFIG_TOML="$HOME/.cheqdnode/config/config.toml"
 
