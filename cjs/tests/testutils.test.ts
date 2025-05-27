@@ -12,7 +12,8 @@ export const faucet = {
 
 export const localnet = {
 	network: CheqdNetwork.Testnet,
-	rpcUrl: 'https://rpc.cheqd.network:443',
+	testnetRpcUrl: 'https://rpc.cheqd.network:443',
+	rpcUrl: 'http://localhost:26657',
 	gasPrice: GasPrice.fromString(`5000${faucet.minimalDenom}`),
 };
 
@@ -28,10 +29,6 @@ export const pubkey_hex =
 	'04adf6cad45e58a7e1908bebefcc358de229c108fb1170566f83be5ce028eb6b1997711067ffcb445532667ed4a4efc2b334c16421edb52ec5e0324a1c0e570663';
 
 export const bech32_account = 'cheqd1ehcg0jarxkyxtkzrwcxayedxrskwyftxj4exm9';
-// Testnet RPC and faucet address
-export const faucet_address = 'cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96';
-
-export const testnet_rpc = 'https://rpc.cheqd.network:443';
 
 export function containsAll<T>(array: T[], values: T[]): boolean {
 	return values.every((value) => array.includes(value));

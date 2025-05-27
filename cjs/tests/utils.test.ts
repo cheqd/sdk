@@ -10,7 +10,7 @@ import {
 } from '../src/utils';
 import { toString } from 'uint8arrays-cjs/to-string';
 import { IKeyPair, MethodSpecificIdAlgo, VerificationMethods } from '../src/types';
-import { faucet_address, pubkey_hex, testnet_rpc } from './testutils.test';
+import { faucet, localnet, pubkey_hex } from './testutils.test';
 
 describe('createSignInputsFromImportableEd25519Key', () => {
 	it('should create a sign input from an importable ed25519 key 2020', async () => {
@@ -90,7 +90,7 @@ describe('createSignInputsFromImportableEd25519Key', () => {
 	});
 
 	it('should return not empty account balance', async () => {
-		const balances = await checkBalance(faucet_address, testnet_rpc);
+		const balances = await checkBalance(faucet.address, localnet.rpcUrl);
 		expect(balances.length).toBeGreaterThan(0);
 		expect(balances[0].denom).toEqual('ncheq');
 		expect(+balances[0].amount).toBeGreaterThan(0);
