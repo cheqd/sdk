@@ -34,7 +34,7 @@ docker compose down --volumes --remove-orphans
 
 info "Running cheqd network"
 docker compose up -d cheqd
-docker compose cp ./ cheqd:/
+docker compose cp ./ cheqd:/cheqd
 docker compose exec cheqd bash /cheqd/init.sh
 docker compose exec -d cheqd cheqd-noded start
 
