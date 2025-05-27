@@ -5,7 +5,7 @@ import {
 import { CheqdSDK } from './index.js';
 import { Coin, EncodeObject } from '@cosmjs/proto-signing';
 import { Signer } from 'did-jwt';
-import { QueryClient } from '@cosmjs/stargate';
+import { QueryClient, SigningStargateClientOptions } from '@cosmjs/stargate';
 import { DIDDocument, DIDResolutionResult } from 'did-resolver';
 import { DidExtension } from './modules/did.js';
 import { ResourceExtension } from './modules/resource.js';
@@ -37,8 +37,8 @@ export interface TxExtension {
 			memo: string | undefined,
 			signer: Pubkey,
 			signerAddress: string,
-			sequence: number,
-			gasLimit: number
+			gasLimit: number,
+			sequence?: number
 		) => Promise<SimulateResponse>;
 	};
 }
@@ -137,3 +137,9 @@ export const ISignInputs = {
 export enum ServiceType {
 	LinkedDomains = 'LinkedDomains',
 }
+
+export type CheqdSigningStargateClientOptions = SigningStargateClientOptions & {
+	endpoint?: string;
+	simulateSequence?: boolean;
+	gasMultiplier?: number;
+};

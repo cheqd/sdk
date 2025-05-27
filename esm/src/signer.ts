@@ -26,7 +26,15 @@ import {
 	MsgDeactivateDidDocPayload,
 	VerificationMethod,
 } from '@cheqd/ts-proto/cheqd/did/v2/index.js';
-import { DIDDocument, DidStdFee, ISignInputs, MessageBatch, TSignerAlgo, VerificationMethods } from './types.js';
+import {
+	CheqdSigningStargateClientOptions,
+	DIDDocument,
+	DidStdFee,
+	ISignInputs,
+	MessageBatch,
+	TSignerAlgo,
+	VerificationMethods,
+} from './types.js';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
 import { assert, assertDefined, sleep } from '@cosmjs/utils';
 import { encodeSecp256k1Pubkey, Pubkey } from '@cosmjs/amino';
@@ -86,6 +94,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	private didSigners: TSignerAlgo = {};
 	private readonly _gasPrice: GasPrice | undefined;
 	private readonly _signer: OfflineSigner;
+	private readonly _simulateSequence: boolean;
+	private readonly _gasMultiplier: number;
 	private readonly endpoint?: string;
 
 	public static async connectWithSigner(
@@ -108,12 +118,14 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	constructor(
 		cometClient: CometClient | undefined,
 		signer: OfflineSigner,
-		options: SigningStargateClientOptions & { endpoint?: string } = {}
+		options: CheqdSigningStargateClientOptions = {}
 	) {
 		super(cometClient, signer, options);
 		this._signer = signer;
 		this._gasPrice = options.gasPrice;
 		this.endpoint = options.endpoint;
+		this._simulateSequence = options.simulateSequence || false;
+		this._gasMultiplier = options.gasMultiplier || 1.3;
 	}
 
 	async signAndBroadcast(
@@ -126,7 +138,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		if (fee == 'auto' || typeof fee === 'number') {
 			assertDefined(this._gasPrice, 'Gas price must be set in the client options when auto gas is used.');
 			const gasEstimation = await this.simulate(signerAddress, messages, memo);
-			const multiplier = typeof fee === 'number' ? fee : 1.3;
+			const multiplier = typeof fee === 'number' ? fee : this._gasMultiplier;
 			usedFee = calculateDidFee(Math.round(gasEstimation * multiplier), this._gasPrice);
 			usedFee.payer = signerAddress;
 		} else {
@@ -338,11 +350,11 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 			throw new Error('Failed to retrieve account from signer');
 		}
 		const pubkey = encodeSecp256k1Pubkey(accountFromSigner.pubkey);
-		const { sequence } = await this.getSequence(signerAddress);
+		const sequence = this._simulateSequence ? (await this.getSequence(signerAddress)).sequence : undefined;
 		const gasLimit = (await CheqdQuerier.getConsensusParameters(this.endpoint))!.block.maxGas;
 		const { gasInfo } = await (
 			await this.constructSimulateExtension(querier)
-		).tx.simulate(anyMsgs, memo, pubkey, signerAddress, sequence, gasLimit);
+		).tx.simulate(anyMsgs, memo, pubkey, signerAddress, gasLimit, sequence);
 		assertDefined(gasInfo);
 		return Uint53.fromString(gasInfo.gasUsed.toString()).toNumber();
 	}

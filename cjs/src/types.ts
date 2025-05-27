@@ -5,7 +5,7 @@ import {
 import { CheqdSDK } from './index';
 import { Coin, EncodeObject } from '@cosmjs/proto-signing-cjs';
 import { Signer } from 'did-jwt-cjs';
-import { QueryClient } from '@cosmjs/stargate-cjs';
+import { QueryClient, SigningStargateClientOptions } from '@cosmjs/stargate-cjs';
 import { DIDDocument, DIDResolutionResult } from 'did-resolver-cjs';
 import { DidExtension } from './modules/did';
 import { ResourceExtension } from './modules/resource';
@@ -14,6 +14,7 @@ import { FeeabstractionExtension } from './modules/feeabstraction';
 import { GetTxResponse, SimulateResponse } from 'cosmjs-types-cjs/cosmos/tx/v1beta1/service';
 import { Any } from 'cosmjs-types-cjs/google/protobuf/any';
 import { Pubkey } from '@cosmjs/amino-cjs';
+
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from 'did-resolver-cjs';
 
 export enum CheqdNetwork {
@@ -37,8 +38,8 @@ export interface TxExtension {
 			memo: string | undefined,
 			signer: Pubkey,
 			signerAddress: string,
-			sequence: number,
-			gasLimit: number
+			gasLimit: number,
+			sequence?: number
 		) => Promise<SimulateResponse>;
 	};
 }
@@ -137,3 +138,9 @@ export const ISignInputs = {
 export enum ServiceType {
 	LinkedDomains = 'LinkedDomains',
 }
+
+export type CheqdSigningStargateClientOptions = SigningStargateClientOptions & {
+	endpoint?: string;
+	simulateSequence?: boolean;
+	gasMultiplier?: number;
+};

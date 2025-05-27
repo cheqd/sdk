@@ -10,7 +10,7 @@ import {
 } from './modules/_';
 import { createDefaultCheqdRegistry } from './registry';
 import { CheqdSigningStargateClient } from './signer';
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
+import { CheqdNetwork, CheqdSigningStargateClientOptions, IContext, IModuleMethodMap } from './types';
 import { GasPrice, QueryClient } from '@cosmjs/stargate-cjs';
 import { CheqdQuerier } from './querier';
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc-cjs';
@@ -33,6 +33,7 @@ export interface ICheqdSDKOptions {
 	network?: CheqdNetwork;
 	gasPrice?: GasPrice;
 	authorizedMethods?: string[];
+	signerOptions?: CheqdSigningStargateClientOptions;
 	readonly wallet: OfflineSigner;
 }
 
@@ -62,7 +63,7 @@ export class CheqdSDK {
 		};
 
 		this.methods = {};
-		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, {});
+		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, this.options.signerOptions);
 		this.querier = <any>new QueryClient({} as unknown as Tendermint37Client);
 	}
 
