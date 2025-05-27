@@ -453,8 +453,10 @@ export function normalizeService(didDocument: DIDDocument): ProtoService[] | und
 
 export function denormalizeService(didDocument: DidDoc): Service[] {
 	return didDocument.service.map((s) => {
-		if (s.serviceType === ServiceType.LinkedDomains)
-			didDocument.context = [...didDocument.context, contexts.LinkedDomainsContext];
+		if (s.serviceType === ServiceType.LinkedDomains) {
+			const updatedContext = [...didDocument.context, contexts.LinkedDomainsContext];
+			didDocument = { ...didDocument, context: updatedContext };
+		}
 
 		return {
 			id: s.id,
