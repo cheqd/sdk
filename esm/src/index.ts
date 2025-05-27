@@ -16,7 +16,7 @@ import {
 } from './modules/_.js';
 import { createDefaultCheqdRegistry } from './registry.js';
 import { CheqdSigningStargateClient } from './signer.js';
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types.js';
+import { CheqdNetwork, CheqdSigningStargateClientOptions, IContext, IModuleMethodMap } from './types.js';
 import { GasPrice, QueryClient } from '@cosmjs/stargate';
 import { CheqdQuerier } from './querier.js';
 import { CometClient } from '@cosmjs/tendermint-rpc';
@@ -33,6 +33,7 @@ export interface ICheqdSDKOptions {
 	network?: CheqdNetwork;
 	gasPrice?: GasPrice;
 	authorizedMethods?: string[];
+	signerOptions?: CheqdSigningStargateClientOptions;
 	readonly wallet: OfflineSigner;
 }
 
@@ -62,7 +63,7 @@ export class CheqdSDK {
 		};
 
 		this.methods = {};
-		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, {});
+		this.signer = new CheqdSigningStargateClient(undefined, this.options.wallet, this.options.signerOptions);
 		this.querier = <any>new QueryClient({} as unknown as CometClient);
 	}
 
