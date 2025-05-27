@@ -87,6 +87,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	private readonly _gasPrice: GasPrice | undefined;
 	private readonly _signer: OfflineSigner;
 	private readonly endpoint?: string;
+	static readonly maxGasLimit = Number.MAX_SAFE_INTEGER;
 
 	public static async connectWithSigner(
 		endpoint: string | HttpEndpoint,
@@ -339,7 +340,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		}
 		const pubkey = encodeSecp256k1Pubkey(accountFromSigner.pubkey);
 		const { sequence } = await this.getSequence(signerAddress);
-		const gasLimit = (await CheqdQuerier.getConsensusParameters(this.endpoint))!.block.maxGas;
+		const gasLimit = CheqdSigningStargateClient.maxGasLimit;
 		const { gasInfo } = await (
 			await this.constructSimulateExtension(querier)
 		).tx.simulate(anyMsgs, memo, pubkey, signerAddress, sequence, gasLimit);

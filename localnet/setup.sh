@@ -35,7 +35,8 @@ docker compose down --volumes --remove-orphans
 # get latest cheqd-node beta image version, where 'develop' is included in the tag
 # NOTE: switch logic to use `latest` tag to avoid circular dependency issues, if developing on SDK against stable network. Beta `cheqd-node` releases are to be used for testing transient features.
 # NOTE: Transient features are features that are not yet ready for production use, but are being tested in a beta environment. These features may change or be removed in future releases.
-# Note: Or use `develop` tag to test major dependency updates, such as Tendermint, Cosmos SDK, IBC, new modules, etc.
+# NOTE: Or use `develop` tag to test major dependency updates, such as Tendermint, Cosmos SDK, IBC, new modules, etc.
+# NOTE: Don't forget to set prerelease to true in the release on GitHub, otherwise it won't be picked up by the script, if you are using production stable tag.
 BETA_TAG=$(curl -s https://api.github.com/repos/cheqd/cheqd-node/releases | jq -r '.[] | select(.prerelease == true) | .tag_name' | grep 'develop' | sort -V | tail -n 1)
 
 # trim v prefix from the tag
