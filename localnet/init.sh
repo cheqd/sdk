@@ -20,9 +20,12 @@ if [[ -z "$BETA_TAG" ]]; then
 fi
 
 # set beta tag as the image version in environment variable
-export CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
+CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
 
 echo "Using cheqd-node beta image: $CHEQD_NODE_BETA_IMAGE"
+
+# pull the latest cheqd-node beta image
+docker pull "$CHEQD_NODE_BETA_IMAGE" -t cheqd-node:beta-latest
 
 CHAIN_ID="cheqd"
 

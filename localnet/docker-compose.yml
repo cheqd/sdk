@@ -1,6 +1,6 @@
 services:
   cheqd:
-    image: ${CHEQD_NODE_BETA_IMAGE}
+    image: cheqd-node:beta-latest
     ports:
       - "26656:26656" # p2p
       - "26657:26657" # rpc
