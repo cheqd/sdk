@@ -8,9 +8,9 @@
 
 ## ℹ️ Overview
 
-The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide base functionality for interacting with cheqd network. It combines the DID and [DID-Linked Resources](https://docs.cheqd.io/identity/guides/did-linked-resources) modules, and putting them into a Cosmos transaction wrapper using [CosmJS](https://github.com/cosmos/cosmjs).
+The purpose of this [`@cheqd/sdk` NPM package](https://www.npmjs.com/package/@cheqd/sdk) is to provide base functionality for interacting with cheqd network. It combines the [Decentralized Identifier (DID)](https://docs.cheqd.io/product/architecture/adr-list/adr-001-cheqd-did-method) and [DID-Linked Resources](https://docs.cheqd.io/product/studio/did-linked-resources) modules, putting them into a Cosmos transaction wrapper using [CosmJS](https://github.com/cosmos/cosmjs).
 
-This package is consumed by other SDKs/libraries such as [Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) and [Hyperledger Aries Framework JavaScript (AFJ)](https://github.com/hyperledger/aries-framework-javascript) to add cheqd network support.
+This package is consumed by other SDKs/libraries such as [Veramo SDK for cheqd](https://docs.cheqd.io/product/sdk/veramo) and [Credo](https://github.com/openwallet-foundation/credo-ts) to add cheqd network support.
 
 This package includes:
 
@@ -19,14 +19,14 @@ This package includes:
 
 ## 🆔 Features
 
-Our identity documentation site provides [tutorials for utilising the identity features](https://docs.cheqd.io/identity/overview/readme) on cheqd network.
+Our identity documentation site provides [tutorials for utilising the identity features](https://docs.cheqd.io/product) on cheqd network.
 
 With this SDK, developers are able to:
 
-* ✅ Create a `did:cheqd` method DID
-* ✅ Update a `did:cheqd` method DID
-* ✅ Deactivate a `did:cheqd` method DID
-* ✅ Create or update [a DID-Linked Resource](https://docs.cheqd.io/identity/tutorials/did-linked-resources/create-resource)
+* ✅ Create a `did:cheqd` method [DID](https://docs.cheqd.io/product/architecture/adr-list/adr-001-cheqd-did-method)
+* ✅ Update a `did:cheqd` method [DID](https://docs.cheqd.io/product/architecture/adr-list/adr-001-cheqd-did-method)
+* ✅ Deactivate a `did:cheqd` method [DID](https://docs.cheqd.io/product/architecture/adr-list/adr-001-cheqd-did-method)
+* ✅ Create or update [a DID-Linked Resource](https://docs.cheqd.io/product/studio/did-linked-resources)
 
 ### 🧰 Tooling
 
@@ -59,7 +59,7 @@ npm install @cheqd/sdk@cjs
 
 ## 📖 Documentation
 
-Our [identity documentation site](https://docs.cheqd.io/identity/) explains how `@cheqd/sdk` is [consumed in Veramo SDK for cheqd](https://docs.cheqd.io/identity/guides/sdk/veramo-sdk-for-cheqd) (as an example of how this package can be consumed).
+Our [product documentation site](https://docs.cheqd.io/product) explains how `@cheqd/sdk` is [consumed in Veramo SDK for cheqd](https://docs.cheqd.io/product/sdk/veramo) (as an example of how this package can be consumed).
 
 ## 💬 Community
 
