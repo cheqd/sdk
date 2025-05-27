@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.0-develop.3](https://github.com/cheqd/sdk/compare/5.3.0-develop.2...5.3.0-develop.3) (2025-05-27)
+
+### Features
+
+* Add additional fields in service section to support didcomm [DEV-5014] ([#437](https://github.com/cheqd/sdk/issues/437)) ([76a4367](https://github.com/cheqd/sdk/commit/76a43677ec46b167b2f4d64ec5ae2dbf68d85a41))
+
 ## [5.3.0-develop.2](https://github.com/cheqd/sdk/compare/5.3.0-develop.1...5.3.0-develop.2) (2025-05-26)
 
 ### Bug Fixes
