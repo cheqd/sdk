@@ -27,7 +27,7 @@
 		"format": "prettier --write '**/*.{js,ts,cjs,mjs,json}'"
 	},
 	"dependencies": {
-		"@cheqd/ts-proto": "^4.0.2",
+		"@cheqd/ts-proto": "^4.1.0",
 		"@cosmjs/amino": "^0.33.1",
 		"@cosmjs/crypto": "^0.33.1",
 		"@cosmjs/encoding": "^0.33.1",
@@ -39,17 +39,17 @@
 		"@stablelib/ed25519": "^2.0.2",
 		"@types/secp256k1": "^4.0.6",
 		"cosmjs-types": "^0.9.0",
-		"did-jwt": "^8.0.9",
+		"did-jwt": "^8.0.15",
 		"did-resolver": "^4.1.0",
 		"exponential-backoff": "^3.1.2",
-		"file-type": "^20.4.1",
-		"multiformats": "^13.3.2",
+		"file-type": "^20.5.0",
+		"multiformats": "^13.3.6",
 		"secp256k1": "^5.0.1",
 		"uint8arrays": "^5.1.0",
 		"uuid": "^11.1.0"
 	},
 	"devDependencies": {
-		"@types/node": "^20.17.25",
+		"@types/node": "^20.17.50",
 		"@types/uuid": "^10.0.0",
 		"cross-env": "^7.0.3"
 	},

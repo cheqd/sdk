@@ -48,7 +48,9 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Start cheqd localnet
-        run: docker run --rm -d -p 26657:26657 ghcr.io/cheqd/cheqd-node:latest
+        working-directory: localnet
+        run:
+          bash setup.sh
 
       - name: "Clean install dependencies"
         run: npm ci
@@ -73,7 +75,7 @@ jobs:
       - name: Clean install dependencies
         run: npm ci
 
-      - name: Run CJS tests
+      - name: Run CJS import tests
         run: |
           npm run build
           mkdir -p import-tests

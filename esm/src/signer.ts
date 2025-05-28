@@ -15,6 +15,7 @@ import {
 	calculateFee,
 	SignerData,
 	createProtobufRpcClient,
+	TimeoutError,
 } from '@cosmjs/stargate';
 import { CometClient, connectComet } from '@cosmjs/tendermint-rpc';
 import { createDefaultCheqdRegistry } from './registry.js';
@@ -27,7 +28,7 @@ import {
 } from '@cheqd/ts-proto/cheqd/did/v2/index.js';
 import { DIDDocument, DidStdFee, ISignInputs, MessageBatch, TSignerAlgo, VerificationMethods } from './types.js';
 import { base64ToBytes, EdDSASigner, hexToBytes, Signer, ES256Signer, ES256KSigner } from 'did-jwt';
-import { assert, assertDefined } from '@cosmjs/utils';
+import { assert, assertDefined, sleep } from '@cosmjs/utils';
 import { encodeSecp256k1Pubkey, Pubkey } from '@cosmjs/amino';
 import { Int53, Uint53 } from '@cosmjs/math';
 import { fromBase64 } from '@cosmjs/encoding';
@@ -86,6 +87,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	private readonly _gasPrice: GasPrice | undefined;
 	private readonly _signer: OfflineSigner;
 	private readonly endpoint?: string;
+	static readonly maxGasLimit = Number.MAX_SAFE_INTEGER;
 
 	public static async connectWithSigner(
 		endpoint: string | HttpEndpoint,
@@ -195,6 +197,131 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		});
 	}
 
+	/**
+	 * Broadcasts a signed transaction to the network and monitors its inclusion in a block,
+	 * with support for retrying on failure and graceful timeout handling.
+	 *
+	 * ## Optimizations over base implementation:
+	 * - Implements a retry policy (`maxRetries`, default: 3) to handle transient broadcast errors.
+	 * - Prevents double spend by reusing the exact same signed transaction (immutable `Uint8Array`).
+	 * - Tracks and returns the last known transaction hash (`txId`), even in the case of timeout or failure.
+	 * - Throws a `TimeoutError` if the transaction is not found within `timeoutMs`, attaching the `txHash` if known.
+	 * - Polling frequency and timeout are customizable via `pollIntervalMs` and `timeoutMs` parameters.
+	 *
+	 * @param tx - The signed transaction bytes to broadcast.
+	 * @param timeoutMs - Maximum duration (in milliseconds) to wait for block inclusion. Defaults to 60,000 ms.
+	 * @param pollIntervalMs - Polling interval (in milliseconds) when checking for transaction inclusion. Defaults to 3,000 ms.
+	 * @param maxRetries - Maximum number of times to retry `broadcastTxSync` on failure. Defaults to 3.
+	 *
+	 * @returns A `Promise` that resolves to `DeliverTxResponse` upon successful inclusion in a block.
+	 * @throws `BroadcastTxError` if the transaction is rejected by the node during CheckTx.
+	 * @throws `TimeoutError` if the transaction is not found on-chain within the timeout window. Includes `txHash` if available.
+	 */
+
+	public async broadcastTx(
+		tx: Uint8Array,
+		timeoutMs = 60_000,
+		pollIntervalMs = 3_000,
+		maxRetries = 3
+	): Promise<DeliverTxResponse> {
+		// define polling callback
+		const pollForTx = async (txId: string, startTime: number): Promise<DeliverTxResponse> => {
+			// define immutable timeout
+			const timedOut = Date.now() - startTime > timeoutMs;
+
+			// check if timed out
+			if (timedOut) {
+				// if so, throw timeout error with txId (or transaction hash)
+				throw new TimeoutError(
+					`Transaction with ID ${txId} was submitted but was not yet found on the chain. Waited ${
+						timeoutMs / 1000
+					} seconds.`,
+					txId
+				);
+			}
+
+			// otherwise, poll for tx
+			await sleep(pollIntervalMs);
+
+			// query for tx
+			const result = await this.getTx(txId);
+
+			// return result if found, otherwise poll again
+			return result
+				? {
+						code: result.code,
+						height: result.height,
+						txIndex: result.txIndex,
+						events: result.events,
+						rawLog: result.rawLog,
+						transactionHash: txId,
+						msgResponses: result.msgResponses,
+						gasUsed: result.gasUsed,
+						gasWanted: result.gasWanted,
+					}
+				: pollForTx(txId, startTime);
+		};
+
+		// define immutable array of errors
+		const errors: unknown[] = [];
+
+		// define last known transaction hash
+		let lastKnownTxHash: string | undefined;
+
+		// attempt to broadcast tx until maxRetries or tx is found
+		for (const attempt of Array.from({ length: maxRetries }, (_, i) => i + 1)) {
+			try {
+				// broadcast tx
+				const txId = await this.broadcastTxSync(tx);
+
+				// set last known transaction hash
+				lastKnownTxHash = txId;
+
+				// recompute start time
+				const startTime = Date.now();
+
+				// poll for tx
+				const result = await pollForTx(txId, startTime);
+
+				// if successful, return result
+				return result;
+			} catch (error) {
+				// if error, push to errors array
+				errors.push(error);
+
+				// define last error
+				const lastError = error as Error & { txHash?: string };
+
+				// if error is not a TimeoutError, throw it
+				if (lastError.name !== 'TimeoutError') throw lastError;
+
+				// define whether final attempt
+				const isFinalAttempt = attempt === maxRetries;
+
+				// define enriched error, attaching last known transaction hash
+				const enrichedError =
+					isFinalAttempt && lastKnownTxHash && lastError.name === 'TimeoutError'
+						? new TimeoutError(
+								`Transaction broadcast failed after ${maxRetries} attempts. Transaction hash: ${lastKnownTxHash}`,
+								lastKnownTxHash
+							)
+						: lastError;
+
+				// if final attempt and error does not have txHash, throw the last error
+				if (isFinalAttempt) throw lastError;
+
+				// otherwise, brief backoff before retrying
+				await sleep(1000);
+			}
+		}
+
+		// should not reach here
+		throw new TimeoutError(
+			`Broadcast failed unexpectedly. Last known transaction hash: ${lastKnownTxHash ?? 'unknown'}`,
+			lastKnownTxHash || 'unknown'
+		);
+	}
+
 	async simulate(
 		signerAddress: string,
 		messages: readonly EncodeObject[],
@@ -213,7 +340,7 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		}
 		const pubkey = encodeSecp256k1Pubkey(accountFromSigner.pubkey);
 		const { sequence } = await this.getSequence(signerAddress);
-		const gasLimit = (await CheqdQuerier.getConsensusParameters(this.endpoint))!.block.maxGas;
+		const gasLimit = CheqdSigningStargateClient.maxGasLimit;
 		const { gasInfo } = await (
 			await this.constructSimulateExtension(querier)
 		).tx.simulate(anyMsgs, memo, pubkey, signerAddress, sequence, gasLimit);

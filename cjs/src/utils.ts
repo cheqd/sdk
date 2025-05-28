@@ -13,6 +13,8 @@ import {
 	DIDDocument,
 	SpecValidationResult,
 	JsonWebKey,
+	ServiceType,
+	Service,
 } from './types';
 import { fromString, toString } from 'uint8arrays-cjs';
 import { bases } from 'multiformats-cjs/basics';
@@ -28,8 +30,9 @@ import {
 	Service as ProtoService,
 	MsgCreateDidDocPayload,
 	MsgDeactivateDidDocPayload,
+	DidDoc,
 } from '@cheqd/ts-proto-cjs/cheqd/did/v2';
-import { DIDModule } from './modules/did';
+import { contexts, DIDModule } from './modules/did';
 import { MsgCreateResourcePayload } from '@cheqd/ts-proto-cjs/cheqd/resource/v2';
 import { toBech32 } from '@cosmjs/encoding-cjs';
 import { StargateClient } from '@cosmjs/stargate-cjs';
@@ -277,13 +280,7 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
 		}
 	});
 
-	const protoService = didDocument?.service?.map((s) => {
-		return ProtoService.fromPartial({
-			id: s?.id,
-			serviceType: s?.type,
-			serviceEndpoint: <string[]>s?.serviceEndpoint,
-		});
-	});
+	const protoService = normalizeService(didDocument);
 
 	return {
 		valid: true,
@@ -421,4 +418,58 @@ function isHex(str: string): boolean {
 	} catch {
 		return false;
 	}
+}
+
+export function normalizeAuthentication(didDocument: DIDDocument): string[] {
+	if (!didDocument.authentication)
+		throw new Error('Invalid DID Document: Authentication section is required in DID Document');
+
+	const authArray = Array.isArray(didDocument.authentication)
+		? didDocument.authentication
+		: [didDocument.authentication];
+
+	return authArray.map((a) => (typeof a === 'string' ? a : a.id));
+}
+
+export function normalizeController(didDocument: DIDDocument): string[] {
+	if (!didDocument.controller) return [didDocument.id];
+
+	return Array.isArray(didDocument.controller) ? didDocument.controller : [didDocument.controller];
+}
+
+export function normalizeService(didDocument: DIDDocument): ProtoService[] | undefined {
+	return didDocument.service?.map((s) => {
+		return ProtoService.fromPartial({
+			id: s?.id,
+			serviceType: s?.type,
+			serviceEndpoint: s ? (Array.isArray(s.serviceEndpoint) ? s.serviceEndpoint : [s.serviceEndpoint]) : [],
+			...(s?.recipientKeys && { recipientKeys: s.recipientKeys }),
+			...(s?.routingKeys && { routingKeys: s.routingKeys }),
+			...(s?.accept && { accept: s.accept }),
+			...(s?.priority !== undefined && { priority: s.priority }),
+		});
+	});
+}
+
+export function denormalizeService(didDocument: DidDoc): Service[] {
+	return didDocument.service.map((s) => {
+		if (s.serviceType === ServiceType.LinkedDomains) {
+			const updatedContext = [...didDocument.context, contexts.LinkedDomainsContext];
+			didDocument = { ...didDocument, context: updatedContext };
+		}
+
+		return {
+			id: s.id,
+			type: s.serviceType,
+			serviceEndpoint: Array.isArray(s?.serviceEndpoint)
+				? s.serviceEndpoint.length === 1
+					? s.serviceEndpoint[0]
+					: s.serviceEndpoint
+				: s?.serviceEndpoint,
+			...(s.recipientKeys && { recipientKeys: s.recipientKeys }),
+			...(s.routingKeys && { routingKeys: s.routingKeys }),
+			...(s.accept && { accept: s.accept }),
+			...(s.priority !== undefined && { priority: s.priority }),
+		};
+	});
 }
