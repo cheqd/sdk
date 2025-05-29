@@ -374,12 +374,9 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		}
 		const pubkey = encodeSecp256k1Pubkey(accountFromSigner.pubkey);
 		const { sequence } = await this.getSequence(signerAddress);
-		const gasLimit = await (async (endpoint) => {
-			const consensusParamsMaxGas = (await CheqdQuerier.getConsensusParameters(endpoint))?.block.maxGas;
-			return consensusParamsMaxGas
-				? Math.min(CheqdSigningStargateClient.maxGasLimit, consensusParamsMaxGas)
-				: CheqdSigningStargateClient.maxGasLimit;
-		})(this.endpoint);
+		const gasLimit = this.endpoint!.includes('localhost')
+			? CheqdSigningStargateClient.maxGasLimit
+			: (await CheqdQuerier.getConsensusParameters(this.endpoint!))!.block.maxGas;
 		const { gasInfo } = await (
 			await this.constructSimulateExtension(querier)
 		).tx.simulate(anyMsgs, memo, pubkey, signerAddress, sequence, gasLimit);
