@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.1](https://github.com/cheqd/sdk/compare/5.3.0...5.3.1) (2025-05-29)
+
+### Bug Fixes
+
+* Added fail-safe max gas declaration ([c722564](https://github.com/cheqd/sdk/commit/c722564b43aa6bd82afb44d4f72cbf683e56e6b0))
+* Rectified localnet values ([0fa87aa](https://github.com/cheqd/sdk/commit/0fa87aa67f49a51207007adca412e2613c5a22e9))
+
 ## [5.3.1-develop.1](https://github.com/cheqd/sdk/compare/5.3.0...5.3.1-develop.1) (2025-05-29)
 
 ### Bug Fixes
