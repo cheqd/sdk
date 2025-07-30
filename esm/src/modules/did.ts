@@ -659,11 +659,13 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		)
 			return { valid: false, error: 'authentication is required' };
 
+		const normalizedAuthentication = normalizeAuthentication(didDocument);
+
 		// define unique authentication
-		const uniqueAuthentication = new Set<string>(normalizeAuthentication(didDocument));
+		const uniqueAuthentication = new Set<string>(normalizedAuthentication);
 
 		// validate authentication - case: authentication contains duplicates
-		if (uniqueAuthentication.size < normalizeAuthentication(didDocument).length)
+		if (uniqueAuthentication.size < normalizedAuthentication.length)
 			return {
 				valid: false,
 				error: `authentication contains duplicate key references: duplicate key reference ${Array.from(uniqueAuthentication).find((a) => normalizeAuthentication(didDocument).filter((aa) => aa === a).length > 1)}`,
@@ -678,8 +680,6 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				valid: false,
 				error: `signatures contain duplicates: duplicate signature for key reference ${Array.from(uniqueSignatures).find((s) => signatures.filter((ss) => ss.verificationMethodId === s).length > 1)}`,
 			};
-
-		const normalizedAuthentication = normalizeAuthentication(didDocument);
 
 		// validate authentication - case: authentication contains invalid key references
 		if (!Array.from(uniqueAuthentication).every((a) => didDocument.verificationMethod?.some((vm) => vm.id === a)))
@@ -814,7 +814,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		// define whether external controller or not
 		const externalController = controllers.concat(previousControllers).some((c) => c !== didDocument.id);
 
-		// define whether key rotation or not, of any short
+		// define whether key rotation or not (same ID, different material)
 		const keyRotation = !!didDocument.verificationMethod?.some((vm) =>
 			previousDidDocument?.verificationMethod?.some(
 				(pvm) =>
@@ -824,6 +824,14 @@ export class DIDModule extends AbstractCheqdSDKModule {
 						pvm.publicKeyJwk?.x !== vm.publicKeyJwk?.x)
 			)
 		);
+
+		// define whether key replacement or not (different IDs in authentication)
+		const currentAuthenticationIds = new Set(normalizeAuthentication(didDocument));
+		const previousAuthenticationIds = new Set(normalizeAuthentication(previousDidDocument));
+
+		const removedKeys = Array.from(previousAuthenticationIds).filter((id) => !currentAuthenticationIds.has(id));
+		const addedKeys = Array.from(currentAuthenticationIds).filter((id) => !previousAuthenticationIds.has(id));
+		const keyReplacement = removedKeys.length > 0 && addedKeys.length > 0;
 
 		// define controller rotation
 		const controllerRotation =
@@ -839,11 +847,12 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		const previousAuthentication = normalizeAuthentication(previousDidDocument);
 		const uniqueUnionAuthentication = new Set<string>([...uniqueAuthentication, ...previousAuthentication]);
 
-		// validate authentication - case: authentication matches signatures, unique, if no external controller, no key rotation
+		// validate authentication - case: authentication matches signatures, unique, if no external controller, no key rotation, no key replacement
 		if (
 			!Array.from(uniqueUnionAuthentication).every((a) => uniqueSignatures.has(a)) &&
 			!externalController &&
-			!keyRotation
+			!keyRotation &&
+			!keyReplacement
 		)
 			return {
 				valid: false,
@@ -863,11 +872,28 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				)
 			: [];
 
-		// define unique union of signatures required, delimited
-		const uniqueUnionSignaturesRequired = new Set([
-			...authentication.filter((a) => rotatedKeys?.find((rk) => a === rk.id)).map((a) => `${a}(document0)`),
-			...previousAuthentication.map((a) => `${a}(document1)`),
-		]);
+		// define unique union of signatures required, including key replacement logic
+		let uniqueUnionSignaturesRequired = new Set<string>();
+		if (keyRotation) {
+			// Existing key rotation logic (same ID, different material)
+			uniqueUnionSignaturesRequired = new Set([
+				...authentication.filter((a) => rotatedKeys?.find((rk) => a === rk.id)).map((a) => `${a}(document0)`),
+				...previousAuthentication.map((a) => `${a}(document1)`),
+			]);
+		} else if (keyReplacement) {
+			// For key replacement, we need signatures from:
+			// 1. The new keys (from current document)
+			// 2. The old keys that are being replaced (from previous document)
+			const newKeySignatures = addedKeys.map((keyId) => `${keyId}(document0)`);
+			const oldKeySignatures = removedKeys
+				.filter((keyId) => previousAuthentication.includes(keyId)) // Only if they were in authentication
+				.map((keyId) => `${keyId}(document1)`);
+
+			uniqueUnionSignaturesRequired = new Set([...newKeySignatures, ...oldKeySignatures]);
+		} else {
+			// No rotation or replacement
+			uniqueUnionSignaturesRequired = new Set([...authentication.map((a) => `${a}(document0)`)]);
+		}
 
 		// define frequency of unique union of signatures required
 		const uniqueUnionSignaturesRequiredFrequency = new Map(

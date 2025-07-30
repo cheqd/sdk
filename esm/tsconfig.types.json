@@ -1,12 +1,12 @@
 {
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "../build/types",
-        "declaration": true,
-        "emitDeclarationOnly": true,
-        "module": "esnext",
-        "target": "esnext",
-    },
-    "include": ["src/**/*.ts"],
-    "exclude": ["tests"]
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"outDir": "../build/types",
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"module": "esnext",
+		"target": "esnext"
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["tests"]
 }
