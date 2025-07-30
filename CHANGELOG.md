@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.2-develop.2](https://github.com/cheqd/sdk/compare/5.3.2-develop.1...5.3.2-develop.2) (2025-07-30)
+
+### Bug Fixes
+
+* key replacement [DEV-5160] ([#458](https://github.com/cheqd/sdk/issues/458)) ([cef577f](https://github.com/cheqd/sdk/commit/cef577ff6f039315cd6ce5e0e1413d7cf42cea04))
+
 ## [5.3.2-develop.1](https://github.com/cheqd/sdk/compare/5.3.1...5.3.2-develop.1) (2025-06-06)
 
 ## [5.3.1](https://github.com/cheqd/sdk/compare/5.3.0...5.3.1) (2025-05-29)
