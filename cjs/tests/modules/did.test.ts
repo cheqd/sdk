@@ -484,6 +484,277 @@ describe('DIDModule', () => {
 			},
 			defaultAsyncTxTimeout
 		);
+		it(
+			'should update a DID with key rotation - case: Ed25519VerificationKey2020',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+				});
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupDidExtension
+				)) as CheqdQuerier & DidExtension;
+				const didModule = new DIDModule(signer, querier);
+
+				// Create initial DID with first key pair
+				const initialKeyPair = createKeyPairBase64();
+				const initialVerificationKeys = createVerificationKeys(
+					initialKeyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const initialVerificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[initialVerificationKeys]
+				);
+				const initialDidPayload = createDidPayload(initialVerificationMethods, [initialVerificationKeys]);
+
+				const initialSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: initialDidPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(initialKeyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const feePayer = (await wallet.getAccounts())[0].address;
+				const createFee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const createDidTx: DeliverTxResponse = await didModule.createDidDocTx(
+					initialSignInputs,
+					initialDidPayload,
+					feePayer,
+					createFee
+				);
+
+				console.warn(`Initial DID payload: ${JSON.stringify(initialDidPayload)}`);
+				console.warn(`Create DID Tx: ${JSON.stringify(createDidTx)}`);
+				expect(createDidTx.code).toBe(0);
+
+				// Create new key pair for rotation
+				const newKeyPair = createKeyPairBase64();
+				const newVerificationKeys = createVerificationKeys(
+					newKeyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1', // Same key ID but different key material
+					CheqdNetwork.Testnet,
+					initialVerificationKeys.methodSpecificId, // Keep same DID
+					initialVerificationKeys.didUrl
+				);
+				const newVerificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[newVerificationKeys]
+				);
+				// Create updated DID payload with rotated key
+				const updatedDidPayload = {
+					'@context': initialDidPayload?.['@context'],
+					id: initialDidPayload.id,
+					controller: initialDidPayload.controller,
+					verificationMethod: [...newVerificationMethods], // <-- Include only new verification method
+					authentication: [newVerificationKeys.keyId], // <-- Updated authentication with new key
+				} as DIDDocument;
+
+				// Sign update with BOTH old and new keys (key rotation pattern)
+				const updateSignInputs: ISignInputs[] = [
+					// Original key signature (to authorize the update)
+					{
+						verificationMethodId: initialDidPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(initialKeyPair.privateKey, 'base64'), 'hex'),
+					},
+					// New key signature (to establish the new key)
+					{
+						verificationMethodId: newVerificationMethods[0].id,
+						privateKeyHex: toString(fromString(newKeyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const updateFee = await DIDModule.generateUpdateDidDocFees(feePayer);
+				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
+				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
+					updateSignInputs,
+					updatedDidPayload,
+					feePayer,
+					updateFee
+				);
+				console.warn(`Update DID Tx: ${JSON.stringify(updateDidDocTx)}`);
+
+				expect(updateDidDocTx.code).toBe(0);
+
+				// Query the updated DID to verify key rotation
+				const updatedDidDoc = await didModule.queryDidDoc(initialDidPayload.id);
+
+				expect(updatedDidDoc.didDocument!.id).toEqual(initialDidPayload.id);
+				expect(updatedDidDoc.didDocument!.controller).toEqual(initialDidPayload.controller);
+
+				// Verify the verification method has been rotated
+				expect(updatedDidDoc.didDocument!.verificationMethod).toHaveLength(1);
+				expect(updatedDidDoc.didDocument!.verificationMethod!.map((vm) => vm.id)).toContain(
+					newVerificationMethods[0].id
+				);
+				// Verify authentication point to the new key
+				expect(updatedDidDoc.didDocument!.authentication).toEqual([newVerificationKeys.keyId]);
+				console.warn(`Verified rotated DID document: ${JSON.stringify(updatedDidDoc.didDocument)}`);
+			},
+			defaultAsyncTxTimeout
+		);
+		it(
+			'should update a DID with new key - case: Ed25519VerificationKey2020',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+				});
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupDidExtension
+				)) as CheqdQuerier & DidExtension;
+				const didModule = new DIDModule(signer, querier);
+				// Create initial DID with first key pair
+				const initialKeyPair = createKeyPairBase64();
+				const initialVerificationKeys = createVerificationKeys(
+					initialKeyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const initialVerificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[initialVerificationKeys]
+				);
+				const initialDidPayload = createDidPayload(initialVerificationMethods, [initialVerificationKeys]);
+
+				const initialSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: initialDidPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(initialKeyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const feePayer = (await wallet.getAccounts())[0].address;
+				const createFee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const createDidTx: DeliverTxResponse = await didModule.createDidDocTx(
+					initialSignInputs,
+					initialDidPayload,
+					feePayer,
+					createFee
+				);
+
+				console.warn(`Initial DID payload: ${JSON.stringify(initialDidPayload)}`);
+				console.warn(`Create DID Tx: ${JSON.stringify(createDidTx)}`);
+				expect(createDidTx.code).toBe(0);
+
+				// Create new key pair for rotation
+				const newKeyPair = createKeyPairBase64();
+				const newVerificationKeys = createVerificationKeys(
+					newKeyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-2', // new key ID
+					CheqdNetwork.Testnet,
+					initialVerificationKeys.methodSpecificId, // Keep same DID
+					initialVerificationKeys.didUrl
+				);
+				const newVerificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[newVerificationKeys]
+				);
+				// Create updated DID payload with rotated key
+				const updatedDidPayload = {
+					'@context': initialDidPayload?.['@context'],
+					id: initialDidPayload.id,
+					controller: initialDidPayload.controller,
+					verificationMethod: [...initialVerificationMethods, ...newVerificationMethods], // <-- Include both verification methods
+					authentication: [newVerificationKeys.keyId], // <-- Updated authentication with new key
+				} as DIDDocument;
+
+				// Sign update with BOTH old and new keys (key rotation pattern)
+				const updateSignInputs: ISignInputs[] = [
+					// Original key signature (to authorize the update)
+					{
+						verificationMethodId: initialDidPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(initialKeyPair.privateKey, 'base64'), 'hex'),
+					},
+					// New key signature (to establish the new key)
+					{
+						verificationMethodId: newVerificationMethods[0].id,
+						privateKeyHex: toString(fromString(newKeyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const updateFee = await DIDModule.generateUpdateDidDocFees(feePayer);
+				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
+				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
+					updateSignInputs,
+					updatedDidPayload,
+					feePayer,
+					updateFee
+				);
+				console.warn(`Update DID Tx: ${JSON.stringify(updateDidDocTx)}`);
+
+				expect(updateDidDocTx.code).toBe(0);
+
+				// Query the updated DID to verify key rotation
+				const updatedDidDoc = await didModule.queryDidDoc(initialDidPayload.id);
+
+				expect(updatedDidDoc.didDocument!.id).toEqual(initialDidPayload.id);
+				expect(updatedDidDoc.didDocument!.controller).toEqual(initialDidPayload.controller);
+
+				// Verify the verification method has been rotated
+				expect(updatedDidDoc.didDocument!.verificationMethod).toHaveLength(2);
+				expect(updatedDidDoc.didDocument!.verificationMethod!.map((vm) => vm.id)).toContain(
+					initialVerificationMethods[0].id
+				);
+				expect(updatedDidDoc.didDocument!.verificationMethod!.map((vm) => vm.id)).toContain(
+					newVerificationMethods[0].id
+				);
+
+				// Verify authentication and assertionMethod point to the new key
+				expect(updatedDidDoc.didDocument!.authentication).toEqual([newVerificationKeys.keyId]);
+
+				console.warn(`Verified rotated DID document: ${JSON.stringify(updatedDidDoc.didDocument)}`);
+				// Optional: Second update to remove the old key completely
+				const finalDidPayload = {
+					'@context': initialDidPayload?.['@context'],
+					id: initialDidPayload.id,
+					controller: initialDidPayload.controller,
+					verificationMethod: newVerificationMethods, // <-- Only new key now
+					authentication: [newVerificationKeys.keyId],
+				} as DIDDocument;
+
+				// Sign second update with only the new key (old key is being removed)
+				const finalSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: newVerificationMethods[0].id,
+						privateKeyHex: toString(fromString(newKeyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const finalUpdateFee = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const finalUpdateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
+					finalSignInputs,
+					finalDidPayload,
+					feePayer,
+					finalUpdateFee
+				);
+
+				console.warn(`Final DID payload (old key removed): ${JSON.stringify(finalDidPayload)}`);
+				console.warn(`Final Update DID Tx: ${JSON.stringify(finalUpdateDidDocTx)}`);
+
+				expect(finalUpdateDidDocTx.code).toBe(0);
+
+				// Query the final DID to verify complete key replacement
+				const finalDidDoc = await didModule.queryDidDoc(initialDidPayload.id);
+
+				// Verify only the new key remains
+				expect(finalDidDoc.didDocument!.verificationMethod).toHaveLength(1);
+				expect(finalDidDoc.didDocument!.verificationMethod![0].id).toEqual(newVerificationMethods[0].id);
+				expect(finalDidDoc.didDocument!.verificationMethod![0].publicKeyMultibase).toEqual(
+					newVerificationMethods[0].publicKeyMultibase
+				);
+
+				console.warn(
+					`Final DID document (complete key replacement): ${JSON.stringify(finalDidDoc.didDocument)}`
+				);
+			},
+			defaultAsyncTxTimeout
+		);
 	});
 
 	describe('deactivateDidDocTx', () => {
