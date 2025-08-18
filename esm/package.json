@@ -32,7 +32,7 @@
 		"@cosmjs/crypto": "^0.33.1",
 		"@cosmjs/encoding": "^0.33.1",
 		"@cosmjs/math": "^0.33.1",
-		"@cosmjs/proto-signing": "^0.33.1",
+		"@cosmjs/proto-signing": "^0.36.0",
 		"@cosmjs/stargate": "^0.33.1",
 		"@cosmjs/tendermint-rpc": "^0.33.1",
 		"@cosmjs/utils": "^0.33.1",
