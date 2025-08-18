@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@cheqd/ts-proto": "^4.1.1",
 		"@cosmjs/amino": "^0.33.1",
-		"@cosmjs/crypto": "^0.33.1",
+		"@cosmjs/crypto": "^0.36.0",
 		"@cosmjs/encoding": "^0.33.1",
 		"@cosmjs/math": "^0.33.1",
 		"@cosmjs/proto-signing": "^0.33.1",
