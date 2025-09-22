@@ -27,7 +27,7 @@ describe('CheqdSDK', () => {
 					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
 					rpcUrl: localnet.rpcUrl,
 					network: localnet.network,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} satisfies ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -50,7 +50,7 @@ describe('CheqdSDK', () => {
 			'should use module methods',
 			async () => {
 				const rpcUrl = localnet.rpcUrl;
-				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic);
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' });
 
 				class TestModule extends AbstractCheqdSDKModule {
 					registryTypes: Iterable<[string, GeneratedType]> = [];
@@ -99,7 +99,7 @@ describe('CheqdSDK', () => {
 				const options = {
 					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
 					rpcUrl: localnet.rpcUrl,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} as ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -121,7 +121,7 @@ describe('CheqdSDK', () => {
 						FeemarketModule as unknown as AbstractCheqdSDKModule,
 					],
 					rpcUrl: localnet.rpcUrl,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} as ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -149,7 +149,7 @@ describe('CheqdSDK', () => {
 					],
 					rpcUrl: localnet.rpcUrl,
 					network: localnet.network,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} satisfies ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -178,7 +178,7 @@ describe('CheqdSDK', () => {
 					],
 					rpcUrl: localnet.rpcUrl,
 					network: localnet.network,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} satisfies ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
