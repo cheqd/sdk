@@ -319,6 +319,7 @@ export function createDidPayload(
 		controller: controller.length ? controller : Array.from(new Set(verificationKeys.map((key) => key.didUrl))),
 		verificationMethod: verificationMethods,
 		authentication: verificationKeys.map((key) => key.keyId),
+		assertionMethod: verificationKeys.map((key) => key.keyId),
 	} as DIDDocument;
 }
 
