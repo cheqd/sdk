@@ -45,10 +45,25 @@ import {
 import { CheqdQuerier } from './querier.js';
 import { TxExtension } from './types';
 
+/**
+ * Calculates the transaction fee for DID operations using gas limit and gas price.
+ *
+ * @param gasLimit - Maximum amount of gas units that can be consumed by the transaction
+ * @param gasPrice - Price per gas unit, either as a string or GasPrice object
+ * @returns DidStdFee object containing the calculated fee structure
+ */
 export function calculateDidFee(gasLimit: number, gasPrice: string | GasPrice): DidStdFee {
 	return calculateFee(gasLimit, gasPrice);
 }
 
+/**
+ * Creates SignerInfo objects for transaction authentication from signer data.
+ * Each signer info contains the public key, sequence number, and signing mode.
+ *
+ * @param signers - Array of signer objects containing public keys and sequence numbers
+ * @param signMode - Signing mode to use (e.g., SIGN_MODE_DIRECT)
+ * @returns Array of SignerInfo objects for transaction authentication
+ */
 export function makeSignerInfos(
 	signers: ReadonlyArray<{ readonly pubkey: Any; readonly sequence: number }>,
 	signMode: SignMode
@@ -64,6 +79,17 @@ export function makeSignerInfos(
 	);
 }
 
+/**
+ * Creates encoded AuthInfo bytes for DID transactions with fee payer support.
+ * The AuthInfo contains signer information, fee details, and gas limit.
+ *
+ * @param signers - Array of signer objects with public keys and sequence numbers
+ * @param feeAmount - Array of coins representing the transaction fee
+ * @param gasLimit - Maximum gas units that can be consumed
+ * @param feePayer - Address of the account paying the transaction fees
+ * @param signMode - Signing mode to use, defaults to SIGN_MODE_DIRECT
+ * @returns Encoded AuthInfo as Uint8Array for transaction construction
+ */
 export function makeDidAuthInfoBytes(
 	signers: ReadonlyArray<{ readonly pubkey: Any; readonly sequence: number }>,
 	feeAmount: readonly Coin[],
@@ -82,13 +108,32 @@ export function makeDidAuthInfoBytes(
 	return AuthInfo.encode(AuthInfo.fromPartial(authInfo)).finish();
 }
 
+/**
+ * Extended SigningStargateClient specifically designed for Cheqd blockchain operations.
+ * Provides enhanced transaction signing, broadcasting, and DID-specific functionality
+ * with support for custom fee payers and advanced retry mechanisms.
+ */
 export class CheqdSigningStargateClient extends SigningStargateClient {
+	/** Map of DID signing algorithms for different verification method types */
 	private didSigners: TSignerAlgo = {};
+	/** Gas price configuration for transaction fee calculation */
 	private readonly _gasPrice: GasPrice | undefined;
+	/** Offline signer instance for transaction signing */
 	private readonly _signer: OfflineSigner;
+	/** RPC endpoint URL for blockchain communication */
 	private readonly endpoint?: string;
+	/** Maximum gas limit allowed for transactions */
 	static readonly maxGasLimit = Number.MAX_SAFE_INTEGER;
 
+	/**
+	 * Creates a new CheqdSigningStargateClient by establishing a connection to the specified endpoint.
+	 * This is the primary factory method for creating a signing client instance.
+	 *
+	 * @param endpoint - RPC endpoint URL or HttpEndpoint object to connect to
+	 * @param signer - Offline signer for transaction signing
+	 * @param options - Additional client configuration options including registry and gas price
+	 * @returns Promise resolving to a connected CheqdSigningStargateClient instance
+	 */
 	public static async connectWithSigner(
 		endpoint: string | HttpEndpoint,
 		signer: OfflineSigner,
@@ -106,6 +151,13 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		});
 	}
 
+	/**
+	 * Constructs a new CheqdSigningStargateClient instance with the provided Comet client and signer.
+	 *
+	 * @param cometClient - Comet client for blockchain communication
+	 * @param signer - Offline signer for transaction signing
+	 * @param options - Additional configuration options including registry, gas price, and endpoint
+	 */
 	constructor(
 		cometClient: CometClient | undefined,
 		signer: OfflineSigner,
@@ -117,6 +169,17 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		this.endpoint = options.endpoint;
 	}
 
+	/**
+	 * Signs and broadcasts a transaction to the blockchain network.
+	 * Supports automatic fee calculation and custom fee payer functionality.
+	 *
+	 * @param signerAddress - Address of the account signing the transaction
+	 * @param messages - Array of messages to include in the transaction
+	 * @param fee - Fee configuration: 'auto' for automatic calculation, number for multiplier, or DidStdFee object
+	 * @param memo - Optional transaction memo string
+	 * @returns Promise resolving to DeliverTxResponse with transaction results
+	 * @throws Error if gas price is not set when using automatic fee calculation
+	 */
 	async signAndBroadcast(
 		signerAddress: string,
 		messages: readonly EncodeObject[],
@@ -140,6 +203,17 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this.broadcastTx(txBytes, this.broadcastTimeoutMs, this.broadcastPollIntervalMs);
 	}
 
+	/**
+	 * Signs a transaction without broadcasting it to the network.
+	 * Creates a signed transaction that can be broadcast later.
+	 *
+	 * @param signerAddress - Address of the account signing the transaction
+	 * @param messages - Array of messages to include in the transaction
+	 * @param fee - Fee configuration for the transaction
+	 * @param memo - Transaction memo string
+	 * @param explicitSignerData - Optional explicit signer data to avoid querying the chain
+	 * @returns Promise resolving to TxRaw containing the signed transaction
+	 */
 	public async sign(
 		signerAddress: string,
 		messages: readonly EncodeObject[],
@@ -163,6 +237,18 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this._signDirect(signerAddress, messages, fee, memo, signerData);
 	}
 
+	/**
+	 * Internal method for direct signing of transactions using SIGN_MODE_DIRECT.
+	 * Handles the low-level transaction construction and signing process.
+	 *
+	 * @param signerAddress - Address of the account signing the transaction
+	 * @param messages - Array of messages to include in the transaction
+	 * @param fee - Fee configuration for the transaction
+	 * @param memo - Transaction memo string
+	 * @param signerData - Account data including number, sequence, and chain ID
+	 * @returns Promise resolving to TxRaw containing the signed transaction
+	 * @private
+	 */
 	private async _signDirect(
 		signerAddress: string,
 		messages: readonly EncodeObject[],
@@ -418,6 +504,17 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		};
 	}
 
+	/**
+	 * Batches multiple messages into optimal groups based on gas limits.
+	 * Simulates each message individually and groups them to maximize throughput
+	 * while staying within gas constraints.
+	 *
+	 * @param messages - Array of messages to batch
+	 * @param signerAddress - Address of the account that will sign the transactions
+	 * @param memo - Optional transaction memo
+	 * @param maxGasLimit - Maximum gas limit per batch, defaults to 30,000,000
+	 * @returns Promise resolving to MessageBatch with grouped messages and gas estimates
+	 */
 	async batchMessages(
 		messages: readonly EncodeObject[],
 		signerAddress: string,
@@ -470,6 +567,14 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 				};
 	}
 
+	/**
+	 * Validates and initializes DID signers for the provided verification methods.
+	 * Ensures that all verification method types are supported and assigns appropriate signers.
+	 *
+	 * @param verificationMethods - Array of verification methods to validate
+	 * @returns Promise resolving to the configured signer algorithm map
+	 * @throws Error if no verification methods are provided or unsupported types are found
+	 */
 	async checkDidSigners(verificationMethods: Partial<VerificationMethod>[] = []): Promise<TSignerAlgo> {
 		if (verificationMethods.length === 0) {
 			throw new Error('No verification methods provided');
@@ -491,6 +596,15 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this.didSigners;
 	}
 
+	/**
+	 * Retrieves the appropriate DID signer for a specific verification method.
+	 * Looks up the verification method by ID and returns the corresponding signer function.
+	 *
+	 * @param verificationMethodId - ID of the verification method to get signer for
+	 * @param verificationMethods - Array of available verification methods
+	 * @returns Promise resolving to a signer function that takes a secret key
+	 * @throws Error if the verification method is not found
+	 */
 	async getDidSigner(
 		verificationMethodId: string,
 		verificationMethods: Partial<VerificationMethod>[]
@@ -505,6 +619,14 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		return this.didSigners[verificationMethod]!;
 	}
 
+	/**
+	 * Signs a CreateDidDoc transaction payload using the provided signing inputs.
+	 * Validates verification methods and creates signatures for each signing input.
+	 *
+	 * @param signInputs - Array of signing inputs containing verification method IDs and private keys
+	 * @param payload - CreateDidDoc payload to sign
+	 * @returns Promise resolving to array of SignInfo objects with signatures
+	 */
 	async signCreateDidDocTx(signInputs: ISignInputs[], payload: MsgCreateDidDocPayload): Promise<SignInfo[]> {
 		await this.checkDidSigners(payload?.verificationMethod);
 
