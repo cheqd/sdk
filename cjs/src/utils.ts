@@ -39,14 +39,32 @@ import { StargateClient } from '@cosmjs/stargate-cjs';
 import { Coin } from 'cosmjs-types-cjs/cosmos/base/v1beta1/coin';
 import { backOff, BackoffOptions } from 'exponential-backoff-cjs';
 
+/**
+ * Represents an importable Ed25519 key with hexadecimal encoding.
+ * This type ensures type safety for Ed25519 key operations.
+ */
 export type TImportableEd25519Key = {
+	/** Public key in hexadecimal format */
 	publicKeyHex: string;
+	/** Private key in hexadecimal format */
 	privateKeyHex: string;
+	/** Key identifier */
 	kid: string;
+	/** Key type, must be 'Ed25519' */
 	type: 'Ed25519';
 };
 
+/**
+ * Utility object for validating TImportableEd25519Key objects.
+ * Provides type guard functionality to ensure key structure integrity.
+ */
 export const TImportableEd25519Key = {
+	/**
+	 * Type guard to validate if an object is a valid TImportableEd25519Key.
+	 *
+	 * @param key - Object to validate
+	 * @returns True if the object is a valid TImportableEd25519Key
+	 */
 	isValid(key: any): key is TImportableEd25519Key {
 		return (
 			typeof key === 'object' &&
@@ -61,16 +79,38 @@ export const TImportableEd25519Key = {
 	},
 };
 
+/** Multicodec header for Ed25519 public keys */
 const MULTICODEC_ED25519_HEADER = new Uint8Array([0xed, 0x01]);
 
+/**
+ * Compares two arrays of key-value pairs for equality.
+ *
+ * @param kv1 - First array of key-value pairs
+ * @param kv2 - Second array of key-value pairs
+ * @returns True if both arrays contain identical key-value pairs in the same order
+ */
 export function isEqualKeyValuePair(kv1: IKeyValuePair[], kv2: IKeyValuePair[]): boolean {
 	return kv1.every((item, index) => item.key === kv2[index].key && item.value === kv2[index].value);
 }
 
+/**
+ * Extended English mnemonic class with additional validation patterns.
+ * Provides regex pattern matching for mnemonic phrase validation.
+ */
 export class EnglishMnemonic extends _ {
+	/** Regular expression pattern for validating English mnemonic phrases */
 	public static readonly _mnemonicMatcher = /^[a-z]+( [a-z]+)*$/;
 }
 
+/**
+ * Creates signing inputs from an importable Ed25519 key by matching it with verification methods.
+ * Supports multiple verification method types and key formats.
+ *
+ * @param key - The Ed25519 key to create signing inputs from
+ * @param verificationMethod - Array of verification methods to match against
+ * @returns Signing inputs containing verification method ID and private key
+ * @throws Error if key validation fails or no matching verification method is found
+ */
 export function createSignInputsFromImportableEd25519Key(
 	key: TImportableEd25519Key,
 	verificationMethod: VerificationMethod[]
@@ -120,10 +160,22 @@ export function createSignInputsFromImportableEd25519Key(
 	);
 }
 
+/**
+ * Creates a raw Ed25519 key pair using the StableLib library.
+ *
+ * @param seed - Optional seed string for deterministic key generation
+ * @returns Raw KeyPair object with publicKey and secretKey as Uint8Arrays
+ */
 export function createKeyPairRaw(seed?: string): KeyPair {
 	return seed ? generateKeyPairFromSeed(fromString(seed)) : generateKeyPair();
 }
 
+/**
+ * Creates an Ed25519 key pair with Base64-encoded keys.
+ *
+ * @param seed - Optional seed string for deterministic key generation
+ * @returns Key pair with Base64-encoded public and private keys
+ */
 export function createKeyPairBase64(seed?: string): IKeyPair {
 	const keyPair = seed ? generateKeyPairFromSeed(fromString(seed)) : generateKeyPair();
 	return {
@@ -132,6 +184,12 @@ export function createKeyPairBase64(seed?: string): IKeyPair {
 	};
 }
 
+/**
+ * Creates an Ed25519 key pair with hexadecimal-encoded keys.
+ *
+ * @param seed - Optional seed string for deterministic key generation
+ * @returns Key pair with hexadecimal-encoded public and private keys
+ */
 export function createKeyPairHex(seed?: string): IKeyPair {
 	const keyPair = createKeyPairRaw(seed);
 	return {
@@ -140,6 +198,19 @@ export function createKeyPairHex(seed?: string): IKeyPair {
 	};
 }
 
+/**
+ * Creates verification keys structure with DID URLs and key identifiers.
+ * Supports multiple algorithm types and network configurations.
+ *
+ * @param publicKey - Public key in base64 or hex format
+ * @param algo - Algorithm for method-specific ID generation
+ * @param keyFragment - Key fragment for the verification key identifier
+ * @param network - Cheqd network (defaults to Testnet)
+ * @param methodSpecificId - Optional pre-computed method-specific ID
+ * @param didUrl - Optional pre-computed DID URL
+ * @returns Verification keys structure with all identifiers
+ * @throws Error if public key format is invalid
+ */
 export function createVerificationKeys(
 	publicKey: string,
 	algo: MethodSpecificIdAlgo,
@@ -178,6 +249,14 @@ export function createVerificationKeys(
 	}
 }
 
+/**
+ * Creates DID verification methods from verification method types and keys.
+ * Supports Ed25519 keys in multiple formats (multibase, base58, JWK).
+ *
+ * @param verificationMethodTypes - Array of verification method types to create
+ * @param verificationKeys - Array of verification keys corresponding to each type
+ * @returns Array of formatted verification methods for DID documents
+ */
 export function createDidVerificationMethod(
 	verificationMethodTypes: VerificationMethods[],
 	verificationKeys: IVerificationKeys[]
@@ -217,6 +296,15 @@ export function createDidVerificationMethod(
 	);
 }
 
+/**
+ * Creates a complete DID document payload with verification methods and controllers.
+ *
+ * @param verificationMethods - Array of verification methods for the DID
+ * @param verificationKeys - Array of verification keys for authentication
+ * @param controller - Optional array of controller DIDs (defaults to self-controlled)
+ * @returns Complete DID document with all required fields
+ * @throws Error if verification methods or keys are missing
+ */
 export function createDidPayload(
 	verificationMethods: VerificationMethod[],
 	verificationKeys: IVerificationKeys[],
@@ -231,9 +319,17 @@ export function createDidPayload(
 		controller: controller.length ? controller : Array.from(new Set(verificationKeys.map((key) => key.didUrl))),
 		verificationMethod: verificationMethods,
 		authentication: verificationKeys.map((key) => key.keyId),
+		assertionMethod: verificationKeys.map((key) => key.keyId),
 	} as DIDDocument;
 }
 
+/**
+ * Validates a DID document against the Cheqd specification and converts to protobuf format.
+ * Ensures all required fields are present and verification methods are supported.
+ *
+ * @param didDocument - DID document to validate
+ * @returns Validation result with protobuf conversion or error details
+ */
 export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecValidationResult {
 	// id is required, validated on both compile and runtime
 	if (!didDocument?.id) return { valid: false, error: 'id is required' };
@@ -289,6 +385,13 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
 	};
 }
 
+/**
+ * Creates a Cosmos wallet from a seed phrase or private key.
+ * Automatically detects whether the input is a mnemonic phrase or hex-encoded private key.
+ *
+ * @param cosmosPayerSeed - Mnemonic phrase or hexadecimal private key
+ * @returns Promise resolving to DirectSecp256k1HdWallet or DirectSecp256k1Wallet
+ */
 export function createCosmosPayerWallet(
 	cosmosPayerSeed: string
 ): Promise<DirectSecp256k1HdWallet | DirectSecp256k1Wallet> {
@@ -297,6 +400,12 @@ export function createCosmosPayerWallet(
 		: DirectSecp256k1Wallet.fromKey(fromString(cosmosPayerSeed.replace(/^0x/, ''), 'hex'), 'cheqd');
 }
 
+/**
+ * Converts a raw Ed25519 public key to multibase format with proper multicodec header.
+ *
+ * @param key - Raw Ed25519 public key as Uint8Array
+ * @returns Multibase-encoded string with Ed25519 multicodec prefix
+ */
 export function toMultibaseRaw(key: Uint8Array) {
 	const multibase = new Uint8Array(MULTICODEC_ED25519_HEADER.length + key.length);
 
@@ -306,6 +415,14 @@ export function toMultibaseRaw(key: Uint8Array) {
 	return bases['base58btc'].encode(multibase);
 }
 
+/**
+ * Creates a MsgCreateDidDoc payload ready for signing.
+ * Validates the DID document and converts it to protobuf format.
+ *
+ * @param didPayload - DID document to create message payload from
+ * @param versionId - Version identifier for the DID document
+ * @returns Encoded message payload bytes ready for signing
+ */
 export async function createMsgCreateDidDocPayloadToSign(didPayload: DIDDocument, versionId: string) {
 	const { protobufVerificationMethod, protobufService } = await DIDModule.validateSpecCompliantPayload(didPayload);
 	return MsgCreateDidDocPayload.encode(
@@ -326,8 +443,16 @@ export async function createMsgCreateDidDocPayloadToSign(didPayload: DIDDocument
 	).finish();
 }
 
+/** Alias for createMsgCreateDidDocPayloadToSign - used for DID document updates */
 export const createMsgUpdateDidDocPayloadToSign = createMsgCreateDidDocPayloadToSign;
 
+/**
+ * Creates a MsgDeactivateDidDoc payload ready for signing.
+ *
+ * @param didPayload - DID document containing the ID to deactivate
+ * @param versionId - Optional version identifier for the deactivation
+ * @returns Encoded deactivation message payload bytes ready for signing
+ */
 export function createMsgDeactivateDidDocPayloadToSign(didPayload: DIDDocument, versionId?: string) {
 	return MsgDeactivateDidDocPayload.encode(
 		MsgDeactivateDidDocPayload.fromPartial({
@@ -337,22 +462,48 @@ export function createMsgDeactivateDidDocPayloadToSign(didPayload: DIDDocument, 
 	).finish();
 }
 
+/**
+ * Creates a MsgCreateResource payload ready for signing.
+ *
+ * @param payload - Resource creation payload (partial or complete)
+ * @returns Encoded resource creation message payload bytes ready for signing
+ */
 export function createMsgResourcePayloadToSign(payload: Partial<MsgCreateResourcePayload> | MsgCreateResourcePayload) {
 	return MsgCreateResourcePayload.encode(MsgCreateResourcePayload.fromPartial(payload)).finish();
 }
 
+/**
+ * Derives a Cosmos account address from a hexadecimal public key.
+ * Converts the public key to the appropriate format and generates a bech32 address.
+ *
+ * @param publicKeyHex - Secp256k1 public key in hexadecimal format
+ * @returns Bech32-encoded Cheqd account address
+ */
 export function getCosmosAccount(publicKeyHex: string): string {
 	const { publicKeyConvert } = pkg;
 
 	return toBech32('cheqd', rawSecp256k1PubkeyToRawAddress(publicKeyConvert(fromString(publicKeyHex, 'hex'), true)));
 }
 
+/**
+ * Checks the balance of all coins for a given address on the blockchain.
+ *
+ * @param address - Bech32-encoded account address to check balance for
+ * @param rpcAddress - RPC endpoint URL of the blockchain node
+ * @returns Promise resolving to array of coin balances
+ */
 export async function checkBalance(address: string, rpcAddress: string): Promise<readonly Coin[]> {
 	const client = await StargateClient.connect(rpcAddress);
 
 	return await client.getAllBalances(address);
 }
 
+/**
+ * Checks if a given input is valid JSON.
+ *
+ * @param input - Input to validate as JSON
+ * @returns True if the input is a valid JSON string
+ */
 export function isJSON(input: any): boolean {
 	if (typeof input !== 'string') return false;
 	try {
@@ -363,6 +514,7 @@ export function isJSON(input: any): boolean {
 	}
 }
 
+/** Default configuration options for exponential backoff retry logic */
 export const DefaultBackoffOptions: BackoffOptions = {
 	jitter: 'full',
 	timeMultiple: 1,
@@ -372,6 +524,15 @@ export const DefaultBackoffOptions: BackoffOptions = {
 	numOfAttempts: 3,
 } as const;
 
+/**
+ * Retries a function with exponential backoff strategy.
+ * Provides configurable retry logic with jitter and delay options.
+ *
+ * @template T - Return type of the function being retried
+ * @param fn - Async function to retry
+ * @param options - Optional backoff configuration (uses defaults if not provided)
+ * @returns Promise resolving to the function result or undefined if all retries fail
+ */
 export async function retry<T>(fn: () => Promise<T>, options?: BackoffOptions): Promise<T | undefined> {
 	// set default options
 	if (!options) {
@@ -392,6 +553,13 @@ export async function retry<T>(fn: () => Promise<T>, options?: BackoffOptions): 
 	return result;
 }
 
+/**
+ * Validates if a string is properly formatted Base64.
+ * Performs pattern matching and encoding validation.
+ *
+ * @param str - String to validate as Base64
+ * @returns True if the string is valid Base64
+ */
 function isBase64(str: string): boolean {
 	// Quick pattern check to filter obvious non-base64 strings
 	const base64Pattern = /^[A-Za-z0-9+/]*={0,3}$/;
@@ -406,6 +574,13 @@ function isBase64(str: string): boolean {
 	}
 }
 
+/**
+ * Validates if a string is properly formatted hexadecimal.
+ * Performs pattern matching and encoding validation.
+ *
+ * @param str - String to validate as hexadecimal
+ * @returns True if the string is valid hexadecimal
+ */
 function isHex(str: string): boolean {
 	// Quick pattern check to filter obvious non-hex strings
 	const hexPattern = /^[0-9a-fA-F]*$/;
@@ -420,6 +595,14 @@ function isHex(str: string): boolean {
 	}
 }
 
+/**
+ * Normalizes the authentication property of a DID document to an array of strings.
+ * Handles both string references and embedded verification method objects.
+ *
+ * @param didDocument - DID document to normalize authentication for
+ * @returns Array of authentication method identifiers
+ * @throws Error if authentication section is missing
+ */
 export function normalizeAuthentication(didDocument: DIDDocument): string[] {
 	if (!didDocument.authentication)
 		throw new Error('Invalid DID Document: Authentication section is required in DID Document');
@@ -431,12 +614,26 @@ export function normalizeAuthentication(didDocument: DIDDocument): string[] {
 	return authArray.map((a) => (typeof a === 'string' ? a : a.id));
 }
 
+/**
+ * Normalizes the controller property of a DID document to an array of strings.
+ * Defaults to self-controlled if no controller is specified.
+ *
+ * @param didDocument - DID document to normalize controller for
+ * @returns Array of controller DID identifiers
+ */
 export function normalizeController(didDocument: DIDDocument): string[] {
 	if (!didDocument.controller) return [didDocument.id];
 
 	return Array.isArray(didDocument.controller) ? didDocument.controller : [didDocument.controller];
 }
 
+/**
+ * Normalizes DID document services to protobuf format.
+ * Converts service endpoints to arrays and includes optional properties.
+ *
+ * @param didDocument - DID document containing services to normalize
+ * @returns Array of protobuf-formatted services or undefined if no services
+ */
 export function normalizeService(didDocument: DIDDocument): ProtoService[] | undefined {
 	return didDocument.service?.map((s) => {
 		return ProtoService.fromPartial({
@@ -451,6 +648,13 @@ export function normalizeService(didDocument: DIDDocument): ProtoService[] | und
 	});
 }
 
+/**
+ * Converts protobuf services back to standard DID document service format.
+ * Handles special context requirements for LinkedDomains services.
+ *
+ * @param didDocument - Protobuf DID document containing services to denormalize
+ * @returns Array of standard DID document services
+ */
 export function denormalizeService(didDocument: DidDoc): Service[] {
 	return didDocument.service.map((s) => {
 		if (s.serviceType === ServiceType.LinkedDomains) {
