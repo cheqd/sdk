@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.3](https://github.com/cheqd/sdk/compare/5.3.2...5.3.3) (2025-09-23)
+
+### Bug Fixes
+
+* add default assetionmethod on did creation [DEV-5287] ([#472](https://github.com/cheqd/sdk/issues/472)) ([da07725](https://github.com/cheqd/sdk/commit/da07725f162aea4d885443e0ab53721649f010c0))
+
 ## [5.3.3-develop.2](https://github.com/cheqd/sdk/compare/5.3.3-develop.1...5.3.3-develop.2) (2025-09-22)
 
 ### Bug Fixes
