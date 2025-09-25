@@ -117,6 +117,21 @@ describe('DIDModule', () => {
 				);
 				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
 
+				didPayload.service = [
+					{
+						id: `${didPayload.id}#service-1`,
+						serviceEndpoint: 'endpoint1',
+						type: 'didcomm',
+						accept: ['application/didcomm-plain+json'],
+						priority: 0,
+					},
+					{
+						id: `${didPayload.id}#service-2`,
+						serviceEndpoint: 'endpoint2',
+						type: 'website',
+					},
+				];
+
 				const signInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -756,7 +771,353 @@ describe('DIDModule', () => {
 			defaultAsyncTxTimeout
 		);
 	});
+	// Tests for controller changes, including self-controller to external controller transitions
+	// and switching between different external controllers.
+	describe('Controller Switch Scenarios', () => {
+		let didModuleA: DIDModule;
+		let didModuleB: DIDModule;
+		let didModuleC: DIDModule;
+		let didPayloadA: DIDDocument;
+		let didPayloadB: DIDDocument;
+		let didPayloadC: DIDDocument;
+		let keyPairA: any;
+		let keyPairB: any;
+		let keyPairC: any;
+		let signInputsA: ISignInputs[];
+		let signInputsB: ISignInputs[];
+		let signInputsC: ISignInputs[];
+		let wallet: DirectSecp256k1HdWallet;
+		let feePayer: string;
 
+		beforeAll(async () => {
+			// Setup common test infrastructure
+			wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+			const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+				registry,
+			});
+			const querier = (await CheqdQuerier.connectWithExtension(
+				localnet.rpcUrl,
+				setupDidExtension
+			)) as CheqdQuerier & DidExtension;
+
+			didModuleA = new DIDModule(signer, querier);
+			didModuleB = new DIDModule(signer, querier);
+			didModuleC = new DIDModule(signer, querier);
+			feePayer = (await wallet.getAccounts())[0].address;
+
+			// Create key pairs for all DIDs
+			keyPairA = createKeyPairBase64();
+			keyPairB = createKeyPairBase64();
+			keyPairC = createKeyPairBase64();
+
+			// Create DID A (will be the target DID for controller changes)
+			const verificationKeysA = createVerificationKeys(keyPairA.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
+			const verificationMethodsA = createDidVerificationMethod(
+				[VerificationMethods.Ed255192018],
+				[verificationKeysA]
+			);
+			didPayloadA = createDidPayload(verificationMethodsA, [verificationKeysA]);
+			signInputsA = [
+				{
+					verificationMethodId: didPayloadA.verificationMethod![0].id,
+					privateKeyHex: toString(fromString(keyPairA.privateKey, 'base64'), 'hex'),
+				},
+			];
+
+			// Create DID B (will be used as external controller)
+			const verificationKeysB = createVerificationKeys(keyPairB.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
+			const verificationMethodsB = createDidVerificationMethod(
+				[VerificationMethods.Ed255192018],
+				[verificationKeysB]
+			);
+			didPayloadB = createDidPayload(verificationMethodsB, [verificationKeysB]);
+			signInputsB = [
+				{
+					verificationMethodId: didPayloadB.verificationMethod![0].id,
+					privateKeyHex: toString(fromString(keyPairB.privateKey, 'base64'), 'hex'),
+				},
+			];
+
+			// Create DID C (will be used as another external controller)
+			const verificationKeysC = createVerificationKeys(keyPairC.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
+			const verificationMethodsC = createDidVerificationMethod(
+				[VerificationMethods.Ed255192018],
+				[verificationKeysC]
+			);
+			didPayloadC = createDidPayload(verificationMethodsC, [verificationKeysC]);
+			signInputsC = [
+				{
+					verificationMethodId: didPayloadC.verificationMethod![0].id,
+					privateKeyHex: toString(fromString(keyPairC.privateKey, 'base64'), 'hex'),
+				},
+			];
+
+			// Create all DIDs on blockchain
+			const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+
+			await didModuleA.createDidDocTx(signInputsA, didPayloadA, feePayer, feeCreate);
+			await didModuleB.createDidDocTx(signInputsB, didPayloadB, feePayer, feeCreate);
+			await didModuleC.createDidDocTx(signInputsC, didPayloadC, feePayer, feeCreate);
+
+			// Add short delay to ensure DIDs are available
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+		}, defaultAsyncTxTimeout);
+
+		it(
+			'should add external controller to existing self-controlled DID',
+			async () => {
+				// Test case: Add external controller B to DID A
+				// Before: DID A controller = [DID A]
+				// After: DID A controller = [DID A, DID B]
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadA.id, didPayloadB.id], // Add external controller
+				};
+
+				// Need signatures from both DID A and DID B
+				const combinedSignInputs = [...signInputsA, ...signInputsB];
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateTx = await didModuleA.updateDidDocTx(
+					combinedSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				expect(updateTx.code).toBe(0);
+
+				// Verify the DID was updated correctly
+				const queryResult = await didModuleA.queryDidDoc(didPayloadA.id);
+				expect(queryResult.didDocument?.controller).toEqual([didPayloadA.id, didPayloadB.id]);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should remove self-controller leaving only external controller',
+			async () => {
+				// Test case: Remove DID A as controller, leaving only DID B
+				// Before: DID A controller = [DID A, DID B]
+				// After: DID A controller = [DID B]
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadB.id], // Remove self, keep only external controller
+				};
+
+				// Need signatures from both current controllers (A and B)
+				const combinedSignInputs = [...signInputsA, ...signInputsB];
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateTx = await didModuleA.updateDidDocTx(
+					combinedSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				expect(updateTx.code).toBe(0);
+
+				// Verify the DID was updated correctly - should only have external controller now
+				const queryResult = await didModuleA.queryDidDoc(didPayloadA.id);
+				expect(queryResult.didDocument?.controller).toEqual([didPayloadB.id]);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should switch from one external controller to another',
+			async () => {
+				// Test case: Switch from controller B to controller C
+				// Before: DID A controller = [DID B]
+				// After: DID A controller = [DID C]
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadC.id], // Switch to controller C
+				};
+
+				// Need signatures from current controller (B) and new controller (C)
+				const combinedSignInputs = [...signInputsB, ...signInputsC];
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateTx = await didModuleA.updateDidDocTx(
+					combinedSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				expect(updateTx.code).toBe(0);
+
+				// Verify the controller switched correctly
+				const queryResult = await didModuleA.queryDidDoc(didPayloadA.id);
+				expect(queryResult.didDocument?.controller).toEqual([didPayloadC.id]);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should add multiple external controllers simultaneously',
+			async () => {
+				// Test case: Add multiple controllers at once
+				// Before: DID A controller = [DID C]
+				// After: DID A controller = [DID B, DID C]
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadB.id, didPayloadC.id], // Multiple external controllers
+				};
+
+				// Need signatures from current controller (C) and new controller (B)
+				const combinedSignInputs = [...signInputsB, ...signInputsC];
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateTx = await didModuleA.updateDidDocTx(
+					combinedSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				expect(updateTx.code).toBe(0);
+
+				// Verify multiple controllers were set
+				const queryResult = await didModuleA.queryDidDoc(didPayloadA.id);
+				expect(queryResult.didDocument?.controller).toEqual([didPayloadB.id, didPayloadC.id]);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should restore self-control from external controllers',
+			async () => {
+				// Test case: Return to self-controlled DID
+				// Before: DID A controller = [DID B, DID C]
+				// After: DID A controller = [DID A]
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadA.id], // Back to self-controlled
+				};
+
+				// Need signatures from current controllers (B and C) and the DID itself (A)
+				const combinedSignInputs = [...signInputsA, ...signInputsB, ...signInputsC];
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateTx = await didModuleA.updateDidDocTx(
+					combinedSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				expect(updateTx.code).toBe(0);
+
+				// Verify back to self-controlled
+				const queryResult = await didModuleA.queryDidDoc(didPayloadA.id);
+				expect(queryResult.didDocument?.controller).toEqual([didPayloadA.id]);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should fail when missing required controller signature during switch',
+			async () => {
+				// Test case: Try to add controller without proper signatures
+				// This should fail validation
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadA.id, didPayloadB.id], // Add external controller
+				};
+
+				// Only provide signature from DID A, missing signature from DID B
+				const incompleteSignInputs = [...signInputsA]; // Missing signInputsB
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+
+				// This should fail due to missing signature
+				const updateTx = await didModuleA.updateDidDocTx(
+					incompleteSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				// Should return a failed transaction with error code
+				expect(updateTx.code).not.toBe(0);
+				expect(updateTx.rawLog).toMatch(/signature is required but not found/);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should handle DID with default assertionMethod during controller rotation',
+			async () => {
+				// Test case: Ensure the fix works with assertionMethod populated
+				// This specifically tests the scenario that was failing before the fix
+
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					controller: [didPayloadB.id], // Switch to external controller only
+					// Ensure assertionMethod is populated (this triggers the original bug)
+					assertionMethod: didPayloadA.verificationMethod!.map((vm) => vm.id),
+				};
+
+				// Need signatures from both current controller (A) and new controller (B)
+				const combinedSignInputs = [...signInputsA, ...signInputsB];
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateTx = await didModuleA.updateDidDocTx(
+					combinedSignInputs,
+					updatedDidPayloadA,
+					feePayer,
+					feeUpdate
+				);
+
+				// This should succeed with our fix (previously would fail)
+				expect(updateTx.code).toBe(0);
+
+				// Verify the update worked correctly
+				const queryResult = await didModuleA.queryDidDoc(didPayloadA.id);
+				expect(queryResult.didDocument?.controller).toEqual([didPayloadB.id]);
+				expect(queryResult.didDocument?.assertionMethod).toEqual(
+					didPayloadA.verificationMethod!.map((vm) => vm.id)
+				);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should fail when trying to update DID with empty verificationMethod list',
+			async () => {
+				// Test case: Try to send updated DID Document with empty verificationMethod list
+				const updatedDidPayloadA = {
+					...didPayloadA,
+					verificationMethod: [], // Empty verification methods - should be invalid
+					authentication: [], // Also clear authentication to avoid client-side validation error
+					assertionMethod: [], // Clear assertion method as well
+				};
+
+				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+
+				// This should throw an error during client-side validation
+				await expect(
+					didModuleA.updateDidDocTx(
+						signInputsB, // Current controller B signature
+						updatedDidPayloadA,
+						feePayer,
+						feeUpdate
+					)
+				).rejects.toThrow(/authentication.*not valid|invalid key reference|empty/i);
+			},
+			defaultAsyncTxTimeout
+		);
+	});
 	describe('deactivateDidDocTx', () => {
 		it(
 			'should deactivate a DID - case: Ed25519VerificationKey2020',
