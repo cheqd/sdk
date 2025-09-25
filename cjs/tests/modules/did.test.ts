@@ -1113,7 +1113,7 @@ describe('DIDModule', () => {
 						feePayer,
 						feeUpdate
 					)
-				).rejects.toThrow(/authentication.*not valid|invalid key reference|empty/i);
+				).rejects.toThrow(/authentication.*not valid|invalid key reference|No verification methods provided/i);
 			},
 			defaultAsyncTxTimeout
 		);
