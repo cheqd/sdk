@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.4-develop.4](https://github.com/cheqd/sdk/compare/5.3.4-develop.3...5.3.4-develop.4) (2025-10-07)
+
+### Bug Fixes
+
+* Added ancillary files on subpackage ([91b92d5](https://github.com/cheqd/sdk/commit/91b92d5a0c15d7038c3af693d87e67494c082b88))
+
 ## [5.3.4-develop.3](https://github.com/cheqd/sdk/compare/5.3.4-develop.2...5.3.4-develop.3) (2025-10-07)
 
 ## [5.3.4-develop.2](https://github.com/cheqd/sdk/compare/5.3.4-develop.1...5.3.4-develop.2) (2025-10-07)
