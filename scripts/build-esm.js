@@ -26,12 +26,23 @@ function ensureDir(target) {
 const workspaceBuildDir = path.join(workspaceDir, 'build');
 clean(workspaceBuildDir);
 runTsc('tsconfig.json');
-fs.copyFileSync(
-	path.join(workspaceDir, 'package.json'),
-	path.join(workspaceBuildDir, 'package.json'),
-);
 
 const destDir = path.join(rootDir, 'build', 'esm');
+const destBuildDir = path.join(destDir, 'build');
+
 clean(destDir);
-ensureDir(path.join(rootDir, 'build'));
-fs.cpSync(workspaceBuildDir, destDir, { recursive: true });
+ensureDir(destBuildDir);
+
+fs.cpSync(workspaceBuildDir, destBuildDir, { recursive: true });
+
+fs.copyFileSync(
+	path.join(workspaceDir, 'package.json'),
+	path.join(destDir, 'package.json'),
+);
+
+['README.md', 'LICENSE'].forEach((filename) => {
+	const source = path.join(rootDir, filename);
+	if (fs.existsSync(source)) {
+		fs.copyFileSync(source, path.join(destDir, filename));
+	}
+});

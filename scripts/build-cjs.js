@@ -27,7 +27,4 @@ const destDir = path.join(rootDir, 'build', 'cjs');
 clean(destDir);
 runTsc('tsconfig.json');
 ensureDir(destDir);
-fs.copyFileSync(
-	path.join(workspaceDir, 'package.json'),
-	path.join(destDir, 'package.json'),
-);
+fs.copyFileSync(path.join(workspaceDir, 'package.json'), path.join(destDir, 'package.json'));
