@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.4-develop.1](https://github.com/cheqd/sdk/compare/5.3.3...5.3.4-develop.1) (2025-10-07)
+
+### Bug Fixes
+
+* externalController logic for required signatures  ([#473](https://github.com/cheqd/sdk/issues/473)) ([807ec1e](https://github.com/cheqd/sdk/commit/807ec1e80e50892841bb0a1ee675af4d17311fa0))
+
 ## [5.3.3](https://github.com/cheqd/sdk/compare/5.3.2...5.3.3) (2025-09-23)
 
 ### Bug Fixes
