@@ -1222,7 +1222,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		if (!querier) throw new Error('querier is required for external controller validation');
 
 		// get external controllers
-		const externalControllers = controllers?.filter((c) => c !== didDocument.id).concat(rotatedControllers);
+		// Only include rotated controllers if they are external (not the current DID itself)
+		const externalRotatedControllers = rotatedControllers.filter((c) => c !== didDocument.id);
+		const externalControllers = controllers?.filter((c) => c !== didDocument.id).concat(externalRotatedControllers);
 
 		// get external controllers' documents
 		const externalControllersDocuments = await Promise.all(
