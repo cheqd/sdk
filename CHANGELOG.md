@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.4](https://github.com/cheqd/sdk/compare/5.3.3...5.3.4) (2025-10-08)
+
+### Bug Fixes
+
+* Added ancillary files on subpackage ([91b92d5](https://github.com/cheqd/sdk/commit/91b92d5a0c15d7038c3af693d87e67494c082b88))
+* externalController logic for required signatures  ([#473](https://github.com/cheqd/sdk/issues/473)) ([807ec1e](https://github.com/cheqd/sdk/commit/807ec1e80e50892841bb0a1ee675af4d17311fa0))
+
 ## [5.3.4-develop.4](https://github.com/cheqd/sdk/compare/5.3.4-develop.3...5.3.4-develop.4) (2025-10-07)
 
 ### Bug Fixes
