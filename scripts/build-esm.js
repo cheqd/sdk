@@ -37,12 +37,10 @@ ancillaryFiles.forEach((filename) => {
 });
 
 const destDir = path.join(rootDir, 'build', 'esm');
-const destBuildDir = path.join(destDir, 'build');
 
 clean(destDir);
-ensureDir(destBuildDir);
 
-fs.cpSync(workspaceBuildDir, destBuildDir, { recursive: true });
+fs.cpSync(workspaceBuildDir, destDir, { recursive: true });
 
 fs.copyFileSync(path.join(workspaceDir, 'package.json'), path.join(destDir, 'package.json'));
 
