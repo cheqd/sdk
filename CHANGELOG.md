@@ -1,5 +1,7 @@
 # Changelog
 
+## [5.3.5-develop.1](https://github.com/cheqd/sdk/compare/5.3.4...5.3.5-develop.1) (2025-10-13)
+
 ## [5.3.4](https://github.com/cheqd/sdk/compare/5.3.3...5.3.4) (2025-10-08)
 
 ### Bug Fixes
