@@ -1125,13 +1125,39 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		// define unique union of signatures required, including key replacement logic
 		let uniqueUnionSignaturesRequired = new Set<string>();
-		if (keyRotation) {
-			// Existing key rotation logic (same ID, different material)
+		if (keyRotation && keyReplacement) {
+			// Combined operation: Both key rotation AND key replacement happening
+			// Need signatures from:
+			// 1. All rotated keys (both old and new material for same ID)
+			// 2. All added keys (new keys being added)
+			// 3. All removed keys (old keys being removed)
+			const rotatedKeySignatures = authentication
+				.filter((a) => rotatedKeys?.find((rk) => a === rk.id))
+				.map((a) => `${a}(document0)`);
+			const previousRotatedKeySignatures = previousAuthentication
+				.filter((a) => rotatedKeys?.find((rk) => a === rk.id))
+				.map((a) => `${a}(document1)`);
+			const newKeySignatures = addedKeys
+				.filter((keyId) => !rotatedKeys?.find((rk) => keyId === rk.id))
+				.map((keyId) => `${keyId}(document0)`);
+			const oldKeySignatures = removedKeys
+				.filter((keyId) => previousAuthentication.includes(keyId))
+				.map((keyId) => `${keyId}(document1)`);
+
+			uniqueUnionSignaturesRequired = new Set([
+				...rotatedKeySignatures,
+				...previousRotatedKeySignatures,
+				...newKeySignatures,
+				...oldKeySignatures,
+			]);
+		} else if (keyRotation) {
+			// Key rotation only (same ID, different material)
 			uniqueUnionSignaturesRequired = new Set([
 				...authentication.filter((a) => rotatedKeys?.find((rk) => a === rk.id)).map((a) => `${a}(document0)`),
 				...previousAuthentication.map((a) => `${a}(document1)`),
 			]);
 		} else if (keyReplacement) {
+			// Key replacement only (different IDs in authentication)
 			// For key replacement, we need signatures from:
 			// 1. The new keys (from current document)
 			// 2. The old keys that are being replaced (from previous document)
@@ -1200,9 +1226,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				error: `authentication does not match signatures: signature from key ${Array.from(uniqueSignaturesFrequency).find(([k, f]) => uniqueUnionSignaturesRequiredFrequency.get(k)! > f)?.[0]} is missing`,
 			};
 
-		// return, if no external controller
-		if (!externalController) return { valid: true };
-
+		// validate signatures - case: all required keys must have signatures provided (check for completely missing keys)
+		if (!externalController) {
+			const missingKeys = Array.from(uniqueUnionSignaturesRequiredFrequency.keys()).filter(
+				(requiredKey) => !uniqueSignaturesFrequency.has(requiredKey)
+			);
+			if (missingKeys.length > 0) {
+				return {
+					valid: false,
+					error: `authentication does not match signatures: signature from key ${missingKeys[0]} is missing`,
+				};
+			}
+		}
 		// require querier
 		if (!querier) throw new Error('querier is required for external controller validation');
 

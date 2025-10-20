@@ -771,6 +771,7 @@ describe('DIDModule', () => {
 			defaultAsyncTxTimeout
 		);
 	});
+
 	// Tests for controller changes, including self-controller to external controller transitions
 	// and switching between different external controllers.
 	describe('Controller Switch Scenarios', () => {
@@ -812,7 +813,7 @@ describe('DIDModule', () => {
 			keyPairC = createKeyPairBase64();
 
 			// Create DID A (will be the target DID for controller changes)
-			const verificationKeysA = createVerificationKeys(keyPairA.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
+			const verificationKeysA = createVerificationKeys(keyPairA.publicKey, MethodSpecificIdAlgo.Uuid, 'Akey-1');
 			const verificationMethodsA = createDidVerificationMethod(
 				[VerificationMethods.Ed255192018],
 				[verificationKeysA]
@@ -826,7 +827,7 @@ describe('DIDModule', () => {
 			];
 
 			// Create DID B (will be used as external controller)
-			const verificationKeysB = createVerificationKeys(keyPairB.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
+			const verificationKeysB = createVerificationKeys(keyPairB.publicKey, MethodSpecificIdAlgo.Uuid, 'Bkey-1');
 			const verificationMethodsB = createDidVerificationMethod(
 				[VerificationMethods.Ed255192018],
 				[verificationKeysB]
@@ -840,7 +841,7 @@ describe('DIDModule', () => {
 			];
 
 			// Create DID C (will be used as another external controller)
-			const verificationKeysC = createVerificationKeys(keyPairC.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
+			const verificationKeysC = createVerificationKeys(keyPairC.publicKey, MethodSpecificIdAlgo.Uuid, 'Ckey-1');
 			const verificationMethodsC = createDidVerificationMethod(
 				[VerificationMethods.Ed255192018],
 				[verificationKeysC]
@@ -1064,7 +1065,7 @@ describe('DIDModule', () => {
 				const updatedDidPayloadA = {
 					...didPayloadA,
 					controller: [didPayloadB.id], // Switch to external controller only
-					// Ensure assertionMethod is populated (this triggers the original bug)
+					// Ensure assertionMethod is populated
 					assertionMethod: didPayloadA.verificationMethod!.map((vm) => vm.id),
 				};
 
