@@ -4,7 +4,7 @@
 
 ### Bug Fixes
 
-*  keyrotation and keyreplacement conditions [DEV-5391] ([#477](https://github.com/cheqd/sdk/issues/477)) ([69ff294](https://github.com/cheqd/sdk/commit/69ff29413cced1bb601bce937ef28381b762c45c))
+* keyrotation and keyreplacement conditions [DEV-5391] ([#477](https://github.com/cheqd/sdk/issues/477)) ([69ff294](https://github.com/cheqd/sdk/commit/69ff29413cced1bb601bce937ef28381b762c45c))
 
 ## [5.3.5](https://github.com/cheqd/sdk/compare/5.3.4...5.3.5) (2025-10-13)
 
