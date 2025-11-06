@@ -337,7 +337,7 @@ describe('CheqdSigningStargateClient', () => {
 					messages.push(createDidDocEncodeObject);
 				}
 				const [signerAccount] = await wallet.getAccounts();
-				const maxGasLimit = (await CheqdQuerier.getConsensusParameters(localnet.rpcUrl))!.block.maxGas;
+				const maxGasLimit = (await CheqdQuerier.getConsensusParameters(localnet.rpcUrl))!.block!.maxGas;
 				const batchMessages = await signer.batchMessages(
 					messages,
 					signerAccount.address,
