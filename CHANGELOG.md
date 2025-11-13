@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.7](https://github.com/cheqd/sdk/compare/5.3.6...5.3.7) (2025-11-13)
+
+### Bug Fixes
+
+* Resolved assertion ([a9f607a](https://github.com/cheqd/sdk/commit/a9f607a46d6a9dba68382132c1ab9344685413c8))
+
 ## [5.3.7-develop.1](https://github.com/cheqd/sdk/compare/5.3.6...5.3.7-develop.1) (2025-11-06)
 
 ### Bug Fixes
