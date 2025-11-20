@@ -14,6 +14,7 @@ import { localnet, faucet } from '../testutils.test';
 import { CheqdQuerier } from '../../src/querier';
 import { setupDidExtension, DidExtension } from '../../src/modules/did';
 import { DeliverTxResponse } from '@cosmjs/stargate';
+import { OracleExtension, setupOracleExtension } from '../../src/modules/oracle';
 
 const defaultAsyncTxTimeout = 30000;
 
@@ -28,8 +29,11 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 		const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 			registry,
 		});
-		const querier = (await CheqdQuerier.connectWithExtension(localnet.rpcUrl, setupDidExtension)) as CheqdQuerier &
-			DidExtension;
+		const querier = (await CheqdQuerier.connectWithExtensions(
+			localnet.rpcUrl,
+			setupDidExtension,
+			setupOracleExtension
+		)) as CheqdQuerier & DidExtension & OracleExtension;
 
 		didModule = new DIDModule(signer, querier);
 		feePayer = (await wallet.getAccounts())[0].address;
@@ -62,7 +66,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create the DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				const createTx = await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				expect(createTx.code).toBe(0);
 
@@ -102,7 +106,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 
 				const combinedSignInputs = [...signInputs1, ...signInputs2]; // Both old and new key signatures
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					rotatedDidPayload,
@@ -147,7 +151,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create the DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -176,7 +180,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				// Only provide old key signature (missing new key signature)
 				const incompleteSignInputs = [...signInputs1]; // Missing new key signature
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				await expect(
 					didModule.updateDidDocTx(incompleteSignInputs, rotatedDidPayload, feePayer, feeUpdate)
@@ -213,7 +217,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create the DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				const createTx = await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				expect(createTx.code).toBe(0);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -257,7 +261,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				expect(combinedSignInputs[0].verificationMethodId).toBe(verificationKeys1.keyId);
 				expect(combinedSignInputs[1].verificationMethodId).toBe(verificationKeys2WithSameDid.keyId);
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					replacedDidPayload,
@@ -304,7 +308,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create the DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -332,7 +336,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				// Only provide old key signature (missing new key signature)
 				const incompleteSignInputs = [...signInputs1]; // Missing new key signature
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				await expect(
 					didModule.updateDidDocTx(incompleteSignInputs, replacedDidPayload, feePayer, feeUpdate)
@@ -366,7 +370,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create the DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -402,7 +406,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 
 				const combinedSignInputs = [...signInputs1, ...signInputs2];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					expandedDidPayload,
@@ -477,7 +481,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create the DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				const createTx = await didModule.createDidDocTx(
 					initialSignInputs,
 					initialDidPayload,
@@ -563,7 +567,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Step 4: Execute the combined operation
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayload,
@@ -655,7 +659,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					},
 				];
 
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(initialSignInputs, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -715,7 +719,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					// Missing key-3 signature!
 				];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				await expect(
 					didModule.updateDidDocTx(incompleteSignInputs, updatedDidPayload, feePayer, feeUpdate)
@@ -755,7 +759,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Create controller DID
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(controllerSignInputs, controllerDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -827,7 +831,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					},
 				];
 
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -852,7 +856,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					verificationMethod: verificationMethods2, // Non-existent key ID
 				};
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				await expect(
 					didModule.updateDidDocTx(signInputs1, invalidDidPayload, feePayer, feeUpdate)
@@ -883,7 +887,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					},
 				];
 
-				const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
 				await didModule.createDidDocTx(signInputs1, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -910,7 +914,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				};
 
 				// Only provide old key signature (missing new key)
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				await expect(
 					didModule.updateDidDocTx(signInputs1, rotatedDidPayload, feePayer, feeUpdate)

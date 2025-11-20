@@ -31,6 +31,7 @@ import { CheqdQuerier } from '../../src/querier';
 import { setupResourceExtension, ResourceExtension } from '../../src/modules/resource';
 import { DidExtension, setupDidExtension } from '../../src/modules/did';
 import { sha256 } from '@cosmjs/crypto';
+import { OracleExtension, setupOracleExtension } from '../../src/modules/oracle';
 
 const defaultAsyncTxTimeout = 30000;
 
@@ -43,10 +44,11 @@ describe('ResourceModule', () => {
 		it('should instantiate standalone module', async () => {
 			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic);
 			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet);
-			const querier = (await CheqdQuerier.connectWithExtension(
+			const querier = (await CheqdQuerier.connectWithExtensions(
 				localnet.rpcUrl,
-				setupResourceExtension
-			)) as CheqdQuerier & ResourceExtension;
+				setupResourceExtension,
+				setupOracleExtension
+			)) as CheqdQuerier & ResourceExtension & OracleExtension;
 			const resourceModule = new ResourceModule(signer, querier);
 			expect(resourceModule).toBeInstanceOf(ResourceModule);
 		});
@@ -64,14 +66,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -93,7 +94,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -102,7 +103,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const resourcePayload: MsgCreateResourcePayload = {
 					collectionId: didPayload.id.split(':').reverse()[0],
@@ -122,7 +123,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await ResourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -149,14 +150,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -178,7 +178,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -187,7 +187,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const resourcePayload: MsgCreateResourcePayload = {
 					collectionId: didPayload.id.split(':').reverse()[0],
@@ -207,7 +207,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceImage = await ResourceModule.generateCreateResourceImageFees(feePayer);
+				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -234,14 +234,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -263,7 +262,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -272,7 +271,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const resourcePayload: MsgCreateResourcePayload = {
 					collectionId: didPayload.id.split(':').reverse()[0],
@@ -292,7 +291,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceDefault = await ResourceModule.generateCreateResourceDefaultFees(feePayer);
+				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -321,14 +320,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -350,7 +348,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -359,7 +357,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -381,7 +379,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await ResourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -430,14 +428,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -459,7 +456,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -468,7 +465,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -490,7 +487,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceImage = await ResourceModule.generateCreateResourceImageFees(feePayer);
+				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -539,14 +536,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -568,7 +564,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -577,7 +573,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -599,7 +595,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceDefault = await ResourceModule.generateCreateResourceDefaultFees(feePayer);
+				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -650,14 +646,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -679,7 +674,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -688,7 +683,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -710,7 +705,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await ResourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -758,14 +753,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -787,7 +781,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -796,7 +790,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -818,7 +812,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceImage = await ResourceModule.generateCreateResourceImageFees(feePayer);
+				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -866,14 +860,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -895,7 +888,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -904,7 +897,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -926,7 +919,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceDefault = await ResourceModule.generateCreateResourceDefaultFees(feePayer);
+				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -976,14 +969,13 @@ describe('ResourceModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = await CheqdQuerier.connectWithExtensions(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					...([
-						setupDidExtension,
-						setupResourceExtension,
-					] as unknown as QueryExtensionSetup<CheqdExtensions>[])
-				);
-				const didModule = new DIDModule(signer, querier as CheqdQuerier & DidExtension);
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -1005,7 +997,7 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1014,7 +1006,7 @@ describe('ResourceModule', () => {
 				expect(didTx.code).toBe(0);
 
 				// create a did linked resource
-				const resourceModule = new ResourceModule(signer, querier as CheqdQuerier & ResourceExtension);
+				const resourceModule = new ResourceModule(signer, querier);
 
 				const collectionId = didPayload.id.split(':').reverse()[0];
 
@@ -1036,7 +1028,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await ResourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -1151,6 +1143,330 @@ describe('ResourceModule', () => {
 				expect(containsAllButOmittedFields(resources.resources, expected, ['created'])).toBe(true);
 			},
 			defaultAsyncTxTimeout * 3
+		);
+	});
+
+	describe('queryLatestLinkedResourceVersion', () => {
+		it(
+			'should query the latest linked resource version',
+			async () => {
+				// create an associated did document
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {
+					prefix: faucet.prefix,
+				});
+				const registry = createDefaultCheqdRegistry(
+					Array.from(DIDModule.registryTypes).concat(Array.from(ResourceModule.registryTypes))
+				);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+				});
+				const querier = (await CheqdQuerier.connectWithExtensions(
+					localnet.rpcUrl,
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
+
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[verificationKeys]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feePayer = (await wallet.getAccounts())[0].address;
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+
+				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
+				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
+
+				expect(didTx.code).toBe(0);
+
+				// create a did linked resource
+				const resourceModule = new ResourceModule(signer, querier);
+
+				const collectionId = didPayload.id.split(':').reverse()[0];
+
+				const resourcePayload: MsgCreateResourcePayload = {
+					collectionId: collectionId,
+					id: v4(),
+					version: '1.0',
+					alsoKnownAs: [],
+					name: 'Test Resource',
+					resourceType: 'test-resource-type',
+					data: new TextEncoder().encode(json_content),
+				};
+
+				const resourceSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						keyType: 'Ed25519',
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const resourceTx = await resourceModule.createLinkedResourceTx(
+					resourceSignInputs,
+					resourcePayload,
+					feePayer,
+					feeResourceJson
+				);
+
+				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
+				console.warn(`Resource Tx: ${JSON.stringify(resourceTx)}`);
+
+				expect(resourceTx.code).toBe(0);
+
+				// query the latest linked resource version
+				const latestResource = await resourceModule.queryLatestLinkedResourceVersion(
+					collectionId,
+					resourcePayload.name,
+					resourcePayload.resourceType
+				);
+
+				// ledger constructed
+				const alsoKnownAs = [
+					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+				];
+				const checksum = toString(sha256(resourcePayload.data), 'hex');
+				const mimeType = 'application/json';
+
+				expect(latestResource.metadata?.collectionId).toBe(collectionId);
+				expect(latestResource.metadata?.id).toBe(resourcePayload.id);
+				expect(latestResource.metadata?.name).toBe(resourcePayload.name);
+				expect(latestResource.metadata?.version).toBe(resourcePayload.version);
+				expect(latestResource.metadata?.resourceType).toBe(resourcePayload.resourceType);
+				expect(latestResource.metadata?.alsoKnownAs).toEqual(alsoKnownAs);
+				expect(latestResource.metadata?.mediaType).toBe(mimeType);
+				expect(latestResource.metadata?.checksum).toBe(checksum);
+				expect(latestResource.metadata?.previousVersionId).toBe('');
+				expect(latestResource.metadata?.nextVersionId).toBe('');
+				expect(latestResource.resource?.data).toEqual(resourcePayload.data);
+
+				// create a did linked resource following version
+				const resourcePayload2: MsgCreateResourcePayload = {
+					collectionId: collectionId,
+					id: v4(),
+					version: '2.0',
+					alsoKnownAs: [],
+					name: 'Test Resource',
+					resourceType: 'test-resource-type',
+					data: new TextEncoder().encode(json_content),
+				};
+
+				const resourceTx2 = await resourceModule.createLinkedResourceTx(
+					resourceSignInputs,
+					resourcePayload2,
+					feePayer,
+					feeResourceJson
+				);
+
+				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
+				console.warn(`Resource Tx: ${JSON.stringify(resourceTx2)}`);
+
+				expect(resourceTx2.code).toBe(0);
+
+				// query the latest linked resource version again
+				const latestResource2 = await resourceModule.queryLatestLinkedResourceVersion(
+					collectionId,
+					resourcePayload2.name,
+					resourcePayload2.resourceType
+				);
+
+				// ledger constructed for latest version
+				const alsoKnownAs2 = [
+					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload2.id}` },
+				];
+
+				expect(latestResource2.metadata?.collectionId).toBe(collectionId);
+				expect(latestResource2.metadata?.id).toBe(resourcePayload2.id);
+				expect(latestResource2.metadata?.name).toBe(resourcePayload2.name);
+				expect(latestResource2.metadata?.version).toBe(resourcePayload2.version);
+				expect(latestResource2.metadata?.resourceType).toBe(resourcePayload2.resourceType);
+				expect(latestResource2.metadata?.alsoKnownAs).toEqual(alsoKnownAs2);
+				expect(latestResource2.metadata?.mediaType).toBe(mimeType);
+				expect(latestResource2.metadata?.checksum).toBe(checksum);
+				expect(latestResource2.metadata?.previousVersionId).toBe(resourcePayload.id);
+				expect(latestResource2.metadata?.nextVersionId).toBe('');
+				expect(latestResource2.resource?.data).toEqual(resourcePayload2.data);
+			},
+			defaultAsyncTxTimeout
+		);
+	});
+
+	describe('queryLatestLinkedResourceVersionMetadata', () => {
+		it(
+			'should query the latest linked resource version metadata',
+			async () => {
+				// create an associated did document
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, {
+					prefix: faucet.prefix,
+				});
+				const registry = createDefaultCheqdRegistry(
+					Array.from(DIDModule.registryTypes).concat(Array.from(ResourceModule.registryTypes))
+				);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+				});
+				const querier = (await CheqdQuerier.connectWithExtensions(
+					localnet.rpcUrl,
+					setupDidExtension,
+					setupResourceExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & ResourceExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
+
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods = createDidVerificationMethod(
+					[VerificationMethods.Ed255192020],
+					[verificationKeys]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feePayer = (await wallet.getAccounts())[0].address;
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+
+				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
+				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
+
+				expect(didTx.code).toBe(0);
+
+				// create a did linked resource
+				const resourceModule = new ResourceModule(signer, querier);
+
+				const collectionId = didPayload.id.split(':').reverse()[0];
+
+				const resourcePayload: MsgCreateResourcePayload = {
+					collectionId: collectionId,
+					id: v4(),
+					version: '1.0',
+					alsoKnownAs: [],
+					name: 'Test Resource',
+					resourceType: 'test-resource-type',
+					data: new TextEncoder().encode(json_content),
+				};
+
+				const resourceSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						keyType: 'Ed25519',
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const resourceTx = await resourceModule.createLinkedResourceTx(
+					resourceSignInputs,
+					resourcePayload,
+					feePayer,
+					feeResourceJson
+				);
+
+				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
+				console.warn(`Resource Tx: ${JSON.stringify(resourceTx)}`);
+
+				expect(resourceTx.code).toBe(0);
+
+				// query the latest linked resource version metadata
+				const latestMetadata = await resourceModule.queryLatestLinkedResourceVersionMetadata(
+					collectionId,
+					resourcePayload.name,
+					resourcePayload.resourceType
+				);
+
+				// ledger constructed
+				const alsoKnownAs = [
+					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload.id}` },
+				];
+				const checksum = toString(sha256(resourcePayload.data), 'hex');
+				const mimeType = 'application/json';
+
+				expect(latestMetadata?.collectionId).toBe(collectionId);
+				expect(latestMetadata?.id).toBe(resourcePayload.id);
+				expect(latestMetadata?.name).toBe(resourcePayload.name);
+				expect(latestMetadata?.version).toBe(resourcePayload.version);
+				expect(latestMetadata?.resourceType).toBe(resourcePayload.resourceType);
+				expect(latestMetadata?.alsoKnownAs).toEqual(alsoKnownAs);
+				expect(latestMetadata?.mediaType).toBe(mimeType);
+				expect(latestMetadata?.checksum).toBe(checksum);
+				expect(latestMetadata?.previousVersionId).toBe('');
+				expect(latestMetadata?.nextVersionId).toBe('');
+
+				// create a did linked resource following version
+				const resourcePayload2: MsgCreateResourcePayload = {
+					collectionId: collectionId,
+					id: v4(),
+					version: '2.0',
+					alsoKnownAs: [],
+					name: 'Test Resource',
+					resourceType: 'test-resource-type',
+					data: new TextEncoder().encode(json_content),
+				};
+
+				const resourceTx2 = await resourceModule.createLinkedResourceTx(
+					resourceSignInputs,
+					resourcePayload2,
+					feePayer,
+					feeResourceJson
+				);
+
+				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
+				console.warn(`Resource Tx: ${JSON.stringify(resourceTx2)}`);
+
+				expect(resourceTx2.code).toBe(0);
+
+				// query the latest linked resource version metadata again
+				const latestMetadata2 = await resourceModule.queryLatestLinkedResourceVersionMetadata(
+					collectionId,
+					resourcePayload2.name,
+					resourcePayload2.resourceType
+				);
+
+				// ledger constructed for latest version
+				const alsoKnownAs2 = [
+					{ description: 'did-url', uri: `${didPayload.id}/resources/${resourcePayload2.id}` },
+				];
+
+				expect(latestMetadata2?.collectionId).toBe(collectionId);
+				expect(latestMetadata2?.id).toBe(resourcePayload2.id);
+				expect(latestMetadata2?.name).toBe(resourcePayload2.name);
+				expect(latestMetadata2?.version).toBe(resourcePayload2.version);
+				expect(latestMetadata2?.resourceType).toBe(resourcePayload2.resourceType);
+				expect(latestMetadata2?.alsoKnownAs).toEqual(alsoKnownAs2);
+				expect(latestMetadata2?.mediaType).toBe(mimeType);
+				expect(latestMetadata2?.checksum).toBe(checksum);
+				expect(latestMetadata2?.previousVersionId).toBe(resourcePayload.id);
+				expect(latestMetadata2?.nextVersionId).toBe('');
+			},
+			defaultAsyncTxTimeout
 		);
 	});
 });

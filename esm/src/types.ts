@@ -14,6 +14,7 @@ import { FeeabstractionExtension } from './modules/feeabstraction.js';
 import { GetTxResponse, SimulateResponse } from 'cosmjs-types/cosmos/tx/v1beta1/service.js';
 import { Any } from 'cosmjs-types/google/protobuf/any.js';
 import { Pubkey } from '@cosmjs/amino';
+import { MovingAverage, OracleExtension, WMAStrategy } from './modules/oracle.js';
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from 'did-resolver';
 
 /** Supported Cheqd blockchain networks */
@@ -36,7 +37,12 @@ export type CheqdExtension<K extends string, V = any> = {
 }[K];
 
 /** Union type of all supported Cheqd query extensions */
-export type CheqdExtensions = DidExtension | ResourceExtension | FeemarketExtension | FeeabstractionExtension;
+export type CheqdExtensions =
+	| DidExtension
+	| ResourceExtension
+	| FeemarketExtension
+	| FeeabstractionExtension
+	| OracleExtension;
 
 /**
  * Extension interface for transaction-related operations.
@@ -211,6 +217,32 @@ export interface DidStdFee {
 	payer?: string;
 	/** Optional address of the account granting fee payment permissions */
 	granter?: string;
+}
+
+/**
+ * Identity-specific fee options for DID and DLR transactions.
+ * Enables customization of fee payment and slippage tolerance.
+ */
+export interface DidFeeOptions {
+	/** Optional explicit USD amount, otherwise we use lower bound from parameters */
+	wantedAmountUsd?: string;
+	/** Optional slippage in basis points; default is module's defaultSlippageBps */
+	slippageBps?: number;
+	/**
+	 * Optional fee denom.
+	 * - If 'ncheq': pay in native after oracle conversion.
+	 * - If accepted fee-abstraction denom: go through fee-abstraction flow.
+	 * - If omitted: pay in native 'ncheq'.
+	 */
+	feeDenom?: string;
+	/** Optional gas limit for the transaction */
+	gasLimit?: string;
+	/** Optional moving average type. */
+	movingAverageType?: MovingAverage;
+	/** Optional WMA strategy, if applicable */
+	wmaStrategy?: WMAStrategy;
+	/** Optional weights for WMA strategy CUSTOM, if applicable */
+	wmaWeights?: number[];
 }
 
 /**

@@ -50,8 +50,8 @@ fi
 
 # set beta tag as the image version in environment variable
 # temporarily bypass latest beta; use specific version for stability in tests
-# CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
-CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:4.1.6"
+CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
+# CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:4.1.6"
 
 echo "Using cheqd-node beta image: $CHEQD_NODE_BETA_IMAGE"
 

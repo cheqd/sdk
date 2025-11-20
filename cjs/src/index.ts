@@ -25,6 +25,7 @@ import {
 	FeeabstractionModule,
 	MinimalImportableFeeabstractionModule,
 } from './modules/feeabstraction';
+import { OracleExtension, OracleModule } from './modules/oracle';
 
 /**
  * Configuration options for initializing the CheqdSDK
@@ -72,7 +73,12 @@ export class CheqdSDK {
 	/** Signing client for executing transactions on the blockchain */
 	signer: CheqdSigningStargateClient;
 	/** Query client with extensions for reading blockchain data */
-	querier: CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension;
+	querier: CheqdQuerier &
+		DidExtension &
+		ResourceExtension &
+		FeemarketExtension &
+		FeeabstractionExtension &
+		OracleExtension;
 	/** Configuration options passed during SDK initialization */
 	options: ICheqdSDKOptions;
 	/** List of method names that are protected from external access */
@@ -174,13 +180,20 @@ export class CheqdSDK {
 	 * @private
 	 */
 	private async loadQuerierExtensions(): Promise<
-		CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension
+		CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension & OracleExtension
 	> {
 		const querierExtensions = this.options.modules.map((module) =>
 			instantiateCheqdSDKModuleQuerierExtensionSetup(module)
 		);
 		const querier = await CheqdQuerier.connectWithExtensions(this.options.rpcUrl, ...querierExtensions);
-		return <CheqdQuerier & DidExtension & ResourceExtension & FeemarketExtension & FeeabstractionExtension>querier;
+		return <
+			CheqdQuerier &
+				DidExtension &
+				ResourceExtension &
+				FeemarketExtension &
+				FeeabstractionExtension &
+				OracleExtension
+		>querier;
 	}
 
 	/**
@@ -258,7 +271,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 	return await new CheqdSDK(options).build();
 }
 
-export { DIDModule, ResourceModule, FeemarketModule, FeeabstractionModule };
+export { DIDModule, ResourceModule, FeemarketModule, FeeabstractionModule, OracleModule };
 export { AbstractCheqdSDKModule, applyMixins } from './modules/_';
 export {
 	DidExtension,
@@ -343,6 +356,50 @@ export {
 	isMsgUpdateParamsEncodeObject,
 	isMsgUpdateParamsResponseEncodeObject,
 } from './modules/feeabstraction';
+export {
+	OracleExtension,
+	MinimalImportableOracleModule,
+	OracleGovProposalOptions,
+	MsgAggregateExchangeRatePrevoteEncodeObject,
+	MsgAggregateExchangeRateVoteEncodeObject,
+	MsgDelegateFeedConsentEncodeObject,
+	MsgLegacyGovUpdateParamsEncodeObject,
+	MsgGovUpdateParamsEncodeObject,
+	MsgGovAddDenomsEncodeObject,
+	MsgGovRemoveCurrencyPairProvidersEncodeObject,
+	MsgGovRemoveCurrencyDeviationThresholdsEncodeObject,
+	MsgGovCancelUpdateParamPlanEncodeObject,
+	defaultOracleExtensionKey,
+	protobufLiterals as protobufLiteralsOracle,
+	typeUrlMsgAggregateExchangeRatePrevote,
+	typeUrlMsgAggregateExchangeRatePrevoteResponse,
+	typeUrlMsgAggregateExchangeRateVote,
+	typeUrlMsgAggregateExchangeRateVoteResponse,
+	typeUrlMsgDelegateFeedConsent,
+	typeUrlMsgDelegateFeedConsentResponse,
+	typeUrlMsgLegacyGovUpdateParams,
+	typeUrlMsgLegacyGovUpdateParamsResponse,
+	typeUrlMsgGovUpdateParams,
+	typeUrlMsgGovUpdateParamsResponse,
+	typeUrlMsgGovAddDenoms,
+	typeUrlMsgGovAddDenomsResponse,
+	typeUrlMsgGovRemoveCurrencyPairProviders,
+	typeUrlMsgGovRemoveCurrencyPairProvidersResponse,
+	typeUrlMsgGovRemoveCurrencyDeviationThresholds,
+	typeUrlMsgGovRemoveCurrencyDeviationThresholdsResponse,
+	typeUrlMsgGovCancelUpdateParamPlan,
+	typeUrlMsgGovCancelUpdateParamPlanResponse,
+	isMsgAggregateExchangeRatePrevoteEncodeObject,
+	isMsgAggregateExchangeRateVoteEncodeObject,
+	isMsgDelegateFeedConsentEncodeObject,
+	isMsgLegacyGovUpdateParamsEncodeObject,
+	isMsgGovUpdateParamsEncodeObject,
+	isMsgGovAddDenomsEncodeObject,
+	isMsgGovRemoveCurrencyPairProvidersEncodeObject,
+	isMsgGovRemoveCurrencyDeviationThresholdsEncodeObject,
+	isMsgGovCancelUpdateParamPlanEncodeObject,
+	setupOracleExtension,
+} from './modules/oracle';
 export * from './signer';
 export * from './querier';
 export * from './registry';

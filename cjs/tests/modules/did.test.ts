@@ -15,8 +15,13 @@ import { localnet, faucet, containsAll } from '../testutils.test';
 import { CheqdQuerier } from '../../src/querier';
 import { setupDidExtension, DidExtension } from '../../src/modules/did';
 import { v4 } from 'uuid-cjs';
+import { OracleExtension, setupOracleExtension } from '../../src/modules/oracle';
 
 const defaultAsyncTxTimeout = 30000;
+
+(BigInt.prototype as any).toJSON = function () {
+	return this.toString();
+};
 
 describe('DIDModule', () => {
 	describe('constructor', () => {
@@ -26,7 +31,7 @@ describe('DIDModule', () => {
 			const querier = (await CheqdQuerier.connectWithExtension(
 				localnet.rpcUrl,
 				setupDidExtension
-			)) as CheqdQuerier & DidExtension;
+			)) as CheqdQuerier & DidExtension & OracleExtension;
 			const didModule = new DIDModule(signer, querier);
 			expect(didModule).toBeInstanceOf(DIDModule);
 		});
@@ -41,10 +46,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -81,7 +87,7 @@ describe('DIDModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -100,10 +106,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -139,7 +146,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -158,10 +165,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(
@@ -179,7 +187,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -198,10 +206,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(keyPair.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
@@ -217,7 +226,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -236,10 +245,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(keyPair.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
@@ -255,7 +265,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -274,10 +284,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				const keyPair = createKeyPairBase64();
 				const verificationKeys = createVerificationKeys(keyPair.publicKey, MethodSpecificIdAlgo.Uuid, 'key-1');
@@ -290,13 +301,77 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
 
 				expect(didTx.code).toBe(0);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'should query a DID document - case: JSON unescaped AssertionMethod',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
+				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+					registry,
+				});
+				const querier = (await CheqdQuerier.connectWithExtensions(
+					localnet.rpcUrl,
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
+				const didModule = new DIDModule(signer, querier);
+
+				const keyPair = createKeyPairBase64();
+				const verificationKeys = createVerificationKeys(
+					keyPair.publicKey,
+					MethodSpecificIdAlgo.Base58,
+					'key-1'
+				);
+				const verificationMethods = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys]);
+				const [assertionMethod] = createDidVerificationMethod(
+					[VerificationMethods.Ed255192018],
+					[verificationKeys]
+				);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				didPayload.assertionMethod = [JSON.stringify(JSON.stringify(assertionMethod))];
+				const expectedAssertionMethod = [assertionMethod];
+				const signInputs: ISignInputs[] = [
+					{
+						verificationMethodId: didPayload.verificationMethod![0].id,
+						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
+					},
+				];
+				const feePayer = (await wallet.getAccounts())[0].address;
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+
+				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
+				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
+
+				expect(didTx.code).toBe(0);
+
+				const didDoc = await didModule.queryDidDoc(didPayload.id);
+
+				expect(didDoc.didDocument!.id).toEqual(didPayload.id);
+				expect(didDoc.didDocument!.controller).toEqual(didPayload.controller);
+				expect(didDoc.didDocument!.verificationMethod).toEqual(didPayload.verificationMethod);
+
+				// we keep 1-1 relationship of omitempty fields in proto and spec compliant json
+				// while converting from proto to spec compliant json, we remove omitempty fields
+				// as in a resolved did document
+				expect(didDoc.didDocument?.authentication).toEqual(didPayload?.authentication);
+				expect(didDoc.didDocument?.assertionMethod).toEqual(expectedAssertionMethod);
+				expect(didDoc.didDocument?.capabilityInvocation).toEqual(didPayload?.capabilityInvocation);
+				expect(didDoc.didDocument?.capabilityDelegation).toEqual(didPayload?.capabilityDelegation);
+				expect(didDoc.didDocument?.keyAgreement).toEqual(didPayload?.keyAgreement);
+				expect(didDoc.didDocument?.service).toEqual(didPayload?.service);
+				expect(didDoc.didDocument?.alsoKnownAs).toEqual(didPayload?.alsoKnownAs);
 			},
 			defaultAsyncTxTimeout
 		);
@@ -311,10 +386,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -335,7 +411,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -353,7 +429,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
@@ -377,10 +453,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -401,7 +478,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -419,7 +496,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -444,10 +521,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -465,7 +543,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -483,7 +561,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -507,10 +585,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				// Create initial DID with first key pair
@@ -533,7 +612,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const createFee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const createFee = await didModule.generateCreateDidDocFees(feePayer);
 				const createDidTx: DeliverTxResponse = await didModule.createDidDocTx(
 					initialSignInputs,
 					initialDidPayload,
@@ -582,7 +661,7 @@ describe('DIDModule', () => {
 					},
 				];
 
-				const updateFee = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateFee = await didModule.generateUpdateDidDocFees(feePayer);
 				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					updateSignInputs,
@@ -619,10 +698,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 				// Create initial DID with first key pair
 				const initialKeyPair = createKeyPairBase64();
@@ -644,7 +724,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const createFee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const createFee = await didModule.generateCreateDidDocFees(feePayer);
 				const createDidTx: DeliverTxResponse = await didModule.createDidDocTx(
 					initialSignInputs,
 					initialDidPayload,
@@ -693,7 +773,7 @@ describe('DIDModule', () => {
 					},
 				];
 
-				const updateFee = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const updateFee = await didModule.generateUpdateDidDocFees(feePayer);
 				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					updateSignInputs,
@@ -741,7 +821,7 @@ describe('DIDModule', () => {
 					},
 				];
 
-				const finalUpdateFee = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const finalUpdateFee = await didModule.generateUpdateDidDocFees(feePayer);
 				const finalUpdateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					finalSignInputs,
 					finalDidPayload,
@@ -797,10 +877,11 @@ describe('DIDModule', () => {
 			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 				registry,
 			});
-			const querier = (await CheqdQuerier.connectWithExtension(
+			const querier = (await CheqdQuerier.connectWithExtensions(
 				localnet.rpcUrl,
-				setupDidExtension
-			)) as CheqdQuerier & DidExtension;
+				setupDidExtension,
+				setupOracleExtension
+			)) as CheqdQuerier & DidExtension & OracleExtension;
 
 			didModuleA = new DIDModule(signer, querier);
 			didModuleB = new DIDModule(signer, querier);
@@ -854,12 +935,9 @@ describe('DIDModule', () => {
 				},
 			];
 
-			// Create all DIDs on blockchain
-			const feeCreate = await DIDModule.generateCreateDidDocFees(feePayer);
-
-			await didModuleA.createDidDocTx(signInputsA, didPayloadA, feePayer, feeCreate);
-			await didModuleB.createDidDocTx(signInputsB, didPayloadB, feePayer, feeCreate);
-			await didModuleC.createDidDocTx(signInputsC, didPayloadC, feePayer, feeCreate);
+			await didModuleA.createDidDocTx(signInputsA, didPayloadA, feePayer);
+			await didModuleB.createDidDocTx(signInputsB, didPayloadB, feePayer);
+			await didModuleC.createDidDocTx(signInputsC, didPayloadC, feePayer);
 
 			// Add short delay to ensure DIDs are available
 			await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -880,7 +958,7 @@ describe('DIDModule', () => {
 				// Need signatures from both DID A and DID B
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -912,7 +990,7 @@ describe('DIDModule', () => {
 				// Need signatures from both current controllers (A and B)
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -944,7 +1022,7 @@ describe('DIDModule', () => {
 				// Need signatures from current controller (B) and new controller (C)
 				const combinedSignInputs = [...signInputsB, ...signInputsC];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -976,7 +1054,7 @@ describe('DIDModule', () => {
 				// Need signatures from current controller (C) and new controller (B)
 				const combinedSignInputs = [...signInputsB, ...signInputsC];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1008,7 +1086,7 @@ describe('DIDModule', () => {
 				// Need signatures from current controllers (B and C) and the DID itself (A)
 				const combinedSignInputs = [...signInputsA, ...signInputsB, ...signInputsC];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1039,7 +1117,7 @@ describe('DIDModule', () => {
 				// Only provide signature from DID A, missing signature from DID B
 				const incompleteSignInputs = [...signInputsA]; // Missing signInputsB
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 
 				// This should fail due to missing signature
 				const updateTx = await didModuleA.updateDidDocTx(
@@ -1072,7 +1150,7 @@ describe('DIDModule', () => {
 				// Need signatures from both current controller (A) and new controller (B)
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1104,7 +1182,7 @@ describe('DIDModule', () => {
 					assertionMethod: [], // Clear assertion method as well
 				};
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 
 				// This should throw an error during client-side validation
 				await expect(
@@ -1119,6 +1197,7 @@ describe('DIDModule', () => {
 			defaultAsyncTxTimeout
 		);
 	});
+
 	describe('deactivateDidDocTx', () => {
 		it(
 			'should deactivate a DID - case: Ed25519VerificationKey2020',
@@ -1128,10 +1207,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1152,7 +1232,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1168,7 +1248,7 @@ describe('DIDModule', () => {
 					authentication: didPayload.authentication,
 				} as DIDDocument;
 
-				const feeDeactivate = await DIDModule.generateDeactivateDidDocFees(feePayer);
+				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer);
 
 				const deactivateDidDocTx: DeliverTxResponse = await didModule.deactivateDidDocTx(
 					signInputs,
@@ -1193,10 +1273,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1209,7 +1290,7 @@ describe('DIDModule', () => {
 					[VerificationMethods.Ed255192018],
 					[verificationKeys]
 				);
-				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys], [verificationKeys.didUrl]);
 				const signInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -1217,7 +1298,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1233,7 +1314,7 @@ describe('DIDModule', () => {
 					authentication: didPayload.authentication,
 				} as DIDDocument;
 
-				const feeDeactivate = await DIDModule.generateDeactivateDidDocFees(feePayer);
+				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer);
 
 				const deactivateDidDocTx: DeliverTxResponse = await didModule.deactivateDidDocTx(
 					signInputs,
@@ -1258,10 +1339,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1271,7 +1353,7 @@ describe('DIDModule', () => {
 					'key-1'
 				);
 				const verificationMethods = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys]);
-				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
+				const didPayload = createDidPayload(verificationMethods, [verificationKeys], [verificationKeys.didUrl]);
 				const signInputs: ISignInputs[] = [
 					{
 						verificationMethodId: didPayload.verificationMethod![0].id,
@@ -1279,7 +1361,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1295,7 +1377,7 @@ describe('DIDModule', () => {
 					authentication: didPayload.authentication,
 				} as DIDDocument;
 
-				const feeDeactivate = await DIDModule.generateDeactivateDidDocFees(feePayer);
+				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer);
 
 				const deactivateDidDocTx: DeliverTxResponse = await didModule.deactivateDidDocTx(
 					signInputs,
@@ -1322,10 +1404,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1346,7 +1429,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1382,10 +1465,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1406,7 +1490,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1442,10 +1526,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1463,7 +1548,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1490,69 +1575,6 @@ describe('DIDModule', () => {
 			},
 			defaultAsyncTxTimeout
 		);
-
-		it(
-			'should query a DID document - case: JSON unescaped AssertionMethod',
-			async () => {
-				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
-				const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
-				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
-					registry,
-				});
-				const querier = (await CheqdQuerier.connectWithExtension(
-					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
-				const didModule = new DIDModule(signer, querier);
-
-				const keyPair = createKeyPairBase64();
-				const verificationKeys = createVerificationKeys(
-					keyPair.publicKey,
-					MethodSpecificIdAlgo.Base58,
-					'key-1'
-				);
-				const verificationMethods = createDidVerificationMethod([VerificationMethods.JWK], [verificationKeys]);
-				const [assertionMethod] = createDidVerificationMethod(
-					[VerificationMethods.Ed255192018],
-					[verificationKeys]
-				);
-				const didPayload = createDidPayload(verificationMethods, [verificationKeys]);
-				didPayload.assertionMethod = [JSON.stringify(JSON.stringify(assertionMethod))];
-				const expectedAssertionMethod = [assertionMethod];
-				const signInputs: ISignInputs[] = [
-					{
-						verificationMethodId: didPayload.verificationMethod![0].id,
-						privateKeyHex: toString(fromString(keyPair.privateKey, 'base64'), 'hex'),
-					},
-				];
-				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
-
-				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
-				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
-
-				expect(didTx.code).toBe(0);
-
-				const didDoc = await didModule.queryDidDoc(didPayload.id);
-
-				expect(didDoc.didDocument!.id).toEqual(didPayload.id);
-				expect(didDoc.didDocument!.controller).toEqual(didPayload.controller);
-				expect(didDoc.didDocument!.verificationMethod).toEqual(didPayload.verificationMethod);
-
-				// we keep 1-1 relationship of omitempty fields in proto and spec compliant json
-				// while converting from proto to spec compliant json, we remove omitempty fields
-				// as in a resolved did document
-				expect(didDoc.didDocument?.authentication).toEqual(didPayload?.authentication);
-				expect(didDoc.didDocument?.assertionMethod).toEqual(expectedAssertionMethod);
-				expect(didDoc.didDocument?.capabilityInvocation).toEqual(didPayload?.capabilityInvocation);
-				expect(didDoc.didDocument?.capabilityDelegation).toEqual(didPayload?.capabilityDelegation);
-				expect(didDoc.didDocument?.keyAgreement).toEqual(didPayload?.keyAgreement);
-				expect(didDoc.didDocument?.service).toEqual(didPayload?.service);
-				expect(didDoc.didDocument?.alsoKnownAs).toEqual(didPayload?.alsoKnownAs);
-			},
-			defaultAsyncTxTimeout
-		);
 	});
 
 	describe('queryDidDocVersion', () => {
@@ -1564,10 +1586,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1588,7 +1611,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -1636,10 +1659,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1660,7 +1684,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -1687,7 +1711,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
@@ -1739,10 +1763,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1760,7 +1785,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -1787,7 +1812,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
@@ -1839,10 +1864,11 @@ describe('DIDModule', () => {
 				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 					registry,
 				});
-				const querier = (await CheqdQuerier.connectWithExtension(
+				const querier = (await CheqdQuerier.connectWithExtensions(
 					localnet.rpcUrl,
-					setupDidExtension
-				)) as CheqdQuerier & DidExtension;
+					setupDidExtension,
+					setupOracleExtension
+				)) as CheqdQuerier & DidExtension & OracleExtension;
 				const didModule = new DIDModule(signer, querier);
 
 				const keyPair = createKeyPairBase64();
@@ -1860,7 +1886,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await DIDModule.generateCreateDidDocFees(feePayer);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -1887,7 +1913,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await DIDModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,

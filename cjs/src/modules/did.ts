@@ -10,8 +10,8 @@ import {
 	SpecValidationResult,
 	VerificationMethods,
 	DIDDocumentWithMetadata,
-	ServiceType,
 	AuthenticationValidationResult,
+	DidFeeOptions,
 } from '../types';
 import {
 	MsgCreateDidDoc,
@@ -31,14 +31,18 @@ import {
 	DidDocWithMetadata,
 	DidDoc,
 	Metadata,
+	QueryParamsResponse,
+	FeeRange,
 } from '@cheqd/ts-proto-cjs/cheqd/did/v2/index';
-import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
+import { EncodeObject, GeneratedType, parseCoins } from '@cosmjs/proto-signing-cjs';
 import { v4 } from 'uuid-cjs';
 import { assert } from '@cosmjs/utils-cjs';
 import { PageRequest } from '@cheqd/ts-proto-cjs/cosmos/base/query/v1beta1/pagination';
 import { CheqdQuerier } from '../querier';
 import { DIDDocumentMetadata } from 'did-resolver-cjs';
 import { denormalizeService, normalizeAuthentication, normalizeController, normalizeService } from '../utils';
+import { defaultOracleExtensionKey, MovingAverages, OracleExtension, WMAStrategies } from './oracle';
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 
 /** Default extension key for DID-related query operations */
 export const defaultDidExtensionKey = 'did' as const;
@@ -248,6 +252,8 @@ export type DidExtension = {
 			id: string,
 			paginationKey?: Uint8Array
 		) => Promise<QueryAllDidDocVersionsMetadataResponse>;
+		/** Query DID module parameters */
+		readonly params: () => Promise<QueryParamsResponse>;
 	};
 };
 
@@ -271,10 +277,7 @@ export const setupDidExtension = (base: QueryClient): DidExtension => {
 				return value;
 			},
 			didDocVersion: async (id: string, versionId: string) => {
-				const { value } = await queryService.DidDocVersion({
-					id,
-					version: versionId,
-				});
+				const { value } = await queryService.DidDocVersion({ id, version: versionId });
 				assert(value);
 				return value;
 			},
@@ -283,6 +286,11 @@ export const setupDidExtension = (base: QueryClient): DidExtension => {
 					id,
 					pagination: createPagination(paginationKey) as PageRequest | undefined,
 				});
+				return response;
+			},
+			params: async () => {
+				const response = await queryService.Params({});
+				assert(response.params);
 				return response;
 			},
 		},
@@ -294,7 +302,7 @@ export const setupDidExtension = (base: QueryClient): DidExtension => {
  * Handles creation, updates, deactivation, and querying of DID documents on the Cheqd blockchain.
  */
 export class DIDModule extends AbstractCheqdSDKModule {
-	//@ts-expect-error the underlying type is intentionally wider
+	// @ts-expect-error underlying type `GeneratedType` is intentionally wider
 	static readonly registryTypes: Iterable<[string, GeneratedType]> = [
 		[typeUrlMsgCreateDidDoc, MsgCreateDidDoc],
 		[typeUrlMsgCreateDidDocResponse, MsgCreateDidDocResponse],
@@ -307,33 +315,49 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	/** Base denomination for Cheqd network transactions */
 	static readonly baseMinimalDenom = 'ncheq' as const;
 
+	/** Base denomination in USD for Cheqd network transactions */
+	static readonly baseUsdDenom = 'usd' as const;
+
+	/** Default slippage tolerance in base points (BPS) */
+	static readonly defaultSlippageBps = 500n;
+
 	/**
 	 * Standard fee amounts for DID operations.
 	 * These represent the default costs for different DID document operations.
 	 */
 	static readonly fees = {
 		/** Default fee for creating a new DID document */
-		DefaultCreateDidDocFee: {
-			amount: '50000000000',
-			denom: DIDModule.baseMinimalDenom,
-		} as const,
+		DefaultCreateDidDocFee: { amount: '50000000000', denom: DIDModule.baseMinimalDenom } as const,
 		/** Default fee for updating an existing DID document */
-		DefaultUpdateDidDocFee: {
-			amount: '25000000000',
-			denom: DIDModule.baseMinimalDenom,
-		} as const,
+		DefaultUpdateDidDocFee: { amount: '25000000000', denom: DIDModule.baseMinimalDenom } as const,
 		/** Default fee for deactivating a DID document */
-		DefaultDeactivateDidDocFee: {
-			amount: '10000000000',
-			denom: DIDModule.baseMinimalDenom,
-		} as const,
+		DefaultDeactivateDidDocFee: { amount: '10000000000', denom: DIDModule.baseMinimalDenom } as const,
+		/** Default fee for creating a new DID document in USD */
+		DefaultCreateDidDocFeeUSD: { amount: '2000000000000000000', denom: DIDModule.baseUsdDenom } as const,
+		/** Default fee for updating an existing DID document in USD */
+		DefaultUpdateDidDocFeeUSD: { amount: '1000000000000000000', denom: DIDModule.baseUsdDenom } as const,
+		/** Default fee for deactivating a DID document in USD */
+		DefaultDeactivateDidDocFeeUSD: { amount: '400000000000000000', denom: DIDModule.baseUsdDenom } as const,
+	} as const;
+
+	/**
+	 * Standard gas limits for DID operations.
+	 * These represent the default gas limits for different DID document operations.
+	 */
+	static readonly gasLimits = {
+		/** Gas limit for creating a new DID document */
+		CreateDidDocGasLimit: '360000',
+		/** Gas limit for updating an existing DID document */
+		UpdateDidDocGasLimit: '360000',
+		/** Gas limit for deactivating a DID document */
+		DeactivateDidDocGasLimit: '360000',
 	} as const;
 
 	/** Querier extension setup function for DID operations */
 	static readonly querierExtensionSetup: QueryExtensionSetup<DidExtension> = setupDidExtension;
 
 	/** Querier instance with DID extension capabilities */
-	querier: CheqdQuerier & DidExtension;
+	querier: CheqdQuerier & DidExtension & OracleExtension;
 
 	/**
 	 * Constructs a new DID module instance.
@@ -341,7 +365,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * @param signer - Signing client for blockchain transactions
 	 * @param querier - Querier client with DID extension for data retrieval
 	 */
-	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier & DidExtension) {
+	constructor(signer: CheqdSigningStargateClient, querier: CheqdQuerier & DidExtension & OracleExtension) {
 		super(signer, querier);
 		this.querier = querier;
 		this.methods = {
@@ -351,6 +375,8 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			queryDidDoc: this.queryDidDoc.bind(this),
 			queryDidDocVersion: this.queryDidDocVersion.bind(this),
 			queryAllDidDocVersionsMetadata: this.queryAllDidDocVersionsMetadata.bind(this),
+			queryParams: this.queryParams.bind(this),
+			generateCreateDidDocFees: this.generateCreateDidDocFees.bind(this),
 		};
 	}
 
@@ -382,6 +408,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * @param fee - Transaction fee configuration or 'auto' for automatic calculation
 	 * @param memo - Optional transaction memo
 	 * @param versionId - Optional version identifier for the DID document
+	 * @param feeOptions - Optional fee options for the transaction
 	 * @param context - Optional SDK context for accessing clients
 	 * @returns Promise resolving to the transaction response
 	 * @throws Error if DID payload is not spec compliant or authentication is invalid
@@ -393,6 +420,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		fee?: DidStdFee | 'auto' | number,
 		memo?: string,
 		versionId?: string,
+		feeOptions?: DidFeeOptions,
 		context?: IContext
 	): Promise<DeliverTxResponse> {
 		if (!this._signer) {
@@ -458,7 +486,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		}
 
 		if (!fee) {
-			fee = await DIDModule.generateCreateDidDocFees(address);
+			fee = await this.generateCreateDidDocFees(address, undefined, feeOptions, context);
 		}
 
 		return this._signer.signAndBroadcast(address, [createDidMsg], fee!, memo);
@@ -474,6 +502,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * @param fee - Transaction fee configuration or 'auto' for automatic calculation
 	 * @param memo - Optional transaction memo
 	 * @param versionId - Optional version identifier for the updated DID document
+	 * @param feeOptions - Optional fee options for the transaction
 	 * @param context - Optional SDK context for accessing clients
 	 * @returns Promise resolving to the transaction response
 	 * @throws Error if DID payload is not spec compliant or authentication is invalid
@@ -485,6 +514,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		fee?: DidStdFee | 'auto' | number,
 		memo?: string,
 		versionId?: string,
+		feeOptions?: DidFeeOptions,
 		context?: IContext
 	): Promise<DeliverTxResponse> {
 		if (!this._signer) {
@@ -563,7 +593,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		}
 
 		if (!fee) {
-			fee = await DIDModule.generateUpdateDidDocFees(address);
+			fee = await this.generateUpdateDidDocFees(address, undefined, feeOptions, context);
 		}
 
 		return this._signer.signAndBroadcast(address, [updateDidMsg], fee!, memo);
@@ -579,6 +609,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * @param fee - Transaction fee configuration or 'auto' for automatic calculation
 	 * @param memo - Optional transaction memo
 	 * @param versionId - Optional version identifier for the deactivation
+	 * @param feeOptions - Optional fee options for the transaction
 	 * @param context - Optional SDK context for accessing clients
 	 * @returns Promise resolving to the transaction response
 	 * @throws Error if DID payload is not spec compliant or authentication is invalid
@@ -590,6 +621,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		fee?: DidStdFee | 'auto' | number,
 		memo?: string,
 		versionId?: string,
+		feeOptions?: DidFeeOptions,
 		context?: IContext
 	): Promise<DeliverTxResponse> {
 		if (!this._signer) {
@@ -640,7 +672,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		}
 
 		if (!fee) {
-			fee = await DIDModule.generateDeactivateDidDocFees(address);
+			fee = await this.generateDeactivateDidDocFees(address, undefined, feeOptions, context);
 		}
 
 		return this._signer.signAndBroadcast(address, [deactivateDidMsg], fee!, memo);
@@ -709,6 +741,236 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			),
 			pagination,
 		};
+	}
+
+	/**
+	 * Queries the DID module parameters from the blockchain.
+	 * @param context - Optional SDK context for accessing clients
+	 * @returns Promise resolving to the DID module parameters
+	 */
+	async queryParams(context?: IContext): Promise<QueryParamsResponse> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier;
+		}
+		return this.querier[defaultDidExtensionKey].params();
+	}
+
+	/**
+	 * Generates oracle-powered fees for creating a DID document.
+	 *
+	 * @param feePayer - Address of the account that will pay the transaction fees
+	 * @param granter - Optional address of the account granting fee payment permissions
+	 * @param feeOptions - Options for fetching oracle fees
+	 * @param context - Optional SDK context for accessing clients
+	 * @returns Promise resolving to the fee configuration for DID document creation with oracle fees
+	 */
+	async generateCreateDidDocFees(
+		feePayer: string,
+		granter?: string,
+		feeOptions?: DidFeeOptions,
+		context?: IContext
+	): Promise<DidStdFee> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier;
+		}
+		// fetch fee parameters from the DID module
+		const feeParams = await this.queryParams(context);
+
+		// get the price range for the create operation
+		const priceRange = await this.getPriceRangeFromParams(feeParams, 'create', feeOptions);
+
+		// calculate the oracle fee amount based on the price range and options
+		return {
+			amount: [await this.calculateOracleFeeAmount(priceRange, feeOptions, context)],
+			gas: feeOptions?.gasLimit || DIDModule.gasLimits.CreateDidDocGasLimit,
+			payer: feePayer,
+			granter,
+		} satisfies DidStdFee;
+	}
+
+	/**
+	 * Generates oracle-powered fees for updating a DID document.
+	 *
+	 * @param feePayer - Address of the account that will pay the transaction fees
+	 * @param granter - Optional address of the account granting fee payment permissions
+	 * @param feeOptions - Options for fetching oracle fees
+	 * @param context - Optional SDK context for accessing clients
+	 * @returns Promise resolving to the fee configuration for DID document update with oracle fees
+	 */
+	async generateUpdateDidDocFees(
+		feePayer: string,
+		granter?: string,
+		fetchOptions?: DidFeeOptions,
+		context?: IContext
+	): Promise<DidStdFee> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier;
+		}
+		// fetch fee parameters from the DID module
+		const feeParams = await this.queryParams(context);
+
+		// get the price range for the update operation
+		const priceRange = await this.getPriceRangeFromParams(feeParams, 'update', fetchOptions);
+
+		// calculate the oracle fee amount based on the price range and options
+		return {
+			amount: [await this.calculateOracleFeeAmount(priceRange, fetchOptions, context)],
+			gas: fetchOptions?.gasLimit || DIDModule.gasLimits.UpdateDidDocGasLimit,
+			payer: feePayer,
+			granter,
+		} satisfies DidStdFee;
+	}
+
+	/** Generates oracle-powered fees for deactivating a DID document.
+	 *
+	 * @param feePayer - Address of the account that will pay the transaction fees
+	 * @param granter - Optional address of the account granting fee payment permissions
+	 * @param feeOptions - Options for fetching oracle fees
+	 * @param context - Optional SDK context for accessing clients
+	 * @returns Promise resolving to the fee configuration for DID document deactivation with oracle fees
+	 */
+	async generateDeactivateDidDocFees(
+		feePayer: string,
+		granter?: string,
+		feeOptions?: DidFeeOptions,
+		context?: IContext
+	): Promise<DidStdFee> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier;
+		}
+		// fetch fee parameters from the DID module
+		const feeParams = await this.queryParams(context);
+
+		// get the price range for the deactivate operation
+		const priceRange = await this.getPriceRangeFromParams(feeParams, 'deactivate', feeOptions);
+
+		// calculate the oracle fee amount based on the price range and options
+		return {
+			amount: [await this.calculateOracleFeeAmount(priceRange, feeOptions, context)],
+			gas: feeOptions?.gasLimit || DIDModule.gasLimits.DeactivateDidDocGasLimit,
+			payer: feePayer,
+			granter,
+		} satisfies DidStdFee;
+	}
+
+	/**
+	 * Gets the fee range for a specific DID operation from the module parameters.
+	 * @param feeParams - DID module fee parameters
+	 * @param operation - DID operation type ('create', 'update', 'deactivate')
+	 * @param feeOptions - Options for fee retrieval
+	 * @returns Promise resolving to the fee range for the specified operation
+	 */
+	async getPriceRangeFromParams(
+		feeParams: QueryParamsResponse,
+		operation: 'create' | 'update' | 'deactivate',
+		feeOptions?: DidFeeOptions
+	) {
+		const operationFees = (() => {
+			switch (operation) {
+				case 'create':
+					return feeParams.params?.createDid.find(
+						(fee) => fee.denom === (feeOptions?.feeDenom ?? DIDModule.baseUsdDenom)
+					);
+				case 'update':
+					return feeParams.params?.updateDid.find(
+						(fee) => fee.denom === (feeOptions?.feeDenom ?? DIDModule.baseUsdDenom)
+					);
+				case 'deactivate':
+					return feeParams.params?.deactivateDid.find(
+						(fee) => fee.denom === (feeOptions?.feeDenom ?? DIDModule.baseUsdDenom)
+					);
+				default:
+					throw new Error('Unsupported operation for fee retrieval');
+			}
+		})();
+
+		if (!operationFees) {
+			throw new Error(`Fee parameters not found for operation: ${operation}`);
+		}
+
+		return operationFees;
+	}
+
+	/**
+	 * Calculates the oracle fee amount based on the provided fee range and options.
+	 * @param feeRange - Fee range for the DID operation
+	 * @param feeOptions - Options for fee calculation
+	 * @param context - Optional SDK context for accessing clients
+	 * @returns Promise resolving to the calculated fee amount as a Coin
+	 */
+	private async calculateOracleFeeAmount(
+		feeRange: FeeRange,
+		feeOptions?: DidFeeOptions,
+		context?: IContext
+	): Promise<Coin> {
+		if (!this.querier) {
+			this.querier = context!.sdk!.querier;
+		}
+		if (feeRange.denom !== feeOptions?.feeDenom && feeOptions?.feeDenom !== undefined) {
+			throw new Error(`Fee denomination mismatch: expected ${feeRange.denom}, got ${feeOptions.feeDenom}`);
+		}
+
+		const wantedFeeAmount =
+			feeRange.denom === DIDModule.baseUsdDenom
+				? (feeOptions?.wantedAmountUsd ?? DIDModule.isFixedRange(feeRange))
+					? feeRange.minAmount
+					: feeRange.minAmount
+				: feeRange.minAmount;
+
+		// override fee options, if unassigned - case: moving average type
+		feeOptions = {
+			...feeOptions,
+			movingAverageType: feeOptions?.movingAverageType || MovingAverages.WMA,
+		};
+
+		// override fee options, if unassigned - case: WMA strategy
+		feeOptions = {
+			...feeOptions,
+			wmaStrategy:
+				feeOptions?.wmaStrategy || feeOptions?.movingAverageType === MovingAverages.WMA
+					? WMAStrategies.BALANCED
+					: undefined,
+		};
+
+		const convertedFeeAmount =
+			feeRange.denom === DIDModule.baseUsdDenom
+				? parseCoins(
+						(
+							await this.querier[defaultOracleExtensionKey].convertUSDtoCHEQ(
+								wantedFeeAmount,
+								feeOptions?.movingAverageType!,
+								feeOptions?.wmaStrategy,
+								feeOptions?.wmaWeights?.map((w) => BigInt(w))
+							)
+						).amount
+					)[0]
+				: Coin.fromPartial({ amount: wantedFeeAmount, denom: feeRange.denom });
+
+		return feeOptions?.slippageBps
+			? DIDModule.applySlippageToCoin(convertedFeeAmount, feeOptions.slippageBps)
+			: convertedFeeAmount;
+	}
+
+	/**
+	 * Applies slippage to a given coin amount based on the specified basis points.
+	 * @param coin - Coin amount to apply slippage to
+	 * @param slippageBps - Slippage in basis points (bps)
+	 * @returns Coin with adjusted amount after applying slippage
+	 */
+	static applySlippageToCoin(coin: Coin, slippageBps: number): Coin {
+		const base = BigInt(coin.amount);
+		const delta = (base * BigInt(slippageBps)) / BigInt(10_000);
+		const adjustedAmount = base + delta;
+		return Coin.fromPartial({ amount: adjustedAmount.toString(), denom: coin.denom });
+	}
+
+	/**
+	 * Checks if a fee range represents a fixed fee (minAmount equals maxAmount).
+	 * @param feeRange - Fee range to check
+	 * @returns True if the fee range is fixed, false otherwise
+	 */
+	static isFixedRange(feeRange: FeeRange): boolean {
+		return feeRange.minAmount === feeRange.maxAmount;
 	}
 
 	/**
@@ -940,7 +1202,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			};
 
 		// define whether external controller or not
-		const externalController = normalizeController(didDocument);
+		const externalController = normalizeController(didDocument).some((c) => c !== didDocument.id);
 
 		// validate authentication - case: authentication matches signatures, unique, if no external controller
 		if (!Array.from(uniqueAuthentication).every((a) => uniqueSignatures.has(a)) && !externalController)
@@ -963,7 +1225,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		if (!querier) throw new Error('querier is required for external controller validation');
 
 		// get external controllers
-		const externalControllers = externalController.filter((c) => c !== didDocument.id);
+		const externalControllers = normalizeController(didDocument).filter((c) => c !== didDocument.id);
 
 		// get external controllers' documents
 		const externalControllersDocuments = await Promise.all(
@@ -1040,7 +1302,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 		// define unique authentication
 		const authentication = normalizeAuthentication(didDocument);
-		const uniqueAuthentication = new Set(authentication);
+		const uniqueAuthentication = new Set<string>(authentication);
 
 		// validate authentication - case: authentication contains duplicates
 		if (uniqueAuthentication.size < authentication.length)
@@ -1129,7 +1391,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 							pvm.id === vm.id &&
 							(pvm.publicKeyBase58 !== vm.publicKeyBase58 ||
 								pvm.publicKeyMultibase !== vm.publicKeyMultibase ||
-								pvm.publicKeyJwk !== vm.publicKeyJwk)
+								pvm.publicKeyJwk?.x !== vm.publicKeyJwk?.x)
 					)
 				)
 			: [];
