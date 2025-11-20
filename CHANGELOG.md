@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.0-develop.1](https://github.com/cheqd/sdk/compare/5.3.7...5.4.0-develop.1) (2025-11-20)
+
+### Features
+
+* Feature release (Oracle) toolset ([da2e850](https://github.com/cheqd/sdk/commit/da2e8500c5f529db9d2e8177848809ae21c8d3e0))
+
 ## [5.3.7](https://github.com/cheqd/sdk/compare/5.3.6...5.3.7) (2025-11-13)
 
 ### Bug Fixes
