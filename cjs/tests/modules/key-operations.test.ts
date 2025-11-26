@@ -1016,7 +1016,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 		);
 
 		it(
-			'remove key when only both keys are in authentication',
+			'remove key when both keys are in authentication',
 			async () => {
 				const keyPair1 = createKeyPairBase64();
 				const keyPair2 = createKeyPairBase64();
