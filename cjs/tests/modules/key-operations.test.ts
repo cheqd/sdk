@@ -975,7 +975,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				await expect(
 					didModule.createDidDocTx(invalidSignInput, initialDidPayload, feePayer, feeCreate)
 				).rejects.toThrow(/authentication does not match signatures.*is not required/);
-
+				await new Promise((resolve) => setTimeout(resolve, 2000));
 				await didModule.createDidDocTx(validSignInput, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -1008,7 +1008,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				await expect(
 					didModule.updateDidDocTx(invalidSignInputs, updatedDidPayload, feePayer, feeUpdate)
 				).rejects.toThrow(/authentication does not match signatures.*is not required/);
-
+				await new Promise((resolve) => setTimeout(resolve, 2000));
 				const res = await didModule.updateDidDocTx(validSignInputs, updatedDidPayload, feePayer, feeUpdate);
 				expect(res.code === 0);
 			},
@@ -1066,7 +1066,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				await expect(
 					didModule.createDidDocTx(invalidSignInput, initialDidPayload, feePayer, feeCreate)
 				).rejects.toThrow(/authentication does not match signatures.*is missing/);
-
+				await new Promise((resolve) => setTimeout(resolve, 2000));
 				await didModule.createDidDocTx(initialSignInputs, initialDidPayload, feePayer, feeCreate);
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -1101,7 +1101,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				await expect(
 					didModule.updateDidDocTx(invalidSignInputs, updatedDidPayload, feePayer, feeUpdate)
 				).rejects.toThrow(/authentication does not match signatures.*is missing/);
-
+				await new Promise((resolve) => setTimeout(resolve, 2000));
 				const res = await didModule.updateDidDocTx(validSignInputs, updatedDidPayload, feePayer, feeUpdate);
 				expect(res.code === 0);
 			},
