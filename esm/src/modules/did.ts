@@ -1444,8 +1444,14 @@ export class DIDModule extends AbstractCheqdSDKModule {
 
 			uniqueUnionSignaturesRequired = new Set([...newKeySignatures, ...oldKeySignatures]);
 		} else {
-			// No rotation or replacement
-			uniqueUnionSignaturesRequired = new Set([...authentication.map((a) => `${a}(document0)`)]);
+			const oldKeySignatures = removedKeys
+				.filter((keyId) => previousAuthentication.includes(keyId)) // Only if they were in authentication
+				.map((keyId) => `${keyId}(document1)`);
+			// current authentication and any removed authentication key signatures
+			uniqueUnionSignaturesRequired = new Set([
+				...authentication.map((a) => `${a}(document0)`),
+				...oldKeySignatures,
+			]);
 		}
 
 		// define frequency of unique union of signatures required

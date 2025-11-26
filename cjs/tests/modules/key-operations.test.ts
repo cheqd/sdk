@@ -26,11 +26,11 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 	beforeAll(async () => {
 		wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
 		const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
-		const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
+		const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.testnetRpcUrl, wallet, {
 			registry,
 		});
 		const querier = (await CheqdQuerier.connectWithExtensions(
-			localnet.rpcUrl,
+			localnet.testnetRpcUrl,
 			setupDidExtension,
 			setupOracleExtension
 		)) as CheqdQuerier & DidExtension & OracleExtension;
@@ -922,9 +922,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 			},
 			defaultAsyncTxTimeout
 		);
-	});
 
-	describe('remove key with and without being in authentication', () => {
 		it(
 			'remove key when only one key is in authentication',
 			async () => {
@@ -954,6 +952,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				const initialDidPayload = {
 					...createDidPayload(initialVerificationMethods, [verificationKeys1, verificationKeys2]),
 					authentication: [verificationKeys1.keyId],
+					assertionMethod: [verificationKeys1.keyId],
 				};
 
 				// valid sign input
@@ -1077,6 +1076,8 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				const updatedDidPayload = {
 					...initialDidPayload,
 					verificationMethod: updatedVerificationMethods,
+					authentication: [initialDidPayload.authentication[0]],
+					assertionMethod: [initialDidPayload.authentication[0]],
 				};
 
 				// invalid sign input
