@@ -26,11 +26,11 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 	beforeAll(async () => {
 		wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: faucet.prefix });
 		const registry = createDefaultCheqdRegistry(DIDModule.registryTypes);
-		const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.testnetRpcUrl, wallet, {
+		const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet, {
 			registry,
 		});
 		const querier = (await CheqdQuerier.connectWithExtensions(
-			localnet.testnetRpcUrl,
+			localnet.rpcUrl,
 			setupDidExtension,
 			setupOracleExtension
 		)) as CheqdQuerier & DidExtension & OracleExtension;
