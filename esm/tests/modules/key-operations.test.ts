@@ -948,7 +948,7 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					...createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys2]),
 				];
 
-				// only key-1 in verification method
+				// only key-1 in authentication
 				const initialDidPayload = {
 					...createDidPayload(initialVerificationMethods, [verificationKeys1, verificationKeys2]),
 					authentication: [verificationKeys1.keyId],
