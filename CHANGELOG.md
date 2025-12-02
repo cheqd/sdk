@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.0-develop.2](https://github.com/cheqd/sdk/compare/5.4.0-develop.1...5.4.0-develop.2) (2025-12-02)
+
+### Bug Fixes
+
+* Signature validation to remove keys ([#480](https://github.com/cheqd/sdk/issues/480)) ([afa7766](https://github.com/cheqd/sdk/commit/afa7766a62913d4e77f0d7219f89fe37112bbea2))
+
 ## [5.4.0-develop.1](https://github.com/cheqd/sdk/compare/5.3.7...5.4.0-develop.1) (2025-11-20)
 
 ### Features
