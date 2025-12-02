@@ -922,5 +922,190 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 			},
 			defaultAsyncTxTimeout
 		);
+
+		it(
+			'remove key when only one key is in authentication',
+			async () => {
+				const keyPair1 = createKeyPairBase64();
+				const keyPair2 = createKeyPairBase64();
+
+				const verificationKeys1 = createVerificationKeys(
+					keyPair1.publicKey,
+					MethodSpecificIdAlgo.Uuid,
+					'key-1'
+				);
+				const verificationKeys2 = createVerificationKeys(
+					keyPair2.publicKey,
+					MethodSpecificIdAlgo.Uuid,
+					'key-2',
+					CheqdNetwork.Testnet,
+					verificationKeys1.methodSpecificId,
+					verificationKeys1.didUrl
+				);
+
+				const initialVerificationMethods = [
+					...createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys1]),
+					...createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys2]),
+				];
+
+				// only key-1 in authentication
+				const initialDidPayload = {
+					...createDidPayload(initialVerificationMethods, [verificationKeys1, verificationKeys2]),
+					authentication: [verificationKeys1.keyId],
+					assertionMethod: [verificationKeys1.keyId],
+				};
+
+				// valid sign input
+				const validSignInput: ISignInputs[] = [
+					{
+						verificationMethodId: verificationKeys1.keyId,
+						privateKeyHex: toString(fromString(keyPair1.privateKey, 'base64'), 'hex'),
+					},
+				];
+				// passing two signatures
+				const invalidSignInput: ISignInputs[] = [
+					...validSignInput,
+					{
+						verificationMethodId: verificationKeys2.keyId,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
+				await expect(
+					didModule.createDidDocTx(invalidSignInput, initialDidPayload, feePayer, feeCreate)
+				).rejects.toThrow(/authentication does not match signatures.*is not required/);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+				await didModule.createDidDocTx(validSignInput, initialDidPayload, feePayer, feeCreate);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				// Remove key-2
+				const updatedVerificationMethods = [initialVerificationMethods[0]];
+
+				const updatedDidPayload = {
+					...initialDidPayload,
+					verificationMethod: updatedVerificationMethods,
+				};
+
+				// valid sign input
+				const validSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: verificationKeys1.keyId,
+						privateKeyHex: toString(fromString(keyPair1.privateKey, 'base64'), 'hex'),
+					},
+				];
+				// passing two signatures
+				const invalidSignInputs: ISignInputs[] = [
+					...validSignInput,
+					{
+						verificationMethodId: verificationKeys2.keyId,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+
+				await expect(
+					didModule.updateDidDocTx(invalidSignInputs, updatedDidPayload, feePayer, feeUpdate)
+				).rejects.toThrow(/authentication does not match signatures.*is not required/);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+				const res = await didModule.updateDidDocTx(validSignInputs, updatedDidPayload, feePayer, feeUpdate);
+				expect(res.code === 0);
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'remove key when both keys are in authentication',
+			async () => {
+				const keyPair1 = createKeyPairBase64();
+				const keyPair2 = createKeyPairBase64();
+
+				const verificationKeys1 = createVerificationKeys(
+					keyPair1.publicKey,
+					MethodSpecificIdAlgo.Uuid,
+					'key-1'
+				);
+				const verificationKeys2 = createVerificationKeys(
+					keyPair2.publicKey,
+					MethodSpecificIdAlgo.Uuid,
+					'key-2',
+					CheqdNetwork.Testnet,
+					verificationKeys1.methodSpecificId,
+					verificationKeys1.didUrl
+				);
+
+				const initialVerificationMethods = [
+					...createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys1]),
+					...createDidVerificationMethod([VerificationMethods.Ed255192018], [verificationKeys2]),
+				];
+
+				// both key-1 and key-2 in authentication
+				const initialDidPayload = {
+					...createDidPayload(initialVerificationMethods, [verificationKeys1, verificationKeys2]),
+					authentication: [verificationKeys1.keyId, verificationKeys2.keyId],
+				};
+
+				// invalid sign input
+				const invalidSignInput: ISignInputs[] = [
+					{
+						verificationMethodId: verificationKeys1.keyId,
+						privateKeyHex: toString(fromString(keyPair1.privateKey, 'base64'), 'hex'),
+					},
+				];
+				// valid sign input
+				const initialSignInputs: ISignInputs[] = [
+					...invalidSignInput,
+					{
+						verificationMethodId: verificationKeys2.keyId,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feeCreate = await didModule.generateCreateDidDocFees(feePayer);
+				await expect(
+					didModule.createDidDocTx(invalidSignInput, initialDidPayload, feePayer, feeCreate)
+				).rejects.toThrow(/authentication does not match signatures.*is missing/);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+				await didModule.createDidDocTx(initialSignInputs, initialDidPayload, feePayer, feeCreate);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				// Remove key-2
+				const updatedVerificationMethods = [initialVerificationMethods[0]];
+
+				const updatedDidPayload = {
+					...initialDidPayload,
+					verificationMethod: updatedVerificationMethods,
+					authentication: [initialDidPayload.authentication[0]],
+					assertionMethod: [initialDidPayload.authentication[0]],
+				};
+
+				// invalid sign input
+				const invalidSignInputs: ISignInputs[] = [
+					{
+						verificationMethodId: verificationKeys1.keyId,
+						privateKeyHex: toString(fromString(keyPair1.privateKey, 'base64'), 'hex'),
+					},
+				];
+				// valid sign input
+				const validSignInputs: ISignInputs[] = [
+					...invalidSignInput,
+					{
+						verificationMethodId: verificationKeys2.keyId,
+						privateKeyHex: toString(fromString(keyPair2.privateKey, 'base64'), 'hex'),
+					},
+				];
+
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+
+				await expect(
+					didModule.updateDidDocTx(invalidSignInputs, updatedDidPayload, feePayer, feeUpdate)
+				).rejects.toThrow(/authentication does not match signatures.*is missing/);
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+				const res = await didModule.updateDidDocTx(validSignInputs, updatedDidPayload, feePayer, feeUpdate);
+				expect(res.code === 0);
+			},
+			defaultAsyncTxTimeout
+		);
 	});
 });
