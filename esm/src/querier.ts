@@ -1,6 +1,8 @@
-import { QueryClient } from '@cosmjs/stargate';
+import { QueryClient, createProtobufRpcClient } from '@cosmjs/stargate';
 import { CometClient, connectComet, ConsensusParams } from '@cosmjs/tendermint-rpc';
 import { QueryExtensionSetup, CheqdExtensions } from './types.js';
+import { ServiceClientImpl, type GetNodeInfoResponse } from 'cosmjs-types/cosmos/base/tendermint/v1beta1/query.js';
+import { CheqdNetwork } from './types.js';
 
 /**
  * Extended QueryClient specifically designed for the Cheqd blockchain network.
@@ -38,6 +40,78 @@ export class CheqdQuerier extends QueryClient {
 		// return consensus parameters
 		return result.consensusUpdates;
 	}
+
+	/**
+	 * Queries the node information over RPC to retrieve binary (application) version details.
+	 * Uses the Cosmos base tendermint service which returns both application and consensus versions.
+	 *
+	 * @param url - RPC URL of the blockchain node
+	 * @returns Promise resolving to GetNodeInfoResponse containing version info
+	 */
+	static async getNodeInfo(url: string): Promise<GetNodeInfoResponse> {
+		const cometClient = await connectComet(url);
+		try {
+			const baseQuerier = new QueryClient(cometClient);
+			const rpcClient = createProtobufRpcClient(baseQuerier);
+			const tendermintService = new ServiceClientImpl(rpcClient);
+
+			return await tendermintService.GetNodeInfo({});
+		} finally {
+			cometClient.disconnect();
+		}
+	}
+
+	/**
+	 * Uses the active connection to retrieve node info without creating a new client.
+	 * @returns Promise resolving to GetNodeInfoResponse containing version info
+	 */
+	/* async getNodeInfo(): Promise<GetNodeInfoResponse> {
+		const rpcClient = createProtobufRpcClient(this);
+		const tendermintService = new ServiceClientImpl(rpcClient);
+		return tendermintService.GetNodeInfo({});
+	} */
+
+	/**
+	 * Resolves the Cheqd network (mainnet/testnet) from the node info response.
+	 * @param nodeInfo - Node info response to inspect
+	 * @returns Detected network or undefined if it cannot be inferred
+	 */
+	static resolveNetworkFromNodeInfo(nodeInfo: GetNodeInfoResponse): CheqdNetwork | undefined {
+		const chainId =
+			nodeInfo.defaultNodeInfo?.network ||
+			nodeInfo.applicationVersion?.appName ||
+			nodeInfo.applicationVersion?.name ||
+			nodeInfo.applicationVersion?.version;
+		if (!chainId) return undefined;
+
+		const chainIdLower = chainId.toLowerCase();
+		if (chainIdLower.includes(CheqdNetwork.Mainnet)) {
+			return CheqdNetwork.Mainnet;
+		}
+		if (chainIdLower.includes(CheqdNetwork.Testnet)) {
+			return CheqdNetwork.Testnet;
+		}
+		return undefined;
+	}
+
+	/**
+	 * Detects the network (mainnet/testnet) by querying the node info over RPC.
+	 * @param url - RPC URL of the blockchain node
+	 * @returns Resolved CheqdNetwork value
+	 */
+	static async detectNetwork(url: string): Promise<CheqdNetwork> {
+		const nodeInfo = await CheqdQuerier.getNodeInfo(url);
+		return CheqdQuerier.resolveNetworkFromNodeInfo(nodeInfo) ?? CheqdNetwork.Testnet;
+	}
+
+	/**
+	 * Detects the network using the existing querier connection.
+	 * @returns Resolved CheqdNetwork value
+	 */
+	/* async detectNetwork(): Promise<CheqdNetwork> {
+		const nodeInfo = await this.getNodeInfo();
+		return CheqdQuerier.resolveNetworkFromNodeInfo(nodeInfo) ?? CheqdNetwork.Testnet;
+	} */
 
 	/**
 	 * Creates a new CheqdQuerier instance by establishing a connection to the specified RPC URL.

@@ -1,6 +1,7 @@
-import { QueryClient } from '@cosmjs/stargate-cjs';
+import { QueryClient, createProtobufRpcClient } from '@cosmjs/stargate-cjs';
 import { Tendermint34Client, Tendermint37Client, ConsensusParams } from '@cosmjs/tendermint-rpc-cjs';
-import { QueryExtensionSetup, CheqdExtensions } from './types';
+import { QueryExtensionSetup, CheqdExtensions, CheqdNetwork } from './types';
+import { ServiceClientImpl, GetNodeInfoResponse } from 'cosmjs-types-cjs/cosmos/base/tendermint/v1beta1/query';
 
 /**
  * Extended QueryClient specifically designed for the Cheqd blockchain network.
@@ -37,6 +38,59 @@ export class CheqdQuerier extends QueryClient {
 
 		// return consensus parameters
 		return result.consensusUpdates;
+	}
+
+	/**
+	 * Queries the node information over RPC to retrieve binary (application) version details.
+	 * Uses the Cosmos base tendermint service which returns both application and consensus versions.
+	 *
+	 * @param url - RPC URL of the blockchain node
+	 * @returns Promise resolving to GetNodeInfoResponse containing version info
+	 */
+	static async getNodeInfo(url: string): Promise<GetNodeInfoResponse> {
+		const tmClient = await Tendermint37Client.connect(url);
+		try {
+			const baseQuerier = new QueryClient(tmClient);
+			const rpcClient = createProtobufRpcClient(baseQuerier);
+			const tendermintService = new ServiceClientImpl(rpcClient);
+
+			return await tendermintService.GetNodeInfo({});
+		} finally {
+			tmClient.disconnect();
+		}
+	}
+
+	/**
+	 * Resolves the Cheqd network (mainnet/testnet) from the node info response.
+	 * @param nodeInfo - Node info response to inspect
+	 * @returns Detected network or undefined if it cannot be inferred
+	 */
+	static resolveNetworkFromNodeInfo(nodeInfo: GetNodeInfoResponse): CheqdNetwork | undefined {
+		const chainId =
+			nodeInfo.defaultNodeInfo?.network ||
+			nodeInfo.applicationVersion?.appName ||
+			nodeInfo.applicationVersion?.name ||
+			nodeInfo.applicationVersion?.version;
+		if (!chainId) return undefined;
+
+		const chainIdLower = chainId.toLowerCase();
+		if (chainIdLower.includes(CheqdNetwork.Mainnet)) {
+			return CheqdNetwork.Mainnet;
+		}
+		if (chainIdLower.includes(CheqdNetwork.Testnet)) {
+			return CheqdNetwork.Testnet;
+		}
+		return undefined;
+	}
+
+	/**
+	 * Detects the network (mainnet/testnet) by querying the node info over RPC.
+	 * @param url - RPC URL of the blockchain node
+	 * @returns Resolved CheqdNetwork value
+	 */
+	static async detectNetwork(url: string): Promise<CheqdNetwork> {
+		const nodeInfo = await CheqdQuerier.getNodeInfo(url);
+		return CheqdQuerier.resolveNetworkFromNodeInfo(nodeInfo) ?? CheqdNetwork.Testnet;
 	}
 
 	/**

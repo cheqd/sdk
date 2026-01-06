@@ -1,7 +1,7 @@
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_.js';
 import { CheqdSigningStargateClient } from '../signer.js';
 import { EncodeObject, GeneratedType, parseCoins } from '@cosmjs/proto-signing';
-import { DidFeeOptions, DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types.js';
+import { CheqdNetwork, DidFeeOptions, DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types.js';
 import {
 	Metadata,
 	MsgCreateResource,
@@ -438,6 +438,18 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		return await this.querier[defaultResourceExtensionKey].latestResourceVersionMetadata(collectionId, name, type);
 	}
 
+	private async resolveNetworkForFees(context?: IContext): Promise<CheqdNetwork> {
+		if (context?.sdk?.options?.rpcUrl) {
+			return await CheqdQuerier.detectNetwork(context.sdk.options.rpcUrl);
+		}
+
+		return context?.sdk?.options?.network ?? CheqdNetwork.Testnet;
+	}
+
+	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
+		return (await this.resolveNetworkForFees(context)) === CheqdNetwork.Testnet;
+	}
+
 	/**
 	 * Queries the Resource module parameters from the blockchain.
 	 * @param context - Optional SDK context for accessing clients
@@ -467,6 +479,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	): Promise<DidStdFee> {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
+		}
+
+		if (!(await this.shouldUseOracleFees(context))) {
+			return ResourceModule.generateCreateResourceImageFees(feePayer, granter);
 		}
 		// fetch fee parameters from the Resource module
 		const feeParams = await this.queryParams(context);
@@ -501,6 +517,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
 		}
+
+		if (!(await this.shouldUseOracleFees(context))) {
+			return ResourceModule.generateCreateResourceJsonFees(feePayer, granter);
+		}
 		// fetch fee parameters from the Resource module
 		const feeParams = await this.queryParams(context);
 
@@ -533,6 +553,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	): Promise<DidStdFee> {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
+		}
+
+		if (!(await this.shouldUseOracleFees(context))) {
+			return ResourceModule.generateCreateResourceDefaultFees(feePayer, granter);
 		}
 		// fetch fee parameters from the Resource module
 		const feeParams = await this.queryParams(context);

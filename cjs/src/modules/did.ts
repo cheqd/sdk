@@ -12,6 +12,7 @@ import {
 	DIDDocumentWithMetadata,
 	AuthenticationValidationResult,
 	DidFeeOptions,
+	CheqdNetwork,
 } from '../types';
 import {
 	MsgCreateDidDoc,
@@ -743,6 +744,18 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		};
 	}
 
+	private async resolveNetworkForFees(context?: IContext): Promise<CheqdNetwork> {
+		if (context?.sdk?.options?.rpcUrl) {
+			return await CheqdQuerier.detectNetwork(context.sdk.options.rpcUrl);
+		}
+
+		return context?.sdk?.options?.network ?? CheqdNetwork.Testnet;
+	}
+
+	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
+		return (await this.resolveNetworkForFees(context)) === CheqdNetwork.Testnet;
+	}
+
 	/**
 	 * Queries the DID module parameters from the blockchain.
 	 * @param context - Optional SDK context for accessing clients
@@ -772,6 +785,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	): Promise<DidStdFee> {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
+		}
+
+		if (!(await this.shouldUseOracleFees(context))) {
+			return DIDModule.generateCreateDidDocFees(feePayer, granter);
 		}
 		// fetch fee parameters from the DID module
 		const feeParams = await this.queryParams(context);
@@ -806,6 +823,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
 		}
+
+		if (!(await this.shouldUseOracleFees(context))) {
+			return DIDModule.generateUpdateDidDocFees(feePayer, granter);
+		}
 		// fetch fee parameters from the DID module
 		const feeParams = await this.queryParams(context);
 
@@ -837,6 +858,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	): Promise<DidStdFee> {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
+		}
+
+		if (!(await this.shouldUseOracleFees(context))) {
+			return DIDModule.generateDeactivateDidDocFees(feePayer, granter);
 		}
 		// fetch fee parameters from the DID module
 		const feeParams = await this.queryParams(context);
