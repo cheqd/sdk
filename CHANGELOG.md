@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.0-develop.3](https://github.com/cheqd/sdk/compare/5.4.0-develop.2...5.4.0-develop.3) (2026-01-06)
+
+### Features
+
+* Hybrid testnet / mainnet release (Oracle vs fixed pricing) ([c44fe50](https://github.com/cheqd/sdk/commit/c44fe5027054430a40e8798f9b22523e2c58017b))
+
 ## [5.4.0-develop.2](https://github.com/cheqd/sdk/compare/5.4.0-develop.1...5.4.0-develop.2) (2025-12-02)
 
 ### Bug Fixes
