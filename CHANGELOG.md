@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.4.0](https://github.com/cheqd/sdk/compare/5.3.7...5.4.0) (2026-01-07)
+
+### Features
+
+* Feature release (Oracle) toolset ([da2e850](https://github.com/cheqd/sdk/commit/da2e8500c5f529db9d2e8177848809ae21c8d3e0))
+* Hybrid testnet / mainnet release (Oracle vs fixed pricing) ([c44fe50](https://github.com/cheqd/sdk/commit/c44fe5027054430a40e8798f9b22523e2c58017b))
+
+### Bug Fixes
+
+* Signature validation to remove keys ([#480](https://github.com/cheqd/sdk/issues/480)) ([afa7766](https://github.com/cheqd/sdk/commit/afa7766a62913d4e77f0d7219f89fe37112bbea2))
+
 ## [5.4.0-develop.3](https://github.com/cheqd/sdk/compare/5.4.0-develop.2...5.4.0-develop.3) (2026-01-06)
 
 ### Features
