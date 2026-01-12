@@ -28,6 +28,14 @@ clean(typesOutDir);
 runTsc('tsconfig.types.json');
 
 const destDir = path.join(rootDir, 'build', 'types');
+const esmTypesDir = path.join(typesOutDir, 'esm', 'src');
+
 clean(destDir);
 ensureDir(path.join(rootDir, 'build'));
-fs.cpSync(typesOutDir, destDir, { recursive: true });
+ensureDir(destDir);
+
+if (!fs.existsSync(esmTypesDir)) {
+	throw new Error(`ESM type output not found at ${esmTypesDir}`);
+}
+
+fs.cpSync(esmTypesDir, destDir, { recursive: true });

@@ -37,10 +37,16 @@ ancillaryFiles.forEach((filename) => {
 });
 
 const destDir = path.join(rootDir, 'build', 'esm');
+const esmOutputDir = path.join(workspaceBuildDir, 'esm', 'src');
 
 clean(destDir);
+ensureDir(destDir);
 
-fs.cpSync(workspaceBuildDir, destDir, { recursive: true });
+if (!fs.existsSync(esmOutputDir)) {
+	throw new Error(`ESM build output not found at ${esmOutputDir}`);
+}
+
+fs.cpSync(esmOutputDir, destDir, { recursive: true });
 
 fs.copyFileSync(path.join(workspaceDir, 'package.json'), path.join(destDir, 'package.json'));
 
