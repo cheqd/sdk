@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.2](https://github.com/cheqd/sdk/compare/5.4.1...5.4.2) (2026-01-12)
+
+### Bug Fixes
+
+* Restructure ESM-only output ([5641166](https://github.com/cheqd/sdk/commit/5641166a8befb6e7d78f88a172781afee5117c95))
+
 ## [5.4.2-develop.1](https://github.com/cheqd/sdk/compare/5.4.1...5.4.2-develop.1) (2026-01-12)
 
 ### Bug Fixes
