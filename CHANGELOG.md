@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.1-develop.1](https://github.com/cheqd/sdk/compare/5.4.0...5.4.1-develop.1) (2026-01-12)
+
+### Bug Fixes
+
+* Re-arrange build exports ([3a1ce6a](https://github.com/cheqd/sdk/commit/3a1ce6ad08bd3e145fa5ab5b67a358a983d4e560))
+
 ## [5.4.0](https://github.com/cheqd/sdk/compare/5.3.7...5.4.0) (2026-01-07)
 
 ### Features
