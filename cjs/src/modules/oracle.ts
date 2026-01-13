@@ -28,7 +28,7 @@ import {
 	MsgGovRemoveCurrencyDeviationThresholds,
 	MsgGovCancelUpdateParamPlan,
 	ConvertUSDCtoCHEQResponse,
-} from '@cheqd/ts-proto/cheqd/oracle/v2';
+} from '@cheqd/ts-proto-cjs/cheqd/oracle/v2';
 import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing';
 import { Decimal } from '@cosmjs/math';
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
