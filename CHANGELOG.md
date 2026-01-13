@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.4](https://github.com/cheqd/sdk/compare/5.4.3...5.4.4) (2026-01-13)
+
+### Bug Fixes
+
+* Pin `@cheqd/ts-proto-cjs` failsafely ([b8691db](https://github.com/cheqd/sdk/commit/b8691dba91c0ea9c6af0df54534ca8d3c0169888))
+
 ## [5.4.4-develop.1](https://github.com/cheqd/sdk/compare/5.4.3...5.4.4-develop.1) (2026-01-13)
 
 ### Bug Fixes
