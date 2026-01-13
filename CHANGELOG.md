@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.5-develop.1](https://github.com/cheqd/sdk/compare/5.4.4...5.4.5-develop.1) (2026-01-13)
+
+### Bug Fixes
+
+* use cjs imports ([#486](https://github.com/cheqd/sdk/issues/486)) ([548673c](https://github.com/cheqd/sdk/commit/548673cf2fc9f8b95de50bf7858f2378e6d7e027))
+
 ## [5.4.4](https://github.com/cheqd/sdk/compare/5.4.3...5.4.4) (2026-01-13)
 
 ### Bug Fixes
