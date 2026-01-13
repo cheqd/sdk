@@ -27,7 +27,7 @@ import {
 } from './modules/feeabstraction.js';
 import { OracleExtension } from './modules/oracle.js';
 import { MinimalImportableOracleModule } from './modules/oracle';
-import { defaultOracleExtensionKey, setupOracleExtension, OracleModule } from '../../cjs/src/modules/oracle';
+import { defaultOracleExtensionKey, setupOracleExtension, OracleModule } from './modules/oracle.js';
 
 /**
  * Configuration options for initializing the CheqdSDK
