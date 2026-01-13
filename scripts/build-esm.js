@@ -16,7 +16,7 @@ function runTsc(configPath) {
 }
 
 function clean(target) {
-	fs.rmSync(target, { recursive: true, force: true, maxRetries: 5 });
+	fs.rmSync(target, { recursive: true, force: true });
 }
 
 function ensureDir(target) {
@@ -37,30 +37,10 @@ ancillaryFiles.forEach((filename) => {
 });
 
 const destDir = path.join(rootDir, 'build', 'esm');
-const esmOutputDir = path.join(workspaceBuildDir, 'esm', 'src');
-const workspaceCjsDir = path.join(workspaceBuildDir, 'cjs');
-const workspaceEsmDir = path.join(workspaceBuildDir, 'esm');
-const copyDirContents = (source, destination) =>
-	fs.readdirSync(source, { withFileTypes: true }).forEach((dirent) => {
-		const from = path.join(source, dirent.name);
-		const to = path.join(destination, dirent.name);
-		fs.cpSync(from, to, { recursive: true });
-	});
 
 clean(destDir);
-ensureDir(destDir);
 
-if (!fs.existsSync(esmOutputDir)) {
-	throw new Error(`ESM build output not found at ${esmOutputDir}`);
-}
-
-fs.cpSync(esmOutputDir, destDir, { recursive: true });
-
-// flatten workspace build directory to keep only final ESM output
-copyDirContents(esmOutputDir, workspaceBuildDir);
-clean(workspaceCjsDir);
-clean(esmOutputDir);
-clean(workspaceEsmDir);
+fs.cpSync(workspaceBuildDir, destDir, { recursive: true });
 
 fs.copyFileSync(path.join(workspaceDir, 'package.json'), path.join(destDir, 'package.json'));
 
