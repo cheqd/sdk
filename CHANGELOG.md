@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.3-develop.1](https://github.com/cheqd/sdk/compare/5.4.2...5.4.3-develop.1) (2026-01-13)
+
+### Bug Fixes
+
+* Reinstate build scripts to pre-cross import state ([0616322](https://github.com/cheqd/sdk/commit/0616322594685721bfe678d0743c633e372ce387))
+* Reinstate ESM import ([639e341](https://github.com/cheqd/sdk/commit/639e341667d420faa8ccbdefb66a9d1df01cb4d1))
+
 ## [5.4.2](https://github.com/cheqd/sdk/compare/5.4.1...5.4.2) (2026-01-12)
 
 ### Bug Fixes
