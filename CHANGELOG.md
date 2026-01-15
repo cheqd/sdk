@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.6](https://github.com/cheqd/sdk/compare/5.4.5...5.4.6) (2026-01-15)
+
+### Bug Fixes
+
+* Resolve scope overlapping ([22b0bf0](https://github.com/cheqd/sdk/commit/22b0bf0d8ebf423ff6720d00b5c76a82c32114fd))
+
 ## [5.4.6-develop.1](https://github.com/cheqd/sdk/compare/5.4.5...5.4.6-develop.1) (2026-01-15)
 
 ### Bug Fixes
