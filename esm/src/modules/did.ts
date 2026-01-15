@@ -376,11 +376,11 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			queryDidDoc: this.queryDidDoc.bind(this),
 			queryDidDocVersion: this.queryDidDocVersion.bind(this),
 			queryAllDidDocVersionsMetadata: this.queryAllDidDocVersionsMetadata.bind(this),
-			queryParams: this.queryParams.bind(this),
+			queryDidParams: this.queryDidParams.bind(this),
 			generateCreateDidDocFees: this.generateCreateDidDocFees.bind(this),
 			generateUpdateDidDocFees: this.generateUpdateDidDocFees.bind(this),
 			generateDeactivateDidDocFees: this.generateDeactivateDidDocFees.bind(this),
-			getPriceRangeFromParams: this.getPriceRangeFromParams.bind(this),
+			getPriceRangeFromDidParams: this.getPriceRangeFromDidParams.bind(this),
 		};
 	}
 
@@ -764,7 +764,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * @param context - Optional SDK context for accessing clients
 	 * @returns Promise resolving to the DID module parameters
 	 */
-	async queryParams(context?: IContext): Promise<QueryParamsResponse> {
+	async queryDidParams(context?: IContext): Promise<QueryParamsResponse> {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
 		}
@@ -794,10 +794,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return DIDModule.generateCreateDidDocFees(feePayer, granter);
 		}
 		// fetch fee parameters from the DID module
-		const feeParams = await this.queryParams(context);
+		const feeParams = await this.queryDidParams(context);
 
 		// get the price range for the create operation
-		const priceRange = await this.getPriceRangeFromParams(feeParams, 'create', feeOptions);
+		const priceRange = await this.getPriceRangeFromDidParams(feeParams, 'create', feeOptions);
 
 		// calculate the oracle fee amount based on the price range and options
 		return {
@@ -831,10 +831,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return DIDModule.generateUpdateDidDocFees(feePayer, granter);
 		}
 		// fetch fee parameters from the DID module
-		const feeParams = await this.queryParams(context);
+		const feeParams = await this.queryDidParams(context);
 
 		// get the price range for the update operation
-		const priceRange = await this.getPriceRangeFromParams(feeParams, 'update', fetchOptions);
+		const priceRange = await this.getPriceRangeFromDidParams(feeParams, 'update', fetchOptions);
 
 		// calculate the oracle fee amount based on the price range and options
 		return {
@@ -867,10 +867,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 			return DIDModule.generateDeactivateDidDocFees(feePayer, granter);
 		}
 		// fetch fee parameters from the DID module
-		const feeParams = await this.queryParams(context);
+		const feeParams = await this.queryDidParams(context);
 
 		// get the price range for the deactivate operation
-		const priceRange = await this.getPriceRangeFromParams(feeParams, 'deactivate', feeOptions);
+		const priceRange = await this.getPriceRangeFromDidParams(feeParams, 'deactivate', feeOptions);
 
 		// calculate the oracle fee amount based on the price range and options
 		return {
@@ -888,7 +888,7 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * @param feeOptions - Options for fee retrieval
 	 * @returns Promise resolving to the fee range for the specified operation
 	 */
-	async getPriceRangeFromParams(
+	async getPriceRangeFromDidParams(
 		feeParams: QueryParamsResponse,
 		operation: 'create' | 'update' | 'deactivate',
 		feeOptions?: DidFeeOptions

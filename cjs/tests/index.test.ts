@@ -1,5 +1,5 @@
 import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing-cjs';
-import { createCheqdSDK, DIDModule, ICheqdSDKOptions, ResourceModule } from '../src/index';
+import { createCheqdSDK, DIDModule, ICheqdSDKOptions, OracleModule, ResourceModule } from '../src/index';
 import { localnet, faucet } from './testutils.test';
 import { AbstractCheqdSDKModule } from '../src/modules/_';
 import { CheqdSigningStargateClient } from '../src/signer';
@@ -119,6 +119,7 @@ describe('CheqdSDK', () => {
 						DIDModule as unknown as AbstractCheqdSDKModule,
 						ResourceModule as unknown as AbstractCheqdSDKModule,
 						FeemarketModule as unknown as AbstractCheqdSDKModule,
+						OracleModule as unknown as AbstractCheqdSDKModule,
 					],
 					rpcUrl: localnet.rpcUrl,
 					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
@@ -128,10 +129,12 @@ describe('CheqdSDK', () => {
 				const didRegistryTypes = DIDModule.registryTypes;
 				const resourceRegistryTypes = ResourceModule.registryTypes;
 				const feemarketRegistryTypes = FeemarketModule.registryTypes;
+				const oracleRegistryTypes = OracleModule.registryTypes;
 				const cheqdRegistry = createDefaultCheqdRegistry([
 					...didRegistryTypes,
 					...resourceRegistryTypes,
 					...feemarketRegistryTypes,
+					...oracleRegistryTypes,
 				]);
 
 				expect(cheqdSDK.signer.registry).toStrictEqual(cheqdRegistry);

@@ -228,11 +228,11 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			queryLinkedResources: this.queryLinkedResources.bind(this),
 			queryLatestLinkedResourceVersion: this.queryLatestLinkedResourceVersion.bind(this),
 			queryLatestLinkedResourceVersionMetadata: this.queryLatestLinkedResourceVersionMetadata.bind(this),
-			queryParams: this.queryParams.bind(this),
+			queryResourceParams: this.queryParams.bind(this),
 			generateCreateResourceImageFees: this.generateCreateResourceImageFees.bind(this),
 			generateCreateResourceJsonFees: this.generateCreateResourceJsonFees.bind(this),
 			generateCreateResourceDefaultFees: this.generateCreateResourceDefaultFees.bind(this),
-			getPriceRangeFromParams: this.getPriceRangeFromParams.bind(this),
+			getPriceRangeFromResourceParams: this.getPriceRangeFromResourceParams.bind(this),
 		};
 	}
 
@@ -488,7 +488,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		const feeParams = await this.queryParams(context);
 
 		// get the price range for the image resource creation
-		const priceRange = await this.getPriceRangeFromParams(feeParams, 'image', feeOptions);
+		const priceRange = await this.getPriceRangeFromResourceParams(feeParams, 'image', feeOptions);
 
 		// calculate the oracle fee amount based on the price range and options
 		return {
@@ -525,7 +525,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		const feeParams = await this.queryParams(context);
 
 		// get the price range for the JSON resource creation
-		const priceRange = await this.getPriceRangeFromParams(feeParams, 'json', feeOptions);
+		const priceRange = await this.getPriceRangeFromResourceParams(feeParams, 'json', feeOptions);
 
 		// calculate the oracle fee amount based on the price range and options
 		return {
@@ -562,7 +562,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		const feeParams = await this.queryParams(context);
 
 		// get the price range for the default resource creation
-		const priceRange = await this.getPriceRangeFromParams(feeParams, 'default', feeOptions);
+		const priceRange = await this.getPriceRangeFromResourceParams(feeParams, 'default', feeOptions);
 
 		// calculate the oracle fee amount based on the price range and options
 		return {
@@ -580,7 +580,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * @param feeOptions - Options for fee retrieval
 	 * @returns Promise resolving to the fee range for the specified operation
 	 */
-	async getPriceRangeFromParams(
+	async getPriceRangeFromResourceParams(
 		feeParams: QueryParamsResponse,
 		operation: 'image' | 'json' | 'default',
 		feeOptions?: DidFeeOptions

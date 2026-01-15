@@ -213,6 +213,14 @@ export class CheqdSDK {
 			this.options.modules.push(FeemarketModule as unknown as AbstractCheqdSDKModule);
 		}
 
+		// ensure oracle module is loaded, if not already, if testnet
+		if (
+			this.options.network === CheqdNetwork.Testnet &&
+			!this.options.modules.find((module) => module instanceof OracleModule)
+		) {
+			this.options.modules.push(OracleModule as unknown as AbstractCheqdSDKModule);
+		}
+
 		const sdk = await this.loadModules(this.options.modules);
 
 		// define gas price
