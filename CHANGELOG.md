@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.7](https://github.com/cheqd/sdk/compare/5.4.6...5.4.7) (2026-01-15)
+
+### Bug Fixes
+
+* Align query namings ([e6dfab7](https://github.com/cheqd/sdk/commit/e6dfab7065e474c3d62eb033f893ff57dfa2c7c6))
+
 ## [5.4.7-develop.1](https://github.com/cheqd/sdk/compare/5.4.6...5.4.7-develop.1) (2026-01-15)
 
 ### Bug Fixes
