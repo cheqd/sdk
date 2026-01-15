@@ -206,8 +206,6 @@ export class CheqdSDK {
 	async build(): Promise<CheqdSDK> {
 		const registry = this.loadRegistry();
 
-		this.querier = await this.loadQuerierExtensions();
-
 		// ensure feemarket module is loaded, if not already
 		if (!this.options.modules.find((module) => module instanceof FeemarketModule)) {
 			this.options.modules.push(FeemarketModule as unknown as AbstractCheqdSDKModule);
@@ -220,6 +218,8 @@ export class CheqdSDK {
 		) {
 			this.options.modules.push(OracleModule as unknown as AbstractCheqdSDKModule);
 		}
+
+		this.querier = await this.loadQuerierExtensions();
 
 		const sdk = await this.loadModules(this.options.modules);
 
