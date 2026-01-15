@@ -228,7 +228,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			queryLinkedResources: this.queryLinkedResources.bind(this),
 			queryLatestLinkedResourceVersion: this.queryLatestLinkedResourceVersion.bind(this),
 			queryLatestLinkedResourceVersionMetadata: this.queryLatestLinkedResourceVersionMetadata.bind(this),
-			queryResourceParams: this.queryParams.bind(this),
+			queryResourceParams: this.queryResourceParams.bind(this),
 			generateCreateResourceImageFees: this.generateCreateResourceImageFees.bind(this),
 			generateCreateResourceJsonFees: this.generateCreateResourceJsonFees.bind(this),
 			generateCreateResourceDefaultFees: this.generateCreateResourceDefaultFees.bind(this),
@@ -455,7 +455,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * @param context - Optional SDK context for accessing clients
 	 * @returns Promise resolving to the Resource module parameters
 	 */
-	async queryParams(context?: IContext): Promise<QueryParamsResponse> {
+	async queryResourceParams(context?: IContext): Promise<QueryParamsResponse> {
 		if (!this.querier) {
 			this.querier = context!.sdk!.querier;
 		}
@@ -485,7 +485,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			return ResourceModule.generateCreateResourceImageFees(feePayer, granter);
 		}
 		// fetch fee parameters from the Resource module
-		const feeParams = await this.queryParams(context);
+		const feeParams = await this.queryResourceParams(context);
 
 		// get the price range for the image resource creation
 		const priceRange = await this.getPriceRangeFromResourceParams(feeParams, 'image', feeOptions);
@@ -522,7 +522,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			return ResourceModule.generateCreateResourceJsonFees(feePayer, granter);
 		}
 		// fetch fee parameters from the Resource module
-		const feeParams = await this.queryParams(context);
+		const feeParams = await this.queryResourceParams(context);
 
 		// get the price range for the JSON resource creation
 		const priceRange = await this.getPriceRangeFromResourceParams(feeParams, 'json', feeOptions);
@@ -559,7 +559,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 			return ResourceModule.generateCreateResourceDefaultFees(feePayer, granter);
 		}
 		// fetch fee parameters from the Resource module
-		const feeParams = await this.queryParams(context);
+		const feeParams = await this.queryResourceParams(context);
 
 		// get the price range for the default resource creation
 		const priceRange = await this.getPriceRangeFromResourceParams(feeParams, 'default', feeOptions);

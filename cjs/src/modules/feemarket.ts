@@ -210,7 +210,7 @@ export class FeemarketModule extends AbstractCheqdSDKModule {
 		this.methods = {
 			queryGasPrice: this.queryGasPrice.bind(this),
 			queryGasPrices: this.queryGasPrices.bind(this),
-			queryParams: this.queryParams.bind(this),
+			queryFeemarketParams: this.queryFeemarketParams.bind(this),
 			generateGasPrice: this.generateGasPrice.bind(this),
 			generateOfflineGasPrice: this.generateOfflineGasPrice.bind(this),
 			generateSafeGasPrice: this.generateSafeGasPrice.bind(this),
@@ -271,7 +271,7 @@ export class FeemarketModule extends AbstractCheqdSDKModule {
 	 * @param context - Optional SDK context for accessing clients
 	 * @returns Promise resolving to the parameters response
 	 */
-	async queryParams(context?: IContext): Promise<ParamsResponse> {
+	async queryFeemarketParams(context?: IContext): Promise<ParamsResponse> {
 		if (!this.querier) this.querier = context!.sdk!.querier;
 
 		return this.querier[defaultFeemarketExtensionKey].params();
