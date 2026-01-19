@@ -1272,6 +1272,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				if (!protobufDocument || !protobufDocument.didDoc)
 					throw new Error(`Document for controller ${c} not found`);
 
+				// throw, if deactivated
+				if (protobufDocument.metadata?.deactivated === true) throw new Error(`Controller ${c} is deactivated`);
+
 				// convert to spec compliant payload
 				return await DIDModule.toSpecCompliantPayload(protobufDocument.didDoc);
 			})
@@ -1569,6 +1572,9 @@ export class DIDModule extends AbstractCheqdSDKModule {
 				// throw, if not found
 				if (!protobufDocument || !protobufDocument.didDoc)
 					throw new Error(`Document for controller ${c} not found`);
+
+				// throw, if deactivated
+				if (protobufDocument.metadata?.deactivated === true) throw new Error(`Controller ${c} is deactivated`);
 
 				// convert to spec compliant payload
 				return await DIDModule.toSpecCompliantPayload(protobufDocument.didDoc);
