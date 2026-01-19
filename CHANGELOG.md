@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.8-develop.1](https://github.com/cheqd/sdk/compare/5.4.7...5.4.8-develop.1) (2026-01-19)
+
+### Bug Fixes
+
+* Validate deactivation status in external controllers ([#487](https://github.com/cheqd/sdk/issues/487)) ([71de9eb](https://github.com/cheqd/sdk/commit/71de9eb8f6dbca4459c66d988757306fa68aaa5d))
+
 ## [5.4.7](https://github.com/cheqd/sdk/compare/5.4.6...5.4.7) (2026-01-15)
 
 ### Bug Fixes
