@@ -29,11 +29,11 @@ import {
 	MsgGovCancelUpdateParamPlan,
 	ConvertUSDCtoCHEQResponse,
 } from '@cheqd/ts-proto-cjs/cheqd/oracle/v2';
-import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing';
-import { Decimal } from '@cosmjs/math';
+import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing-cjs';
+import { Decimal } from '@cosmjs/math-cjs';
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_';
-import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from '@cosmjs/stargate';
-import { assert } from '@cosmjs/utils';
+import { createProtobufRpcClient, DeliverTxResponse, QueryClient } from '@cosmjs/stargate-cjs';
+import { assert } from '@cosmjs/utils-cjs';
 import { DidStdFee, IContext, QueryExtensionSetup } from '../types';
 import { CheqdQuerier } from '../querier';
 import { CheqdSigningStargateClient } from '../signer';
