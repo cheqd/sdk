@@ -65,7 +65,7 @@ info "Running cheqd network"
 docker compose up -d cheqd
 docker compose cp ./ cheqd:/cheqd
 docker compose exec cheqd bash /cheqd/init.sh
-docker compose exec cheqd mv /cheqd/price-feeder.toml /home/cheqd/.cheqdnode
+docker compose exec cheqd cp /cheqd/price-feeder.toml /home/cheqd/.cheqdnode
 docker compose exec -d cheqd node-start
 
 
