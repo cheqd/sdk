@@ -51,7 +51,7 @@ fi
 # set beta tag as the image version in environment variable
 # temporarily bypass latest beta; use specific version for stability in tests
 # CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
-CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:4.1.6"
+CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:4.2.0"
 
 echo "Using cheqd-node beta image: $CHEQD_NODE_BETA_IMAGE"
 
@@ -65,7 +65,9 @@ info "Running cheqd network"
 docker compose up -d cheqd
 docker compose cp ./ cheqd:/cheqd
 docker compose exec cheqd bash /cheqd/init.sh
-docker compose exec -d cheqd cheqd-noded start
+docker compose exec cheqd mv /cheqd/price-feeder.toml /home/cheqd/.cheqdnode
+docker compose exec -d cheqd node-start
+
 
 info "Waiting for chains"
 # TODO: Get rid of this
