@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.9-develop.1](https://github.com/cheqd/sdk/compare/5.4.8...5.4.9-develop.1) (2026-01-21)
+
+### Bug Fixes
+
+* Oracle Module cjs imports ([#488](https://github.com/cheqd/sdk/issues/488)) ([2be7d79](https://github.com/cheqd/sdk/commit/2be7d79dd6180d4100dc7a0ce955837fa56766fe))
+
 ## [5.4.8](https://github.com/cheqd/sdk/compare/5.4.7...5.4.8) (2026-01-19)
 
 ### Bug Fixes
