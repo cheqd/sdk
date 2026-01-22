@@ -3,7 +3,7 @@ import { CheqdNetwork } from '../src';
 
 export const faucet = {
 	prefix: 'cheqd',
-	minimalDenom: 'ncheq',
+	minimalDenom: 'usd',
 	mnemonic:
 		'sketch mountain erode window enact net enrich smoke claim kangaroo another visual write meat latin bacon pulp similar forum guilt father state erase bright',
 	address: 'cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96',
@@ -11,6 +11,7 @@ export const faucet = {
 
 export const localnet = {
 	network: CheqdNetwork.Testnet,
+	testnetRpcUrl: 'https://rpc.cheqd.network:443',
 	rpcUrl: 'http://localhost:26657',
 	gasPrice: GasPrice.fromString(`5000${faucet.minimalDenom}`),
 };

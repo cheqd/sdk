@@ -29,6 +29,23 @@ function assert_network_running_comet_v38_or_above() {
     fi
 }
 
+function wait_for_oracle(){
+    local WAIT_TIME=180  # seconds
+    local INTERVAL=10
+    info "Waiting for oracle..."
+    while ! cheqd-noded q oracle ema cheq >/dev/null 2>&1; do
+        if [ "$WAIT_TIME" -le 0 ]; then
+            info "Oracle is not set up after timeout"
+            exit 1
+        fi
+
+        sleep "$INTERVAL"
+        WAIT_TIME=$((WAIT_TIME - INTERVAL))
+    done
+
+    info "Oracle is ready"
+}
+
 info "Cleanup"
 docker compose down --volumes --remove-orphans
 
@@ -76,3 +93,6 @@ sleep 20
 info "Checking statuses"
 CHEQD_STATUS=$(docker compose exec cheqd cheqd-noded status 2>&1)
 assert_network_running_comet_v38_or_above "${CHEQD_STATUS}"
+
+sleep 120
+wait_for_oracle

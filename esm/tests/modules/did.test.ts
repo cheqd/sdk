@@ -102,9 +102,7 @@ describe('DIDModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -163,9 +161,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -206,9 +202,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -247,9 +241,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -288,9 +280,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -326,9 +316,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -375,9 +363,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -522,9 +508,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -543,7 +527,7 @@ describe('DIDModule', () => {
 				} as DIDDocument;
 
 				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -593,9 +577,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -614,7 +596,7 @@ describe('DIDModule', () => {
 				} as DIDDocument;
 
 				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
@@ -662,9 +644,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -683,7 +663,7 @@ describe('DIDModule', () => {
 				} as DIDDocument;
 
 				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
@@ -735,9 +715,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const createFee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const createFee = await didModule.generateCreateDidDocFees(feePayer);
 				const createDidTx: DeliverTxResponse = await didModule.createDidDocTx(
 					initialSignInputs,
 					initialDidPayload,
@@ -787,7 +765,7 @@ describe('DIDModule', () => {
 				];
 
 				const updateFee = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
@@ -851,9 +829,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const createFee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const createFee = await didModule.generateCreateDidDocFees(feePayer);
 				const createDidTx: DeliverTxResponse = await didModule.createDidDocTx(
 					initialSignInputs,
 					initialDidPayload,
@@ -903,7 +879,7 @@ describe('DIDModule', () => {
 				];
 
 				const updateFee = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
@@ -953,7 +929,7 @@ describe('DIDModule', () => {
 				];
 
 				const finalUpdateFee = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const finalUpdateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					finalSignInputs,
@@ -1150,15 +1126,9 @@ describe('DIDModule', () => {
 				},
 			];
 
-			await didModuleA.createDidDocTx(signInputsA, didPayloadA, feePayer, undefined, undefined, undefined, {
-				feeDenom: faucet.minimalDenom,
-			});
-			await didModuleB.createDidDocTx(signInputsB, didPayloadB, feePayer, undefined, undefined, undefined, {
-				feeDenom: faucet.minimalDenom,
-			});
-			await didModuleC.createDidDocTx(signInputsC, didPayloadC, feePayer, undefined, undefined, undefined, {
-				feeDenom: faucet.minimalDenom,
-			});
+			await didModuleA.createDidDocTx(signInputsA, didPayloadA, feePayer);
+			await didModuleB.createDidDocTx(signInputsB, didPayloadB, feePayer);
+			await didModuleC.createDidDocTx(signInputsC, didPayloadC, feePayer);
 
 			// Add short delay to ensure DIDs are available
 			await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -1180,16 +1150,13 @@ describe('DIDModule', () => {
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
 					feePayer,
-					feeUpdate,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
+					feeUpdate
 				);
 
 				expect(updateTx.code).toBe(0);
@@ -1217,7 +1184,7 @@ describe('DIDModule', () => {
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
@@ -1251,7 +1218,7 @@ describe('DIDModule', () => {
 				const combinedSignInputs = [...signInputsB, ...signInputsC];
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
@@ -1285,7 +1252,7 @@ describe('DIDModule', () => {
 				const combinedSignInputs = [...signInputsB, ...signInputsC];
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
@@ -1319,7 +1286,7 @@ describe('DIDModule', () => {
 				const combinedSignInputs = [...signInputsA, ...signInputsB, ...signInputsC];
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
@@ -1352,7 +1319,7 @@ describe('DIDModule', () => {
 				const incompleteSignInputs = [...signInputsA]; // Missing signInputsB
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 
 				// This should fail due to missing signature
@@ -1387,7 +1354,7 @@ describe('DIDModule', () => {
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
 				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
@@ -1420,9 +1387,7 @@ describe('DIDModule', () => {
 					assertionMethod: [], // Clear assertion method as well
 				};
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
 
 				// This should throw an error during client-side validation
 				await expect(
@@ -1472,18 +1437,8 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
-					signInputs,
-					didPayload,
-					feePayer,
-					fee,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
-				);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1498,18 +1453,13 @@ describe('DIDModule', () => {
 					authentication: didPayload.authentication,
 				} as DIDDocument;
 
-				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer);
 
 				const deactivateDidDocTx: DeliverTxResponse = await didModule.deactivateDidDocTx(
 					signInputs,
 					deactivateDidPayload,
 					feePayer,
-					feeDeactivate,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
+					feeDeactivate
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(deactivateDidPayload)}`);
@@ -1553,18 +1503,8 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
-					signInputs,
-					didPayload,
-					feePayer,
-					fee,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
-				);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1579,18 +1519,13 @@ describe('DIDModule', () => {
 					authentication: didPayload.authentication,
 				} as DIDDocument;
 
-				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer);
 
 				const deactivateDidDocTx: DeliverTxResponse = await didModule.deactivateDidDocTx(
 					signInputs,
 					deactivateDidPayload,
 					feePayer,
-					feeDeactivate,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
+					feeDeactivate
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(deactivateDidPayload)}`);
@@ -1631,18 +1566,8 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
-					signInputs,
-					didPayload,
-					feePayer,
-					fee,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
-				);
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1657,18 +1582,13 @@ describe('DIDModule', () => {
 					authentication: didPayload.authentication,
 				} as DIDDocument;
 
-				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const feeDeactivate = await didModule.generateDeactivateDidDocFees(feePayer);
 
 				const deactivateDidDocTx: DeliverTxResponse = await didModule.deactivateDidDocTx(
 					signInputs,
 					deactivateDidPayload,
 					feePayer,
-					feeDeactivate,
-					undefined,
-					undefined,
-					{ feeDenom: faucet.minimalDenom }
+					feeDeactivate
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(deactivateDidPayload)}`);
@@ -1796,9 +1716,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1859,9 +1777,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1919,9 +1835,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
@@ -1984,9 +1898,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -2059,9 +1971,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -2089,7 +1999,7 @@ describe('DIDModule', () => {
 				} as DIDDocument;
 
 				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -2164,9 +2074,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -2194,7 +2102,7 @@ describe('DIDModule', () => {
 				} as DIDDocument;
 
 				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
+					slippageBps: 1000,
 				});
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -2269,9 +2177,7 @@ describe('DIDModule', () => {
 					},
 				];
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const fee = await didModule.generateCreateDidDocFees(feePayer);
 				const versionId = v4();
 				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
 					signInputs,
@@ -2298,9 +2204,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
-					feeDenom: faucet.minimalDenom,
-				});
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, { slippageBps: 1000 });
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
