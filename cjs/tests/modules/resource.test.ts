@@ -104,8 +104,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -133,7 +143,9 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -188,8 +200,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -217,12 +239,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer);
+				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceImage
+					feeResourceImage,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -272,8 +298,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -301,12 +337,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer);
+				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceDefault
+					feeResourceDefault,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -613,8 +653,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -644,7 +694,9 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -721,8 +773,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -752,12 +814,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer);
+				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceImage
+					feeResourceImage,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -829,8 +895,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -860,12 +936,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer);
+				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceDefault
+					feeResourceDefault,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -939,8 +1019,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -970,7 +1060,9 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -1046,8 +1138,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1077,12 +1179,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer);
+				const feeResourceImage = await resourceModule.generateCreateResourceImageFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceImage
+					feeResourceImage,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -1153,8 +1259,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1184,12 +1300,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer);
+				const feeResourceDefault = await resourceModule.generateCreateResourceDefaultFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceDefault
+					feeResourceDefault,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -1262,8 +1382,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1293,7 +1423,9 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -1453,8 +1585,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1484,7 +1626,9 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -1616,8 +1760,18 @@ describe('ResourceModule', () => {
 				];
 
 				const feePayer = (await wallet.getAccounts())[0].address;
-				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const fee = await didModule.generateCreateDidDocFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1647,12 +1801,16 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
+					feeDenom: faucet.minimalDenom,
+				});
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
 					feePayer,
-					feeResourceJson
+					feeResourceJson,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
@@ -1700,7 +1858,9 @@ describe('ResourceModule', () => {
 					resourceSignInputs,
 					resourcePayload2,
 					feePayer,
-					feeResourceJson
+					feeResourceJson,
+					undefined,
+					{ feeDenom: faucet.minimalDenom }
 				);
 
 				console.warn(`Using payload: ${JSON.stringify(resourcePayload)}`);
