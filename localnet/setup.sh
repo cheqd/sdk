@@ -30,10 +30,10 @@ function assert_network_running_comet_v38_or_above() {
 }
 
 function wait_for_oracle(){
-    local WAIT_TIME=180  # seconds
+    local WAIT_TIME=1800  # seconds
     local INTERVAL=10
     info "Waiting for oracle..."
-    while ! cheqd-noded q oracle ema cheq >/dev/null 2>&1; do
+    while ! cheqd-noded q oracle exchange-rate cheq >/dev/null 2>&1; do
         if [ "$WAIT_TIME" -le 0 ]; then
             info "Oracle is not set up after timeout"
             exit 1
@@ -48,6 +48,7 @@ function wait_for_oracle(){
 
 info "Cleanup"
 docker compose down --volumes --remove-orphans
+
 
 # get latest cheqd-node beta image version, where 'develop' is included in the tag
 # NOTE: switch logic to use `latest` tag to avoid circular dependency issues, if developing on SDK against stable network. Beta `cheqd-node` releases are to be used for testing transient features.
@@ -83,7 +84,7 @@ docker compose up -d cheqd
 docker compose cp ./ cheqd:/cheqd
 docker compose exec cheqd bash /cheqd/init.sh
 docker compose exec cheqd cp /cheqd/price-feeder.toml /home/cheqd/.cheqdnode
-docker compose exec -d cheqd node-start
+docker compose exec cheqd node-start
 
 
 info "Waiting for chains"
@@ -94,5 +95,7 @@ info "Checking statuses"
 CHEQD_STATUS=$(docker compose exec cheqd cheqd-noded status 2>&1)
 assert_network_running_comet_v38_or_above "${CHEQD_STATUS}"
 
-sleep 120
+# Transfer funds to test account
+docker compose exec -d cheqd cheqd-noded tx bank send validator cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96 10000000000000000ncheq --from validator --gas auto --gas-adjustment=1.8 --fees 10000000000ncheq --chain-id cheqd --keyring-backend test -y && sleep 2
+
 wait_for_oracle
