@@ -29,23 +29,6 @@ function assert_network_running_comet_v38_or_above() {
     fi
 }
 
-function wait_for_oracle(){
-    local WAIT_TIME=1800  # seconds
-    local INTERVAL=10
-    info "Waiting for oracle..."
-    while ! cheqd-noded q oracle exchange-rate cheq >/dev/null 2>&1; do
-        if [ "$WAIT_TIME" -le 0 ]; then
-            info "Oracle is not set up after timeout"
-            exit 1
-        fi
-
-        sleep "$INTERVAL"
-        WAIT_TIME=$((WAIT_TIME - INTERVAL))
-    done
-
-    info "Oracle is ready"
-}
-
 info "Cleanup"
 docker compose down --volumes --remove-orphans
 
@@ -84,7 +67,7 @@ docker compose up -d cheqd
 docker compose cp ./ cheqd:/cheqd
 docker compose exec cheqd bash /cheqd/init.sh
 docker compose exec cheqd cp /cheqd/price-feeder.toml /home/cheqd/.cheqdnode
-docker compose exec cheqd node-start
+docker compose exec -d cheqd node-start
 
 
 info "Waiting for chains"
@@ -97,5 +80,3 @@ assert_network_running_comet_v38_or_above "${CHEQD_STATUS}"
 
 # Transfer funds to test account
 docker compose exec -d cheqd cheqd-noded tx bank send validator cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96 10000000000000000ncheq --from validator --gas auto --gas-adjustment=1.8 --fees 10000000000ncheq --chain-id cheqd --keyring-backend test -y && sleep 2
-
-wait_for_oracle
