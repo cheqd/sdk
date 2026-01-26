@@ -526,7 +526,9 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
@@ -593,7 +595,9 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -658,7 +662,9 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
@@ -758,7 +764,9 @@ describe('DIDModule', () => {
 					},
 				];
 
-				const updateFee = await didModule.generateUpdateDidDocFees(feePayer);
+				const updateFee = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					updateSignInputs,
@@ -870,7 +878,9 @@ describe('DIDModule', () => {
 					},
 				];
 
-				const updateFee = await didModule.generateUpdateDidDocFees(feePayer);
+				const updateFee = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				console.warn(`Updated DID payload: ${JSON.stringify(updatedDidPayload)}`);
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					updateSignInputs,
@@ -918,7 +928,9 @@ describe('DIDModule', () => {
 					},
 				];
 
-				const finalUpdateFee = await didModule.generateUpdateDidDocFees(feePayer);
+				const finalUpdateFee = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const finalUpdateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					finalSignInputs,
 					finalDidPayload,
@@ -1137,7 +1149,9 @@ describe('DIDModule', () => {
 				// Need signatures from both DID A and DID B
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1169,7 +1183,9 @@ describe('DIDModule', () => {
 				// Need signatures from both current controllers (A and B)
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1201,7 +1217,9 @@ describe('DIDModule', () => {
 				// Need signatures from current controller (B) and new controller (C)
 				const combinedSignInputs = [...signInputsB, ...signInputsC];
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1233,7 +1251,9 @@ describe('DIDModule', () => {
 				// Need signatures from current controller (C) and new controller (B)
 				const combinedSignInputs = [...signInputsB, ...signInputsC];
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1265,7 +1285,9 @@ describe('DIDModule', () => {
 				// Need signatures from current controllers (B and C) and the DID itself (A)
 				const combinedSignInputs = [...signInputsA, ...signInputsB, ...signInputsC];
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1296,7 +1318,9 @@ describe('DIDModule', () => {
 				// Only provide signature from DID A, missing signature from DID B
 				const incompleteSignInputs = [...signInputsA]; // Missing signInputsB
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 
 				// This should fail due to missing signature
 				const updateTx = await didModuleA.updateDidDocTx(
@@ -1329,7 +1353,9 @@ describe('DIDModule', () => {
 				// Need signatures from both current controller (A) and new controller (B)
 				const combinedSignInputs = [...signInputsA, ...signInputsB];
 
-				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModuleA.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModuleA.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayloadA,
@@ -1972,7 +1998,9 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
@@ -2073,7 +2101,9 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,
@@ -2174,7 +2204,7 @@ describe('DIDModule', () => {
 					assertionMethod: [didPayload.verificationMethod![0].id], // <-- This is the only difference
 				} as DIDDocument;
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, { slippageBps: 1000 });
 				const updateDidDocTx: DeliverTxResponse = await didModule.updateDidDocTx(
 					signInputs,
 					updateDidPayload,

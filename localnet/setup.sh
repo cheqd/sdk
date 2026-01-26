@@ -32,6 +32,7 @@ function assert_network_running_comet_v38_or_above() {
 info "Cleanup"
 docker compose down --volumes --remove-orphans
 
+
 # get latest cheqd-node beta image version, where 'develop' is included in the tag
 # NOTE: switch logic to use `latest` tag to avoid circular dependency issues, if developing on SDK against stable network. Beta `cheqd-node` releases are to be used for testing transient features.
 # NOTE: Transient features are features that are not yet ready for production use, but are being tested in a beta environment. These features may change or be removed in future releases.
@@ -51,7 +52,7 @@ fi
 # set beta tag as the image version in environment variable
 # temporarily bypass latest beta; use specific version for stability in tests
 # CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:${BETA_TAG}"
-CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:4.1.6"
+CHEQD_NODE_BETA_IMAGE="ghcr.io/cheqd/cheqd-node:4.2.0"
 
 echo "Using cheqd-node beta image: $CHEQD_NODE_BETA_IMAGE"
 
@@ -65,7 +66,9 @@ info "Running cheqd network"
 docker compose up -d cheqd
 docker compose cp ./ cheqd:/cheqd
 docker compose exec cheqd bash /cheqd/init.sh
-docker compose exec -d cheqd cheqd-noded start
+docker compose exec cheqd cp /cheqd/price-feeder.toml /home/cheqd/.cheqdnode
+docker compose exec -d cheqd node-start
+
 
 info "Waiting for chains"
 # TODO: Get rid of this
@@ -74,3 +77,6 @@ sleep 20
 info "Checking statuses"
 CHEQD_STATUS=$(docker compose exec cheqd cheqd-noded status 2>&1)
 assert_network_running_comet_v38_or_above "${CHEQD_STATUS}"
+
+# Transfer funds to test account
+docker compose exec -d cheqd cheqd-noded tx bank send validator cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96 10000000000000000ncheq --from validator --gas auto --gas-adjustment=1.8 --fees 10000000000ncheq --chain-id cheqd --keyring-backend test -y && sleep 2

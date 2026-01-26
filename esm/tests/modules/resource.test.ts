@@ -105,7 +105,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -189,7 +195,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -273,7 +285,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -614,7 +632,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -722,7 +746,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -830,7 +860,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -940,7 +976,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1047,7 +1089,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1154,7 +1202,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1263,7 +1317,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1454,7 +1514,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
@@ -1484,9 +1550,7 @@ describe('ResourceModule', () => {
 					},
 				];
 
-				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer, undefined, {
-					slippageBps: 1000,
-				});
+				const feeResourceJson = await resourceModule.generateCreateResourceJsonFees(feePayer);
 				const resourceTx = await resourceModule.createLinkedResourceTx(
 					resourceSignInputs,
 					resourcePayload,
@@ -1619,7 +1683,13 @@ describe('ResourceModule', () => {
 
 				const feePayer = (await wallet.getAccounts())[0].address;
 				const fee = await didModule.generateCreateDidDocFees(feePayer);
-				const didTx: DeliverTxResponse = await didModule.createDidDocTx(signInputs, didPayload, feePayer, fee);
+				const didTx: DeliverTxResponse = await didModule.createDidDocTx(
+					signInputs,
+					didPayload,
+					feePayer,
+					fee,
+					undefined
+				);
 
 				console.warn(`Using payload: ${JSON.stringify(didPayload)}`);
 				console.warn(`DID Tx: ${JSON.stringify(didTx)}`);
