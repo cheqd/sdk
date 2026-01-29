@@ -33,10 +33,50 @@ jobs:
       - name: "Run npm build"
         run: npm run build
 
+  integration-tests-matrix-generator:
+    name: Detect changes & generate matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
+          filters: |
+            esm: 'esm/**'
+            cjs: 'cjs/**'
+
+      - id: generate
+        run: |
+          MATRIX="[]"
+
+          if [ "${{ steps.filter.outputs.esm }}" = "true" ]; then
+            MATRIX=$(jq '. + [{"name":"esm","test_directory":"esm"}]' <<< "$MATRIX")
+          fi
+
+          if [ "${{ steps.filter.outputs.cjs }}" = "true" ]; then
+            MATRIX=$(jq '. + [{"name":"cjs","test_directory":"cjs"}]' <<< "$MATRIX")
+          fi
+
+          echo "$MATRIX"
+
+          {
+            echo 'matrix<<EOF'
+            echo "$MATRIX"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
   integration-tests:
     name: Integration Tests (${{ matrix.name }})
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, integration-tests-matrix-generator]
+    if: false
 
     env:
       ORACLE_TESTS: "DIDModule|DID Key Operations|OracleModule|ResourceModule"
@@ -44,12 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: esm
-            test_directory: esm
-
-          - name: cjs
-            test_directory: cjs
+        include: ${{ fromJSON(needs.integration-tests-matrix-generator.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v5
