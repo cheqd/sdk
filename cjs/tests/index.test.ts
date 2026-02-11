@@ -9,7 +9,7 @@ import {
 	ResourceModule,
 	setupOracleExtension,
 } from '../src/index';
-import { localnet, faucet, mainnet } from './testutils.test';
+import { localnet, faucet } from './testutils.test';
 import { AbstractCheqdSDKModule } from '../src/modules/_';
 import { CheqdSigningStargateClient } from '../src/signer';
 import { createDefaultCheqdRegistry } from '../src/registry';

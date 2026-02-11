@@ -10,12 +10,6 @@ export const faucet = {
 	address: 'cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96',
 };
 
-export const mainnet = {
-	network: CheqdNetwork.Mainnet,
-	rpcUrl: 'https://rpc.cheqd.net:443',
-	gasPrice: GasPrice.fromString(`5000${faucet.minimalDenom}`),
-};
-
 export const localnet = {
 	network: CheqdNetwork.Testnet,
 	testnetRpcUrl: 'https://rpc.cheqd.network:443',
