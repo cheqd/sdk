@@ -106,7 +106,9 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 
 				const combinedSignInputs = [...signInputs1, ...signInputs2]; // Both old and new key signatures
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					rotatedDidPayload,
@@ -261,7 +263,9 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				expect(combinedSignInputs[0].verificationMethodId).toBe(verificationKeys1.keyId);
 				expect(combinedSignInputs[1].verificationMethodId).toBe(verificationKeys2WithSameDid.keyId);
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					replacedDidPayload,
@@ -406,7 +410,9 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 
 				const combinedSignInputs = [...signInputs1, ...signInputs2];
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					expandedDidPayload,
@@ -567,7 +573,9 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 				];
 
 				// Step 4: Execute the combined operation
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 				const updateTx = await didModule.updateDidDocTx(
 					combinedSignInputs,
 					updatedDidPayload,
@@ -1003,7 +1011,9 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					},
 				];
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 
 				await expect(
 					didModule.updateDidDocTx(invalidSignInputs, updatedDidPayload, feePayer, feeUpdate)
@@ -1096,7 +1106,9 @@ describe('DID Key Operations (Rotation, Replacement, and Combined)', () => {
 					},
 				];
 
-				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer);
+				const feeUpdate = await didModule.generateUpdateDidDocFees(feePayer, undefined, {
+					slippageBps: 1000,
+				});
 
 				await expect(
 					didModule.updateDidDocTx(invalidSignInputs, updatedDidPayload, feePayer, feeUpdate)
