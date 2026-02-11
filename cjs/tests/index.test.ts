@@ -9,7 +9,7 @@ import {
 	ResourceModule,
 	setupOracleExtension,
 } from '../src/index';
-import { localnet, faucet } from './testutils.test';
+import { localnet, faucet, mainnet } from './testutils.test';
 import { AbstractCheqdSDKModule } from '../src/modules/_';
 import { CheqdSigningStargateClient } from '../src/signer';
 import { createDefaultCheqdRegistry } from '../src/registry';
@@ -54,6 +54,52 @@ describe('CheqdSDK', () => {
 				moduleMethods.forEach((method) => {
 					expect(sdkMethods).toContain(method);
 				});
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'it can be dynamically instantiate Oracle module if available',
+			async () => {
+				const options = {
+					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
+					rpcUrl: localnet.rpcUrl,
+					network: localnet.network,
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
+				} satisfies ICheqdSDKOptions;
+				const cheqdSDK = await createCheqdSDK(options);
+
+				const sdkMethods = Object.keys(cheqdSDK.methods);
+				const testSigner = await CheqdSigningStargateClient.connectWithSigner(options.rpcUrl, options.wallet);
+				const testQuerier = (await CheqdQuerier.connectWithExtension(
+					options.rpcUrl,
+					setupOracleExtension
+				)) as CheqdQuerier & OracleExtension;
+
+				expect(sdkMethods).toContain('convertUSDtoCHEQ');
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
+			'it can dynamically avoid Oracle module if not available',
+			async () => {
+				const options = {
+					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
+					rpcUrl: mainnet.rpcUrl,
+					network: mainnet.network,
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
+				} satisfies ICheqdSDKOptions;
+				const cheqdSDK = await createCheqdSDK(options);
+
+				const sdkMethods = Object.keys(cheqdSDK.methods);
+				const testSigner = await CheqdSigningStargateClient.connectWithSigner(options.rpcUrl, options.wallet);
+				const testQuerier = (await CheqdQuerier.connectWithExtension(
+					options.rpcUrl,
+					setupOracleExtension
+				)) as CheqdQuerier & OracleExtension;
+
+				expect(sdkMethods).not.toContain('convertUSDtoCHEQ');
 			},
 			defaultAsyncTxTimeout
 		);
