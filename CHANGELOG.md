@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.5.0](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0) (2026-02-13)
+
+### Features
+
+* Validate oracle module dynamically on init ([#491](https://github.com/cheqd/sdk/issues/491)) ([a41e606](https://github.com/cheqd/sdk/commit/a41e6063356adc1b65f206847177cc3c4c08f3ee))
+
 ## [5.5.0-develop.1](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0-develop.1) (2026-02-11)
 
 ### Features
