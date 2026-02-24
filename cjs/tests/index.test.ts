@@ -1,5 +1,14 @@
 import { DirectSecp256k1HdWallet, GeneratedType } from '@cosmjs/proto-signing-cjs';
-import { createCheqdSDK, DIDModule, ICheqdSDKOptions, ResourceModule } from '../src/index';
+import {
+	createCheqdSDK,
+	defaultOracleExtensionKey,
+	DIDModule,
+	ICheqdSDKOptions,
+	OracleExtension,
+	OracleModule,
+	ResourceModule,
+	setupOracleExtension,
+} from '../src/index';
 import { localnet, faucet } from './testutils.test';
 import { AbstractCheqdSDKModule } from '../src/modules/_';
 import { CheqdSigningStargateClient } from '../src/signer';
@@ -24,10 +33,13 @@ describe('CheqdSDK', () => {
 			'can be instantiated with modules',
 			async () => {
 				const options = {
-					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
+					modules: [
+						FeemarketModule as unknown as AbstractCheqdSDKModule,
+						OracleModule as unknown as AbstractCheqdSDKModule,
+					],
 					rpcUrl: localnet.rpcUrl,
 					network: localnet.network,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} satisfies ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -47,10 +59,33 @@ describe('CheqdSDK', () => {
 		);
 
 		it(
+			'it can dynamically instantiate Oracle module if available',
+			async () => {
+				const options = {
+					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
+					rpcUrl: localnet.rpcUrl,
+					network: localnet.network,
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
+				} satisfies ICheqdSDKOptions;
+				const cheqdSDK = await createCheqdSDK(options);
+
+				const sdkMethods = Object.keys(cheqdSDK.methods);
+				const testSigner = await CheqdSigningStargateClient.connectWithSigner(options.rpcUrl, options.wallet);
+				const testQuerier = (await CheqdQuerier.connectWithExtension(
+					options.rpcUrl,
+					setupOracleExtension
+				)) as CheqdQuerier & OracleExtension;
+
+				expect(sdkMethods).toContain('convertUSDtoCHEQ');
+			},
+			defaultAsyncTxTimeout
+		);
+
+		it(
 			'should use module methods',
 			async () => {
 				const rpcUrl = localnet.rpcUrl;
-				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic);
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' });
 
 				class TestModule extends AbstractCheqdSDKModule {
 					registryTypes: Iterable<[string, GeneratedType]> = [];
@@ -74,6 +109,7 @@ describe('CheqdSDK', () => {
 					modules: [
 						TestModule as unknown as AbstractCheqdSDKModule,
 						FeemarketModule as unknown as AbstractCheqdSDKModule,
+						OracleModule as unknown as AbstractCheqdSDKModule,
 					],
 					rpcUrl,
 					wallet,
@@ -97,14 +133,18 @@ describe('CheqdSDK', () => {
 			'should instantiate registry from passed modules',
 			async () => {
 				const options = {
-					modules: [FeemarketModule as unknown as AbstractCheqdSDKModule],
+					modules: [
+						FeemarketModule as unknown as AbstractCheqdSDKModule,
+						OracleModule as unknown as AbstractCheqdSDKModule,
+					],
 					rpcUrl: localnet.rpcUrl,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} as ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
 				const feemarketRegistryTypes = FeemarketModule.registryTypes;
-				const cheqdRegistry = createDefaultCheqdRegistry(feemarketRegistryTypes);
+				const oracleRegistryTypes = OracleModule.registryTypes;
+				const cheqdRegistry = createDefaultCheqdRegistry([...feemarketRegistryTypes, ...oracleRegistryTypes]);
 
 				expect(cheqdSDK.signer.registry).toStrictEqual(cheqdRegistry);
 			},
@@ -119,19 +159,22 @@ describe('CheqdSDK', () => {
 						DIDModule as unknown as AbstractCheqdSDKModule,
 						ResourceModule as unknown as AbstractCheqdSDKModule,
 						FeemarketModule as unknown as AbstractCheqdSDKModule,
+						OracleModule as unknown as AbstractCheqdSDKModule,
 					],
 					rpcUrl: localnet.rpcUrl,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} as ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
 				const didRegistryTypes = DIDModule.registryTypes;
 				const resourceRegistryTypes = ResourceModule.registryTypes;
 				const feemarketRegistryTypes = FeemarketModule.registryTypes;
+				const oracleRegistryTypes = OracleModule.registryTypes;
 				const cheqdRegistry = createDefaultCheqdRegistry([
 					...didRegistryTypes,
 					...resourceRegistryTypes,
 					...feemarketRegistryTypes,
+					...oracleRegistryTypes,
 				]);
 
 				expect(cheqdSDK.signer.registry).toStrictEqual(cheqdRegistry);
@@ -149,7 +192,7 @@ describe('CheqdSDK', () => {
 					],
 					rpcUrl: localnet.rpcUrl,
 					network: localnet.network,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} satisfies ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -175,10 +218,11 @@ describe('CheqdSDK', () => {
 						DIDModule as unknown as AbstractCheqdSDKModule,
 						ResourceModule as unknown as AbstractCheqdSDKModule,
 						FeemarketModule as unknown as AbstractCheqdSDKModule,
+						OracleModule as unknown as AbstractCheqdSDKModule,
 					],
 					rpcUrl: localnet.rpcUrl,
 					network: localnet.network,
-					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic),
+					wallet: await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic, { prefix: 'cheqd' }),
 				} satisfies ICheqdSDKOptions;
 				const cheqdSDK = await createCheqdSDK(options);
 
@@ -194,6 +238,10 @@ describe('CheqdSDK', () => {
 					options.rpcUrl,
 					setupFeemarketExtension
 				)) as CheqdQuerier & FeemarketExtension;
+				const oracleQuerier = (await CheqdQuerier.connectWithExtension(
+					options.rpcUrl,
+					setupOracleExtension
+				)) as CheqdQuerier & OracleExtension;
 
 				// we need to stringify the querier extension because it's a proxy object
 				// and the equality check will fail
@@ -205,6 +253,9 @@ describe('CheqdSDK', () => {
 				);
 				expect(JSON.stringify(cheqdSDK.querier[defaultFeemarketExtensionKey])).toStrictEqual(
 					JSON.stringify(feemarketQuerier[defaultFeemarketExtensionKey])
+				);
+				expect(JSON.stringify(cheqdSDK.querier[defaultOracleExtensionKey])).toStrictEqual(
+					JSON.stringify(oracleQuerier[defaultOracleExtensionKey])
 				);
 			},
 			defaultAsyncTxTimeout

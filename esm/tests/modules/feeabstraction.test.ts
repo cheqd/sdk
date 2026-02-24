@@ -15,15 +15,19 @@ const defaultAsyncTxTimeout = 30000;
 
 describe('FeeabstractionModule', () => {
 	describe('constructor', () => {
-		it('should instantiate standalone module', async () => {
-			const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic);
-			const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet);
-			const querier = (await CheqdQuerier.connectWithExtension(
-				localnet.rpcUrl,
-				setupFeeabstractionExtension
-			)) as CheqdQuerier & FeeabstractionExtension;
-			const feeabstractionModule = new FeeabstractionModule(signer, querier);
-			expect(feeabstractionModule).toBeInstanceOf(FeeabstractionModule);
-		});
+		it(
+			'should instantiate standalone module',
+			async () => {
+				const wallet = await DirectSecp256k1HdWallet.fromMnemonic(faucet.mnemonic);
+				const signer = await CheqdSigningStargateClient.connectWithSigner(localnet.rpcUrl, wallet);
+				const querier = (await CheqdQuerier.connectWithExtension(
+					localnet.rpcUrl,
+					setupFeeabstractionExtension
+				)) as CheqdQuerier & FeeabstractionExtension;
+				const feeabstractionModule = new FeeabstractionModule(signer, querier);
+				expect(feeabstractionModule).toBeInstanceOf(FeeabstractionModule);
+			},
+			defaultAsyncTxTimeout
+		);
 	});
 });

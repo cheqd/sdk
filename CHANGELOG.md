@@ -1,5 +1,245 @@
 # Changelog
 
+## [5.5.1-develop.1](https://github.com/cheqd/sdk/compare/5.5.0...5.5.1-develop.1) (2026-02-19)
+
+### Bug Fixes
+
+* sync package-lock file ([f127197](https://github.com/cheqd/sdk/commit/f1271976070dbdd708bbe03fe5f6e64a28305682))
+
+## [5.5.0](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0) (2026-02-13)
+
+### Features
+
+* Validate oracle module dynamically on init ([#491](https://github.com/cheqd/sdk/issues/491)) ([a41e606](https://github.com/cheqd/sdk/commit/a41e6063356adc1b65f206847177cc3c4c08f3ee))
+
+## [5.5.0-develop.1](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0-develop.1) (2026-02-11)
+
+### Features
+
+* Validate oracle module dynamically on init ([#491](https://github.com/cheqd/sdk/issues/491)) ([a41e606](https://github.com/cheqd/sdk/commit/a41e6063356adc1b65f206847177cc3c4c08f3ee))
+
+## [5.4.9](https://github.com/cheqd/sdk/compare/5.4.8...5.4.9) (2026-01-23)
+
+### Bug Fixes
+
+* Oracle Module cjs imports ([#488](https://github.com/cheqd/sdk/issues/488)) ([2be7d79](https://github.com/cheqd/sdk/commit/2be7d79dd6180d4100dc7a0ce955837fa56766fe))
+
+## [5.4.9-develop.1](https://github.com/cheqd/sdk/compare/5.4.8...5.4.9-develop.1) (2026-01-21)
+
+### Bug Fixes
+
+* Oracle Module cjs imports ([#488](https://github.com/cheqd/sdk/issues/488)) ([2be7d79](https://github.com/cheqd/sdk/commit/2be7d79dd6180d4100dc7a0ce955837fa56766fe))
+
+## [5.4.8](https://github.com/cheqd/sdk/compare/5.4.7...5.4.8) (2026-01-19)
+
+### Bug Fixes
+
+* Validate deactivation status in external controllers ([#487](https://github.com/cheqd/sdk/issues/487)) ([71de9eb](https://github.com/cheqd/sdk/commit/71de9eb8f6dbca4459c66d988757306fa68aaa5d))
+
+## [5.4.8-develop.2](https://github.com/cheqd/sdk/compare/5.4.8-develop.1...5.4.8-develop.2) (2026-01-20)
+
+### Bug Fixes
+
+* Oracle Module cjs imports ([#488](https://github.com/cheqd/sdk/issues/488)) ([2be7d79](https://github.com/cheqd/sdk/commit/2be7d79dd6180d4100dc7a0ce955837fa56766fe))
+
+## [5.4.8-develop.1](https://github.com/cheqd/sdk/compare/5.4.7...5.4.8-develop.1) (2026-01-19)
+
+### Bug Fixes
+
+* Validate deactivation status in external controllers ([#487](https://github.com/cheqd/sdk/issues/487)) ([71de9eb](https://github.com/cheqd/sdk/commit/71de9eb8f6dbca4459c66d988757306fa68aaa5d))
+
+## [5.4.7](https://github.com/cheqd/sdk/compare/5.4.6...5.4.7) (2026-01-15)
+
+### Bug Fixes
+
+* Align query namings ([e6dfab7](https://github.com/cheqd/sdk/commit/e6dfab7065e474c3d62eb033f893ff57dfa2c7c6))
+
+## [5.4.7-develop.1](https://github.com/cheqd/sdk/compare/5.4.6...5.4.7-develop.1) (2026-01-15)
+
+### Bug Fixes
+
+* Align query namings ([e6dfab7](https://github.com/cheqd/sdk/commit/e6dfab7065e474c3d62eb033f893ff57dfa2c7c6))
+
+## [5.4.6](https://github.com/cheqd/sdk/compare/5.4.5...5.4.6) (2026-01-15)
+
+### Bug Fixes
+
+* Resolve scope overlapping ([22b0bf0](https://github.com/cheqd/sdk/commit/22b0bf0d8ebf423ff6720d00b5c76a82c32114fd))
+
+## [5.4.6-develop.1](https://github.com/cheqd/sdk/compare/5.4.5...5.4.6-develop.1) (2026-01-15)
+
+### Bug Fixes
+
+* Resolve scope overlapping ([22b0bf0](https://github.com/cheqd/sdk/commit/22b0bf0d8ebf423ff6720d00b5c76a82c32114fd))
+
+## [5.4.5](https://github.com/cheqd/sdk/compare/5.4.4...5.4.5) (2026-01-13)
+
+### Bug Fixes
+
+* use cjs imports ([#486](https://github.com/cheqd/sdk/issues/486)) ([548673c](https://github.com/cheqd/sdk/commit/548673cf2fc9f8b95de50bf7858f2378e6d7e027))
+
+## [5.4.5-develop.1](https://github.com/cheqd/sdk/compare/5.4.4...5.4.5-develop.1) (2026-01-13)
+
+### Bug Fixes
+
+* use cjs imports ([#486](https://github.com/cheqd/sdk/issues/486)) ([548673c](https://github.com/cheqd/sdk/commit/548673cf2fc9f8b95de50bf7858f2378e6d7e027))
+
+## [5.4.4](https://github.com/cheqd/sdk/compare/5.4.3...5.4.4) (2026-01-13)
+
+### Bug Fixes
+
+* Pin `@cheqd/ts-proto-cjs` failsafely ([b8691db](https://github.com/cheqd/sdk/commit/b8691dba91c0ea9c6af0df54534ca8d3c0169888))
+
+## [5.4.4-develop.1](https://github.com/cheqd/sdk/compare/5.4.3...5.4.4-develop.1) (2026-01-13)
+
+### Bug Fixes
+
+* Pin `@cheqd/ts-proto-cjs` failsafely ([b8691db](https://github.com/cheqd/sdk/commit/b8691dba91c0ea9c6af0df54534ca8d3c0169888))
+
+## [5.4.3](https://github.com/cheqd/sdk/compare/5.4.2...5.4.3) (2026-01-13)
+
+### Bug Fixes
+
+* Reinstate build scripts to pre-cross import state ([0616322](https://github.com/cheqd/sdk/commit/0616322594685721bfe678d0743c633e372ce387))
+* Reinstate ESM import ([639e341](https://github.com/cheqd/sdk/commit/639e341667d420faa8ccbdefb66a9d1df01cb4d1))
+
+## [5.4.3-develop.1](https://github.com/cheqd/sdk/compare/5.4.2...5.4.3-develop.1) (2026-01-13)
+
+### Bug Fixes
+
+* Reinstate build scripts to pre-cross import state ([0616322](https://github.com/cheqd/sdk/commit/0616322594685721bfe678d0743c633e372ce387))
+* Reinstate ESM import ([639e341](https://github.com/cheqd/sdk/commit/639e341667d420faa8ccbdefb66a9d1df01cb4d1))
+
+## [5.4.2](https://github.com/cheqd/sdk/compare/5.4.1...5.4.2) (2026-01-12)
+
+### Bug Fixes
+
+* Restructure ESM-only output ([5641166](https://github.com/cheqd/sdk/commit/5641166a8befb6e7d78f88a172781afee5117c95))
+
+## [5.4.2-develop.1](https://github.com/cheqd/sdk/compare/5.4.1...5.4.2-develop.1) (2026-01-12)
+
+### Bug Fixes
+
+* Restructure ESM-only output ([5641166](https://github.com/cheqd/sdk/commit/5641166a8befb6e7d78f88a172781afee5117c95))
+
+## [5.4.1](https://github.com/cheqd/sdk/compare/5.4.0...5.4.1) (2026-01-12)
+
+### Bug Fixes
+
+* Re-arrange build exports ([3a1ce6a](https://github.com/cheqd/sdk/commit/3a1ce6ad08bd3e145fa5ab5b67a358a983d4e560))
+
+## [5.4.1-develop.1](https://github.com/cheqd/sdk/compare/5.4.0...5.4.1-develop.1) (2026-01-12)
+
+### Bug Fixes
+
+* Re-arrange build exports ([3a1ce6a](https://github.com/cheqd/sdk/commit/3a1ce6ad08bd3e145fa5ab5b67a358a983d4e560))
+
+## [5.4.0](https://github.com/cheqd/sdk/compare/5.3.7...5.4.0) (2026-01-07)
+
+### Features
+
+* Feature release (Oracle) toolset ([da2e850](https://github.com/cheqd/sdk/commit/da2e8500c5f529db9d2e8177848809ae21c8d3e0))
+* Hybrid testnet / mainnet release (Oracle vs fixed pricing) ([c44fe50](https://github.com/cheqd/sdk/commit/c44fe5027054430a40e8798f9b22523e2c58017b))
+
+### Bug Fixes
+
+* Signature validation to remove keys ([#480](https://github.com/cheqd/sdk/issues/480)) ([afa7766](https://github.com/cheqd/sdk/commit/afa7766a62913d4e77f0d7219f89fe37112bbea2))
+
+## [5.4.0-develop.3](https://github.com/cheqd/sdk/compare/5.4.0-develop.2...5.4.0-develop.3) (2026-01-06)
+
+### Features
+
+* Hybrid testnet / mainnet release (Oracle vs fixed pricing) ([c44fe50](https://github.com/cheqd/sdk/commit/c44fe5027054430a40e8798f9b22523e2c58017b))
+
+## [5.4.0-develop.2](https://github.com/cheqd/sdk/compare/5.4.0-develop.1...5.4.0-develop.2) (2025-12-02)
+
+### Bug Fixes
+
+* Signature validation to remove keys ([#480](https://github.com/cheqd/sdk/issues/480)) ([afa7766](https://github.com/cheqd/sdk/commit/afa7766a62913d4e77f0d7219f89fe37112bbea2))
+
+## [5.4.0-develop.1](https://github.com/cheqd/sdk/compare/5.3.7...5.4.0-develop.1) (2025-11-20)
+
+### Features
+
+* Feature release (Oracle) toolset ([da2e850](https://github.com/cheqd/sdk/commit/da2e8500c5f529db9d2e8177848809ae21c8d3e0))
+
+## [5.3.7](https://github.com/cheqd/sdk/compare/5.3.6...5.3.7) (2025-11-13)
+
+### Bug Fixes
+
+* Resolved assertion ([a9f607a](https://github.com/cheqd/sdk/commit/a9f607a46d6a9dba68382132c1ab9344685413c8))
+
+## [5.3.7-develop.1](https://github.com/cheqd/sdk/compare/5.3.6...5.3.7-develop.1) (2025-11-06)
+
+### Bug Fixes
+
+* Resolved assertion ([a9f607a](https://github.com/cheqd/sdk/commit/a9f607a46d6a9dba68382132c1ab9344685413c8))
+
+## [5.3.6](https://github.com/cheqd/sdk/compare/5.3.5...5.3.6) (2025-10-23)
+
+### Bug Fixes
+
+* keyrotation and keyreplacement conditions [DEV-5391] ([#477](https://github.com/cheqd/sdk/issues/477)) ([69ff294](https://github.com/cheqd/sdk/commit/69ff29413cced1bb601bce937ef28381b762c45c))
+
+## [5.3.6-develop.1](https://github.com/cheqd/sdk/compare/5.3.5...5.3.6-develop.1) (2025-10-22)
+
+### Bug Fixes
+
+* keyrotation and keyreplacement conditions [DEV-5391] ([#477](https://github.com/cheqd/sdk/issues/477)) ([69ff294](https://github.com/cheqd/sdk/commit/69ff29413cced1bb601bce937ef28381b762c45c))
+
+## [5.3.5](https://github.com/cheqd/sdk/compare/5.3.4...5.3.5) (2025-10-13)
+
+## [5.3.5-develop.1](https://github.com/cheqd/sdk/compare/5.3.4...5.3.5-develop.1) (2025-10-13)
+
+## [5.3.4](https://github.com/cheqd/sdk/compare/5.3.3...5.3.4) (2025-10-08)
+
+### Bug Fixes
+
+* Added ancillary files on subpackage ([91b92d5](https://github.com/cheqd/sdk/commit/91b92d5a0c15d7038c3af693d87e67494c082b88))
+* externalController logic for required signatures  ([#473](https://github.com/cheqd/sdk/issues/473)) ([807ec1e](https://github.com/cheqd/sdk/commit/807ec1e80e50892841bb0a1ee675af4d17311fa0))
+
+## [5.3.4-develop.4](https://github.com/cheqd/sdk/compare/5.3.4-develop.3...5.3.4-develop.4) (2025-10-07)
+
+### Bug Fixes
+
+* Added ancillary files on subpackage ([91b92d5](https://github.com/cheqd/sdk/commit/91b92d5a0c15d7038c3af693d87e67494c082b88))
+
+## [5.3.4-develop.3](https://github.com/cheqd/sdk/compare/5.3.4-develop.2...5.3.4-develop.3) (2025-10-07)
+
+## [5.3.4-develop.2](https://github.com/cheqd/sdk/compare/5.3.4-develop.1...5.3.4-develop.2) (2025-10-07)
+
+## [5.3.4-develop.1](https://github.com/cheqd/sdk/compare/5.3.3...5.3.4-develop.1) (2025-10-07)
+
+### Bug Fixes
+
+* externalController logic for required signatures  ([#473](https://github.com/cheqd/sdk/issues/473)) ([807ec1e](https://github.com/cheqd/sdk/commit/807ec1e80e50892841bb0a1ee675af4d17311fa0))
+
+## [5.3.3](https://github.com/cheqd/sdk/compare/5.3.2...5.3.3) (2025-09-23)
+
+### Bug Fixes
+
+* add default assetionmethod on did creation [DEV-5287] ([#472](https://github.com/cheqd/sdk/issues/472)) ([da07725](https://github.com/cheqd/sdk/commit/da07725f162aea4d885443e0ab53721649f010c0))
+
+## [5.3.3-develop.2](https://github.com/cheqd/sdk/compare/5.3.3-develop.1...5.3.3-develop.2) (2025-09-22)
+
+### Bug Fixes
+
+* add default assetionmethod on did creation [DEV-5287] ([#472](https://github.com/cheqd/sdk/issues/472)) ([da07725](https://github.com/cheqd/sdk/commit/da07725f162aea4d885443e0ab53721649f010c0))
+
+## [5.3.3-develop.1](https://github.com/cheqd/sdk/compare/5.3.2...5.3.3-develop.1) (2025-08-26)
+
+## [5.3.2](https://github.com/cheqd/sdk/compare/5.3.1...5.3.2) (2025-08-01)
+
+### Bug Fixes
+
+* key replacement [DEV-5160] ([#458](https://github.com/cheqd/sdk/issues/458)) ([cef577f](https://github.com/cheqd/sdk/commit/cef577ff6f039315cd6ce5e0e1413d7cf42cea04))
+
+## [5.3.2-develop.2](https://github.com/cheqd/sdk/compare/5.3.2-develop.1...5.3.2-develop.2) (2025-07-30)
+
+### Bug Fixes
+
+* key replacement [DEV-5160] ([#458](https://github.com/cheqd/sdk/issues/458)) ([cef577f](https://github.com/cheqd/sdk/commit/cef577ff6f039315cd6ce5e0e1413d7cf42cea04))
+
 ## [5.3.2-develop.1](https://github.com/cheqd/sdk/compare/5.3.1...5.3.2-develop.1) (2025-06-06)
 
 ## [5.3.1](https://github.com/cheqd/sdk/compare/5.3.0...5.3.1) (2025-05-29)
