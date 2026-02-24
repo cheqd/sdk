@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.5.1-develop.1](https://github.com/cheqd/sdk/compare/5.5.0...5.5.1-develop.1) (2026-02-19)
+
+### Bug Fixes
+
+* sync package-lock file ([f127197](https://github.com/cheqd/sdk/commit/f1271976070dbdd708bbe03fe5f6e64a28305682))
+
 ## [5.5.0](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0) (2026-02-13)
 
 ### Features
