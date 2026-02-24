@@ -10,7 +10,7 @@ import {
 } from './modules/_';
 import { createDefaultCheqdRegistry } from './registry';
 import { CheqdSigningStargateClient } from './signer';
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types';
+import { CheqdNetwork, IContext, IModuleMethodMap, QueryExtensionSetup } from './types';
 import { GasPrice, QueryClient } from '@cosmjs/stargate-cjs';
 import { CheqdQuerier } from './querier';
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc-cjs';
@@ -25,7 +25,7 @@ import {
 	FeeabstractionModule,
 	MinimalImportableFeeabstractionModule,
 } from './modules/feeabstraction';
-import { OracleExtension, OracleModule } from './modules/oracle';
+import { defaultOracleExtensionKey, OracleExtension, OracleModule } from './modules/oracle';
 
 /**
  * Configuration options for initializing the CheqdSDK
@@ -197,6 +197,30 @@ export class CheqdSDK {
 	}
 
 	/**
+	 * Checks if the Oracle module is enabled on the connected chain.
+	 * It instantiates a Oracle querier and perform a
+	 * lightweight metadata query. If the query fails, it assumes the module
+	 * is not supported or disabled.
+	 *
+	 * @returns {Promise<boolean>} Resolves to `true` if the Oracle extension is functional, `false` otherwise.
+	 * @private
+	 */
+	private async isOracleExtensionEnabled(): Promise<boolean> {
+		const oracleQuerierExtension: QueryExtensionSetup<OracleExtension> =
+			instantiateCheqdSDKModuleQuerierExtensionSetup(OracleModule);
+		const querier: CheqdQuerier & OracleExtension = await CheqdQuerier.connectWithExtension(
+			this.options.rpcUrl,
+			oracleQuerierExtension
+		);
+		try {
+			await querier[defaultOracleExtensionKey].queryParams();
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	/**
 	 * Builds and initializes the complete SDK instance by loading all components:
 	 * registry, querier extensions, modules, gas price configuration, and signing client.
 	 * This method must be called before the SDK can be used for blockchain operations.
@@ -213,7 +237,7 @@ export class CheqdSDK {
 
 		// ensure oracle module is loaded, if not already, if testnet
 		if (
-			this.options.network === CheqdNetwork.Testnet &&
+			(await this.isOracleExtensionEnabled()) &&
 			!this.options.modules.find((module) => module instanceof OracleModule)
 		) {
 			this.options.modules.push(OracleModule as unknown as AbstractCheqdSDKModule);

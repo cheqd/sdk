@@ -1,6 +1,6 @@
 {
 	"name": "@cheqd/sdk-esm",
-	"version": "5.4.9",
+	"version": "5.5.1-develop.1",
 	"description": "A TypeScript SDK built with CosmJS to interact with cheqd network ledger",
 	"license": "Apache-2.0",
 	"author": "Cheqd Foundation Limited (https://github.com/cheqd)",
@@ -46,7 +46,7 @@
 		"@cosmjs/utils": "^0.36.2",
 		"@stablelib/ed25519": "^2.0.2",
 		"@types/secp256k1": "^4.0.6",
-		"cosmjs-types": "^0.10.1",
+		"cosmjs-types": "^0.11.0",
 		"did-jwt": "^8.0.16",
 		"did-resolver": "^4.1.0",
 		"exponential-backoff": "^3.1.2",
@@ -57,7 +57,7 @@
 		"uuid": "^13.0.0"
 	},
 	"devDependencies": {
-		"@types/node": "^22.15.30",
+		"@types/node": "^24.5.2",
 		"@types/uuid": "^10.0.0",
 		"cross-env": "^7.0.3"
 	},

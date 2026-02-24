@@ -144,10 +144,10 @@ export class CheqdQuerier extends QueryClient {
 	 * @param extension - Query extension setup to add specialized query functionality
 	 * @returns Promise resolving to a CheqdQuerier instance with the specified extension
 	 */
-	static async connectWithExtension(
+	static async connectWithExtension<E extends CheqdExtensions>(
 		url: string,
-		extension: QueryExtensionSetup<CheqdExtensions>
-	): Promise<CheqdQuerier & CheqdExtensions> {
+		extension: QueryExtensionSetup<E>
+	): Promise<CheqdQuerier & E> {
 		const cometClient = await connectComet(url);
 		return CheqdQuerier.withExtensions(cometClient, extension);
 	}

@@ -1,5 +1,23 @@
 # Changelog
 
+## [5.5.1-develop.1](https://github.com/cheqd/sdk/compare/5.5.0...5.5.1-develop.1) (2026-02-19)
+
+### Bug Fixes
+
+* sync package-lock file ([f127197](https://github.com/cheqd/sdk/commit/f1271976070dbdd708bbe03fe5f6e64a28305682))
+
+## [5.5.0](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0) (2026-02-13)
+
+### Features
+
+* Validate oracle module dynamically on init ([#491](https://github.com/cheqd/sdk/issues/491)) ([a41e606](https://github.com/cheqd/sdk/commit/a41e6063356adc1b65f206847177cc3c4c08f3ee))
+
+## [5.5.0-develop.1](https://github.com/cheqd/sdk/compare/5.4.9...5.5.0-develop.1) (2026-02-11)
+
+### Features
+
+* Validate oracle module dynamically on init ([#491](https://github.com/cheqd/sdk/issues/491)) ([a41e606](https://github.com/cheqd/sdk/commit/a41e6063356adc1b65f206847177cc3c4c08f3ee))
+
 ## [5.4.9](https://github.com/cheqd/sdk/compare/5.4.8...5.4.9) (2026-01-23)
 
 ### Bug Fixes

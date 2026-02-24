@@ -16,7 +16,7 @@ import {
 } from './modules/_.js';
 import { createDefaultCheqdRegistry } from './registry.js';
 import { CheqdSigningStargateClient } from './signer.js';
-import { CheqdNetwork, IContext, IModuleMethodMap } from './types.js';
+import { CheqdNetwork, IContext, IModuleMethodMap, QueryExtensionSetup } from './types.js';
 import { GasPrice, QueryClient } from '@cosmjs/stargate';
 import { CheqdQuerier } from './querier.js';
 import { CometClient } from '@cosmjs/tendermint-rpc';
@@ -27,7 +27,7 @@ import {
 } from './modules/feeabstraction.js';
 import { OracleExtension } from './modules/oracle.js';
 import { MinimalImportableOracleModule } from './modules/oracle';
-import { defaultOracleExtensionKey, setupOracleExtension, OracleModule } from './modules/oracle.js';
+import { defaultOracleExtensionKey, OracleModule } from './modules/oracle.js';
 
 /**
  * Configuration options for initializing the CheqdSDK
@@ -200,6 +200,30 @@ export class CheqdSDK {
 	}
 
 	/**
+	 * Checks if the Oracle module is enabled on the connected chain.
+	 * It instantiates a Oracle querier and perform a
+	 * lightweight metadata query. If the query fails, it assumes the module
+	 * is not supported or disabled.
+	 *
+	 * @returns {Promise<boolean>} Resolves to `true` if the Oracle extension is functional, `false` otherwise.
+	 * @private
+	 */
+	private async isOracleExtensionEnabled(): Promise<boolean> {
+		const oracleQuerierExtension: QueryExtensionSetup<OracleExtension> =
+			instantiateCheqdSDKModuleQuerierExtensionSetup(OracleModule);
+		const querier: CheqdQuerier & OracleExtension = await CheqdQuerier.connectWithExtension(
+			this.options.rpcUrl,
+			oracleQuerierExtension
+		);
+		try {
+			await querier[defaultOracleExtensionKey].queryParams();
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	/**
 	 * Builds and initializes the complete SDK instance by loading all components:
 	 * registry, querier extensions, modules, gas price configuration, and signing client.
 	 * This method must be called before the SDK can be used for blockchain operations.
@@ -216,7 +240,7 @@ export class CheqdSDK {
 
 		// ensure oracle module is loaded, if not already, if testnet
 		if (
-			this.options.network === CheqdNetwork.Testnet &&
+			(await this.isOracleExtensionEnabled()) &&
 			!this.options.modules.find((module) => module instanceof OracleModule)
 		) {
 			this.options.modules.push(OracleModule as unknown as AbstractCheqdSDKModule);
