@@ -389,7 +389,10 @@ export class FeemarketModule extends AbstractCheqdSDKModule {
 	 */
 	static generateFeesFromGasPrice(gasPrice: GasPrice, payer: string, gas = '200000'): DidStdFee {
 		return {
-			amount: [{ denom: gasPrice.denom, amount: gasPrice.amount.multiply(Uint32.fromString(gas)).toString() }],
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			amount: [
+				{ denom: gasPrice.denom, amount: gasPrice.amount.multiply(Uint32.fromString(gas) as any).toString() },
+			],
 			gas,
 			payer,
 		} satisfies DidStdFee;
