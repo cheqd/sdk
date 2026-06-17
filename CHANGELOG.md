@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.5.1-develop.2](https://github.com/cheqd/sdk/compare/5.5.1-develop.1...5.5.1-develop.2) (2026-06-17)
+
+### Bug Fixes
+
+* use oracle fee pricing when module is available ([#507](https://github.com/cheqd/sdk/issues/507)) ([fe0447e](https://github.com/cheqd/sdk/commit/fe0447eb172dc767c9a6ab2d06675f078303efd0))
+
 ## [5.5.1-develop.1](https://github.com/cheqd/sdk/compare/5.5.0...5.5.1-develop.1) (2026-02-19)
 
 ### Bug Fixes
