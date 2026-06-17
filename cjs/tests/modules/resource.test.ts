@@ -317,7 +317,7 @@ describe('ResourceModule', () => {
 			defaultAsyncTxTimeout
 		);
 
-		it('should generate dynamic fees transacting on testnet - case: json', async () => {
+		it('should generate dynamic fees when Oracle module is available - case: json', async () => {
 			const feeRange = {
 				denom: ResourceModule.baseUsdDenom,
 				minAmount: '400000000000000000',
@@ -348,7 +348,7 @@ describe('ResourceModule', () => {
 
 			const mockQuerier = {
 				[defaultResourceExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
 
 			const resourceModule = new ResourceModule({} as CheqdSigningStargateClient, mockQuerier);
@@ -365,7 +365,7 @@ describe('ResourceModule', () => {
 			expect(fee.amount[0].amount).not.toBe(ResourceModule.fees.DefaultCreateResourceJsonFee.amount);
 		});
 
-		it('should generate dynamic fees transacting on testnet - case: image', async () => {
+		it('should generate dynamic fees when Oracle module is available - case: image', async () => {
 			const feeRange = {
 				denom: ResourceModule.baseUsdDenom,
 				minAmount: '100000000000000000',
@@ -396,7 +396,7 @@ describe('ResourceModule', () => {
 
 			const mockQuerier = {
 				[defaultResourceExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
 
 			const resourceModule = new ResourceModule({} as CheqdSigningStargateClient, mockQuerier);
@@ -413,7 +413,7 @@ describe('ResourceModule', () => {
 			expect(fee.amount[0].amount).not.toBe(ResourceModule.fees.DefaultCreateResourceImageFee.amount);
 		});
 
-		it('should generate dynamic fees transacting on testnet - case: default', async () => {
+		it('should generate dynamic fees when Oracle module is available - case: default', async () => {
 			const feeRange = {
 				denom: ResourceModule.baseUsdDenom,
 				minAmount: '50000000000000000',
@@ -444,7 +444,7 @@ describe('ResourceModule', () => {
 
 			const mockQuerier = {
 				[defaultResourceExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
 
 			const resourceModule = new ResourceModule({} as CheqdSigningStargateClient, mockQuerier);
@@ -461,22 +461,38 @@ describe('ResourceModule', () => {
 			expect(fee.amount[0].amount).not.toBe(ResourceModule.fees.DefaultCreateResourceDefaultFee.amount);
 		});
 
-		it('should generate static fees transacting on mainnet - case: json', async () => {
+		it('should generate dynamic fees transacting on mainnet when Oracle module is available - case: json', async () => {
+			const feeRange = {
+				denom: ResourceModule.baseUsdDenom,
+				minAmount: '400000000000000000',
+				maxAmount: '400000000000000000',
+			};
+			const paramsResponse = {
+				params: {
+					json: [feeRange],
+				},
+			};
+
 			let paramsCallCount = 0;
 			const params = async () => {
 				paramsCallCount += 1;
-				return { params: {} };
+				return paramsResponse;
 			};
 
-			let convertCallCount = 0;
-			const convertUSDtoCHEQ = async () => {
-				convertCallCount += 1;
-				return { amount: '0ncheq' };
+			let convertArgs: unknown[] | undefined;
+			const convertUSDtoCHEQ = async (
+				usdAmount: string,
+				movingAverage: MovingAverage,
+				wmaStrategy?: WMAStrategy,
+				weights?: bigint[]
+			) => {
+				convertArgs = [usdAmount, movingAverage, wmaStrategy, weights];
+				return { amount: '50000000000ncheq' };
 			};
 
 			const mockQuerier = {
 				[defaultResourceExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
 
 			const context = {
@@ -491,29 +507,46 @@ describe('ResourceModule', () => {
 				context
 			);
 
-			expect(paramsCallCount).toBe(0);
-			expect(convertCallCount).toBe(0);
-			expect(fee.amount).toEqual([ResourceModule.fees.DefaultCreateResourceJsonFee]);
+			expect(paramsCallCount).toBe(1);
+			expect(convertArgs).toEqual([feeRange.minAmount, MovingAverages.WMA, WMAStrategies.BALANCED, undefined]);
+			expect(fee.amount).toEqual([{ amount: '50500000000', denom: ResourceModule.baseMinimalDenom }]);
 			expect(fee.gas).toBe(ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit);
 			expect(fee.payer).toBe(faucet.address);
+			expect(fee.amount[0].amount).not.toBe(ResourceModule.fees.DefaultCreateResourceJsonFee.amount);
 		});
 
-		it('should generate static fees transacting on mainnet - case: image', async () => {
+		it('should generate dynamic fees transacting on mainnet when Oracle module is available - case: image', async () => {
+			const feeRange = {
+				denom: ResourceModule.baseUsdDenom,
+				minAmount: '100000000000000000',
+				maxAmount: '100000000000000000',
+			};
+			const paramsResponse = {
+				params: {
+					image: [feeRange],
+				},
+			};
+
 			let paramsCallCount = 0;
 			const params = async () => {
 				paramsCallCount += 1;
-				return { params: {} };
+				return paramsResponse;
 			};
 
-			let convertCallCount = 0;
-			const convertUSDtoCHEQ = async () => {
-				convertCallCount += 1;
-				return { amount: '0ncheq' };
+			let convertArgs: unknown[] | undefined;
+			const convertUSDtoCHEQ = async (
+				usdAmount: string,
+				movingAverage: MovingAverage,
+				wmaStrategy?: WMAStrategy,
+				weights?: bigint[]
+			) => {
+				convertArgs = [usdAmount, movingAverage, wmaStrategy, weights];
+				return { amount: '20000000000ncheq' };
 			};
 
 			const mockQuerier = {
 				[defaultResourceExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
 
 			const context = {
@@ -528,29 +561,46 @@ describe('ResourceModule', () => {
 				context
 			);
 
-			expect(paramsCallCount).toBe(0);
-			expect(convertCallCount).toBe(0);
-			expect(fee.amount).toEqual([ResourceModule.fees.DefaultCreateResourceImageFee]);
+			expect(paramsCallCount).toBe(1);
+			expect(convertArgs).toEqual([feeRange.minAmount, MovingAverages.WMA, WMAStrategies.BALANCED, undefined]);
+			expect(fee.amount).toEqual([{ amount: '20200000000', denom: ResourceModule.baseMinimalDenom }]);
 			expect(fee.gas).toBe(ResourceModule.gasLimits.CreateLinkedResourceImageGasLimit);
 			expect(fee.payer).toBe(faucet.address);
+			expect(fee.amount[0].amount).not.toBe(ResourceModule.fees.DefaultCreateResourceImageFee.amount);
 		});
 
-		it('should generate static fees transacting on mainnet - case: default', async () => {
+		it('should generate dynamic fees transacting on mainnet when Oracle module is available - case: default', async () => {
+			const feeRange = {
+				denom: ResourceModule.baseUsdDenom,
+				minAmount: '50000000000000000',
+				maxAmount: '50000000000000000',
+			};
+			const paramsResponse = {
+				params: {
+					default: [feeRange],
+				},
+			};
+
 			let paramsCallCount = 0;
 			const params = async () => {
 				paramsCallCount += 1;
-				return { params: {} };
+				return paramsResponse;
 			};
 
-			let convertCallCount = 0;
-			const convertUSDtoCHEQ = async () => {
-				convertCallCount += 1;
-				return { amount: '0ncheq' };
+			let convertArgs: unknown[] | undefined;
+			const convertUSDtoCHEQ = async (
+				usdAmount: string,
+				movingAverage: MovingAverage,
+				wmaStrategy?: WMAStrategy,
+				weights?: bigint[]
+			) => {
+				convertArgs = [usdAmount, movingAverage, wmaStrategy, weights];
+				return { amount: '10000000000ncheq' };
 			};
 
 			const mockQuerier = {
 				[defaultResourceExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
 
 			const context = {
@@ -565,11 +615,137 @@ describe('ResourceModule', () => {
 				context
 			);
 
-			expect(paramsCallCount).toBe(0);
-			expect(convertCallCount).toBe(0);
-			expect(fee.amount).toEqual([ResourceModule.fees.DefaultCreateResourceDefaultFee]);
+			expect(paramsCallCount).toBe(1);
+			expect(convertArgs).toEqual([feeRange.minAmount, MovingAverages.WMA, WMAStrategies.BALANCED, undefined]);
+			expect(fee.amount).toEqual([{ amount: '10100000000', denom: ResourceModule.baseMinimalDenom }]);
 			expect(fee.gas).toBe(ResourceModule.gasLimits.CreateLinkedResourceDefaultGasLimit);
 			expect(fee.payer).toBe(faucet.address);
+			expect(fee.amount[0].amount).not.toBe(ResourceModule.fees.DefaultCreateResourceDefaultFee.amount);
+		});
+
+		it('should generate static fees when Oracle module is absent - case: json', async () => {
+			let paramsCallCount = 0;
+			const params = async () => {
+				paramsCallCount += 1;
+				return { params: {} };
+			};
+
+			const mockQuerier = {
+				[defaultResourceExtensionKey]: { params },
+			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
+
+			const resourceModule = new ResourceModule({} as CheqdSigningStargateClient, mockQuerier);
+			const fee = await resourceModule.generateCreateResourceJsonFees(faucet.address, undefined, {
+				slippageBps: 100,
+			});
+
+			expect(paramsCallCount).toBe(0);
+			expect(fee.amount).toEqual([ResourceModule.fees.DefaultCreateResourceJsonFee]);
+			expect(fee.gas).toBe(ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit);
+			expect(fee.payer).toBe(faucet.address);
+		});
+
+		it('should auto-pick Resource pricing params by denom when feeDenom is omitted', async () => {
+			const usdFeeRange = {
+				denom: ResourceModule.baseUsdDenom,
+				minAmount: '400000000000000000',
+				maxAmount: '400000000000000000',
+			};
+			const ncheqFeeRange = {
+				denom: ResourceModule.baseMinimalDenom,
+				minAmount: '32100000000',
+				maxAmount: '32100000000',
+			};
+
+			const generateFee = async (
+				json: { denom: string; minAmount: string; maxAmount: string }[],
+				feeDenom?: string
+			) => {
+				let convertCallCount = 0;
+				const mockQuerier = {
+					[defaultResourceExtensionKey]: {
+						params: async () => ({ params: { json } }),
+					},
+					[defaultOracleExtensionKey]: {
+						queryParams: async () => ({ params: {} }),
+						convertUSDtoCHEQ: async () => {
+							convertCallCount += 1;
+							return { amount: '88800000000ncheq' };
+						},
+					},
+				} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
+				const resourceModule = new ResourceModule({} as CheqdSigningStargateClient, mockQuerier);
+				const fee = await resourceModule.generateCreateResourceJsonFees(
+					faucet.address,
+					undefined,
+					feeDenom ? { feeDenom } : undefined
+				);
+				return { fee, convertCallCount };
+			};
+
+			const usdOnly = await generateFee([usdFeeRange]);
+			expect(usdOnly.convertCallCount).toBe(1);
+			expect(usdOnly.fee.amount).toEqual([{ amount: '88800000000', denom: ResourceModule.baseMinimalDenom }]);
+
+			const ncheqOnly = await generateFee([ncheqFeeRange]);
+			expect(ncheqOnly.convertCallCount).toBe(0);
+			expect(ncheqOnly.fee.amount).toEqual([{ amount: ncheqFeeRange.minAmount, denom: ncheqFeeRange.denom }]);
+
+			const bothImplicit = await generateFee([ncheqFeeRange, usdFeeRange]);
+			expect(bothImplicit.convertCallCount).toBe(1);
+			expect(bothImplicit.fee.amount).toEqual([
+				{ amount: '88800000000', denom: ResourceModule.baseMinimalDenom },
+			]);
+
+			const explicitNcheq = await generateFee([usdFeeRange, ncheqFeeRange], ResourceModule.baseMinimalDenom);
+			expect(explicitNcheq.convertCallCount).toBe(0);
+			expect(explicitNcheq.fee.amount).toEqual([{ amount: ncheqFeeRange.minAmount, denom: ncheqFeeRange.denom }]);
+		});
+
+		it('should use Oracle fees when Resource transactions are initiated without explicit fees', async () => {
+			const feeRange = {
+				denom: ResourceModule.baseUsdDenom,
+				minAmount: '400000000000000000',
+				maxAmount: '400000000000000000',
+			};
+			const broadcastFees: any[] = [];
+			const signer = {
+				signAndBroadcast: async (_address: string, _messages: unknown[], fee: unknown) => {
+					broadcastFees.push(fee);
+					return { code: 0 };
+				},
+			} as unknown as CheqdSigningStargateClient;
+			const mockQuerier = {
+				[defaultResourceExtensionKey]: {
+					params: async () => ({ params: { json: [feeRange] } }),
+				},
+				[defaultOracleExtensionKey]: {
+					queryParams: async () => ({ params: {} }),
+					convertUSDtoCHEQ: async () => ({ amount: '50000000000ncheq' }),
+				},
+			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
+			const resourceModule = new ResourceModule(signer, mockQuerier);
+			const resourcePayload: Partial<MsgCreateResourcePayload> = {
+				collectionId: v4(),
+				id: v4(),
+				name: 'Test Resource',
+				version: '1.0',
+				resourceType: 'test-resource-type',
+				data: fromString(json_content, 'utf-8'),
+			};
+			const signInputs = [
+				{
+					verificationMethodId: 'did:cheqd:testnet:test#key-1',
+					signature: new Uint8Array([1]),
+				},
+			];
+
+			await resourceModule.createLinkedResourceTx(signInputs as any, resourcePayload, faucet.address);
+
+			expect(broadcastFees.map((fee) => fee.amount)).toEqual([
+				[{ amount: '50000000000', denom: ResourceModule.baseMinimalDenom }],
+			]);
+			expect(broadcastFees[0].gas).toBe(ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit);
 		});
 	});
 

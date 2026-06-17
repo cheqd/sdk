@@ -238,7 +238,7 @@ export class CheqdSDK {
 			this.options.modules.push(FeemarketModule as unknown as AbstractCheqdSDKModule);
 		}
 
-		// ensure oracle module is loaded, if not already, if testnet
+		// ensure oracle module is loaded, if not already, when available on the connected chain
 		if (
 			(await this.isOracleExtensionEnabled()) &&
 			!this.options.modules.find((module) => module instanceof OracleModule)

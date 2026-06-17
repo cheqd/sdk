@@ -12,7 +12,6 @@ import {
 	DIDDocumentWithMetadata,
 	AuthenticationValidationResult,
 	DidFeeOptions,
-	CheqdNetwork,
 } from '../types.js';
 import {
 	MsgCreateDidDoc,
@@ -747,16 +746,22 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		};
 	}
 
-	private async resolveNetworkForFees(context?: IContext): Promise<CheqdNetwork> {
-		if (context?.sdk?.options?.rpcUrl) {
-			return await CheqdQuerier.detectNetwork(context.sdk.options.rpcUrl);
+	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
+		if (!this.querier && context?.sdk?.querier) {
+			this.querier = context.sdk.querier;
 		}
 
-		return context?.sdk?.options?.network ?? CheqdNetwork.Testnet;
-	}
+		const oracle = (this.querier as Partial<OracleExtension> | undefined)?.[defaultOracleExtensionKey];
+		if (!oracle?.queryParams) {
+			return false;
+		}
 
-	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
-		return (await this.resolveNetworkForFees(context)) === CheqdNetwork.Testnet;
+		try {
+			await oracle.queryParams();
+			return true;
+		} catch {
+			return false;
+		}
 	}
 
 	/**
@@ -896,27 +901,26 @@ export class DIDModule extends AbstractCheqdSDKModule {
 		const operationFees = (() => {
 			switch (operation) {
 				case 'create':
-					return feeParams.params?.createDid.find(
-						(fee) => fee.denom === (feeOptions?.feeDenom ?? DIDModule.baseUsdDenom)
-					);
+					return feeParams.params?.createDid;
 				case 'update':
-					return feeParams.params?.updateDid.find(
-						(fee) => fee.denom === (feeOptions?.feeDenom ?? DIDModule.baseUsdDenom)
-					);
+					return feeParams.params?.updateDid;
 				case 'deactivate':
-					return feeParams.params?.deactivateDid.find(
-						(fee) => fee.denom === (feeOptions?.feeDenom ?? DIDModule.baseUsdDenom)
-					);
+					return feeParams.params?.deactivateDid;
 				default:
 					throw new Error('Unsupported operation for fee retrieval');
 			}
 		})();
 
-		if (!operationFees) {
+		const operationFee = feeOptions?.feeDenom
+			? operationFees?.find((fee) => fee.denom === feeOptions.feeDenom)
+			: (operationFees?.find((fee) => fee.denom === DIDModule.baseUsdDenom) ??
+				operationFees?.find((fee) => fee.denom === DIDModule.baseMinimalDenom));
+
+		if (!operationFee) {
 			throw new Error(`Fee parameters not found for operation: ${operation}`);
 		}
 
-		return operationFees;
+		return operationFee;
 	}
 
 	/**

@@ -391,7 +391,7 @@ describe('DIDModule', () => {
 			defaultAsyncTxTimeout
 		);
 
-		it('should generate dynamic fees transacting on testnet - case: create', async () => {
+		it('should generate dynamic fees when Oracle module is available - case: create', async () => {
 			const feeRange = {
 				denom: DIDModule.baseUsdDenom,
 				minAmount: '2000000000000000000',
@@ -422,7 +422,7 @@ describe('DIDModule', () => {
 
 			const mockQuerier = {
 				[defaultDidExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
 
 			const didModule = new DIDModule({} as CheqdSigningStargateClient, mockQuerier);
@@ -436,22 +436,38 @@ describe('DIDModule', () => {
 			expect(fee.amount[0].amount).not.toBe(DIDModule.fees.DefaultCreateDidDocFee.amount);
 		});
 
-		it('should generate static fees transacting on mainnet - case: create', async () => {
+		it('should generate dynamic fees transacting on mainnet when Oracle module is available - case: create', async () => {
+			const feeRange = {
+				denom: DIDModule.baseUsdDenom,
+				minAmount: '2000000000000000000',
+				maxAmount: '2000000000000000000',
+			};
+			const paramsResponse = {
+				params: {
+					createDid: [feeRange],
+				},
+			};
+
 			let paramsCallCount = 0;
 			const params = async () => {
 				paramsCallCount += 1;
-				return { params: {} };
+				return paramsResponse;
 			};
 
-			let convertCallCount = 0;
-			const convertUSDtoCHEQ = async () => {
-				convertCallCount += 1;
-				return { amount: '0ncheq' };
+			let convertArgs: unknown[] | undefined;
+			const convertUSDtoCHEQ = async (
+				usdAmount: string,
+				movingAverage: MovingAverage,
+				wmaStrategy?: WMAStrategy,
+				weights?: bigint[]
+			) => {
+				convertArgs = [usdAmount, movingAverage, wmaStrategy, weights];
+				return { amount: '40000000000ncheq' };
 			};
 
 			const mockQuerier = {
 				[defaultDidExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
 
 			const context = {
@@ -466,11 +482,193 @@ describe('DIDModule', () => {
 				context
 			);
 
+			expect(paramsCallCount).toBe(1);
+			expect(convertArgs).toEqual([feeRange.minAmount, MovingAverages.WMA, WMAStrategies.BALANCED, undefined]);
+			expect(fee.amount).toEqual([{ amount: '40400000000', denom: DIDModule.baseMinimalDenom }]);
+			expect(fee.gas).toBe(DIDModule.gasLimits.CreateDidDocGasLimit);
+			expect(fee.payer).toBe(faucet.address);
+			expect(fee.amount[0].amount).not.toBe(DIDModule.fees.DefaultCreateDidDocFee.amount);
+		});
+
+		it('should generate static fees when Oracle module probing fails - case: create', async () => {
+			let paramsCallCount = 0;
+			const params = async () => {
+				paramsCallCount += 1;
+				return { params: {} };
+			};
+
+			let convertCallCount = 0;
+			const convertUSDtoCHEQ = async () => {
+				convertCallCount += 1;
+				return { amount: '0ncheq' };
+			};
+
+			const mockQuerier = {
+				[defaultDidExtensionKey]: { params },
+				[defaultOracleExtensionKey]: {
+					queryParams: async () => {
+						throw new Error('Oracle module unavailable');
+					},
+					convertUSDtoCHEQ,
+				},
+			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
+
+			const didModule = new DIDModule({} as CheqdSigningStargateClient, mockQuerier);
+			const fee = await didModule.generateCreateDidDocFees(faucet.address, undefined, { slippageBps: 100 });
+
 			expect(paramsCallCount).toBe(0);
 			expect(convertCallCount).toBe(0);
 			expect(fee.amount).toEqual([DIDModule.fees.DefaultCreateDidDocFee]);
 			expect(fee.gas).toBe(DIDModule.gasLimits.CreateDidDocGasLimit);
 			expect(fee.payer).toBe(faucet.address);
+		});
+
+		it('should auto-pick DID pricing params by denom when feeDenom is omitted', async () => {
+			const usdFeeRange = {
+				denom: DIDModule.baseUsdDenom,
+				minAmount: '2000000000000000000',
+				maxAmount: '2000000000000000000',
+			};
+			const ncheqFeeRange = {
+				denom: DIDModule.baseMinimalDenom,
+				minAmount: '12300000000',
+				maxAmount: '12300000000',
+			};
+
+			const generateFee = async (
+				createDid: { denom: string; minAmount: string; maxAmount: string }[],
+				feeDenom?: string
+			) => {
+				let convertCallCount = 0;
+				const mockQuerier = {
+					[defaultDidExtensionKey]: {
+						params: async () => ({ params: { createDid } }),
+					},
+					[defaultOracleExtensionKey]: {
+						queryParams: async () => ({ params: {} }),
+						convertUSDtoCHEQ: async () => {
+							convertCallCount += 1;
+							return { amount: '77700000000ncheq' };
+						},
+					},
+				} as unknown as CheqdQuerier & DidExtension & OracleExtension;
+				const didModule = new DIDModule({} as CheqdSigningStargateClient, mockQuerier);
+				const fee = await didModule.generateCreateDidDocFees(
+					faucet.address,
+					undefined,
+					feeDenom ? { feeDenom } : undefined
+				);
+				return { fee, convertCallCount };
+			};
+
+			const usdOnly = await generateFee([usdFeeRange]);
+			expect(usdOnly.convertCallCount).toBe(1);
+			expect(usdOnly.fee.amount).toEqual([{ amount: '77700000000', denom: DIDModule.baseMinimalDenom }]);
+
+			const ncheqOnly = await generateFee([ncheqFeeRange]);
+			expect(ncheqOnly.convertCallCount).toBe(0);
+			expect(ncheqOnly.fee.amount).toEqual([{ amount: ncheqFeeRange.minAmount, denom: ncheqFeeRange.denom }]);
+
+			const bothImplicit = await generateFee([ncheqFeeRange, usdFeeRange]);
+			expect(bothImplicit.convertCallCount).toBe(1);
+			expect(bothImplicit.fee.amount).toEqual([{ amount: '77700000000', denom: DIDModule.baseMinimalDenom }]);
+
+			const explicitNcheq = await generateFee([usdFeeRange, ncheqFeeRange], DIDModule.baseMinimalDenom);
+			expect(explicitNcheq.convertCallCount).toBe(0);
+			expect(explicitNcheq.fee.amount).toEqual([{ amount: ncheqFeeRange.minAmount, denom: ncheqFeeRange.denom }]);
+		});
+
+		it('should use Oracle fees when DID transactions are initiated without explicit fees', async () => {
+			const keyPair = createKeyPairBase64();
+			const verificationKeys = createVerificationKeys(keyPair.publicKey, MethodSpecificIdAlgo.Base58, 'key-1');
+			const didPayload = createDidPayload(
+				createDidVerificationMethod([VerificationMethods.Ed255192020], [verificationKeys]),
+				[verificationKeys]
+			);
+			const signInputs = [
+				{
+					verificationMethodId: didPayload.verificationMethod![0].id,
+					signature: new Uint8Array([1]),
+				},
+			];
+			const feeRanges = {
+				create: {
+					denom: DIDModule.baseUsdDenom,
+					minAmount: '2000000000000000000',
+					maxAmount: '2000000000000000000',
+				},
+				update: {
+					denom: DIDModule.baseUsdDenom,
+					minAmount: '1000000000000000000',
+					maxAmount: '1000000000000000000',
+				},
+				deactivate: {
+					denom: DIDModule.baseUsdDenom,
+					minAmount: '500000000000000000',
+					maxAmount: '500000000000000000',
+				},
+			};
+			const convertedAmounts: Record<string, string> = {
+				[feeRanges.create.minAmount]: '40000000000ncheq',
+				[feeRanges.update.minAmount]: '20000000000ncheq',
+				[feeRanges.deactivate.minAmount]: '10000000000ncheq',
+			};
+			const broadcastFees: any[] = [];
+			const signer = {
+				signAndBroadcast: async (_address: string, _messages: unknown[], fee: unknown) => {
+					broadcastFees.push(fee);
+					return { code: 0 };
+				},
+			} as unknown as CheqdSigningStargateClient;
+			const mockQuerier = {
+				[defaultDidExtensionKey]: {
+					params: async () => ({
+						params: {
+							createDid: [feeRanges.create],
+							updateDid: [feeRanges.update],
+							deactivateDid: [feeRanges.deactivate],
+						},
+					}),
+				},
+				[defaultOracleExtensionKey]: {
+					queryParams: async () => ({ params: {} }),
+					convertUSDtoCHEQ: async (usdAmount: string) => ({ amount: convertedAmounts[usdAmount] }),
+				},
+			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
+			const didModule = new DIDModule(signer, mockQuerier);
+			const validateSpecCompliantPayload = DIDModule.validateSpecCompliantPayload;
+			const validateAuthenticationAgainstSignatures = DIDModule.validateAuthenticationAgainstSignatures;
+			const validateAuthenticationAgainstSignaturesKeyRotation =
+				DIDModule.validateAuthenticationAgainstSignaturesKeyRotation;
+			(DIDModule as any).validateSpecCompliantPayload = async () => ({
+				valid: true,
+				protobufVerificationMethod: [],
+				protobufService: [],
+			});
+			(DIDModule as any).validateAuthenticationAgainstSignatures = async () => ({ valid: true });
+			(DIDModule as any).validateAuthenticationAgainstSignaturesKeyRotation = async () => ({ valid: true });
+
+			try {
+				await didModule.createDidDocTx(signInputs as any, didPayload, faucet.address);
+				await didModule.updateDidDocTx(signInputs as any, didPayload, faucet.address);
+				await didModule.deactivateDidDocTx(signInputs as any, didPayload, faucet.address);
+			} finally {
+				(DIDModule as any).validateSpecCompliantPayload = validateSpecCompliantPayload;
+				(DIDModule as any).validateAuthenticationAgainstSignatures = validateAuthenticationAgainstSignatures;
+				(DIDModule as any).validateAuthenticationAgainstSignaturesKeyRotation =
+					validateAuthenticationAgainstSignaturesKeyRotation;
+			}
+
+			expect(broadcastFees.map((fee) => fee.amount)).toEqual([
+				[{ amount: '40000000000', denom: DIDModule.baseMinimalDenom }],
+				[{ amount: '20000000000', denom: DIDModule.baseMinimalDenom }],
+				[{ amount: '10000000000', denom: DIDModule.baseMinimalDenom }],
+			]);
+			expect(broadcastFees.map((fee) => fee.gas)).toEqual([
+				DIDModule.gasLimits.CreateDidDocGasLimit,
+				DIDModule.gasLimits.UpdateDidDocGasLimit,
+				DIDModule.gasLimits.DeactivateDidDocGasLimit,
+			]);
 		});
 	});
 
@@ -960,7 +1158,7 @@ describe('DIDModule', () => {
 			defaultAsyncTxTimeout
 		);
 
-		it('should generate dynamic fees transacting on testnet - case: update', async () => {
+		it('should generate dynamic fees when Oracle module is available - case: update', async () => {
 			const feeRange = {
 				denom: DIDModule.baseUsdDenom,
 				minAmount: '1000000000000000000',
@@ -991,7 +1189,7 @@ describe('DIDModule', () => {
 
 			const mockQuerier = {
 				[defaultDidExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
 
 			const didModule = new DIDModule({} as CheqdSigningStargateClient, mockQuerier);
@@ -1005,22 +1203,38 @@ describe('DIDModule', () => {
 			expect(fee.amount[0].amount).not.toBe(DIDModule.fees.DefaultUpdateDidDocFee.amount);
 		});
 
-		it('should generate static fees transacting on mainnet - case: update', async () => {
+		it('should generate dynamic fees transacting on mainnet when Oracle module is available - case: update', async () => {
+			const feeRange = {
+				denom: DIDModule.baseUsdDenom,
+				minAmount: '1000000000000000000',
+				maxAmount: '1000000000000000000',
+			};
+			const paramsResponse = {
+				params: {
+					updateDid: [feeRange],
+				},
+			};
+
 			let paramsCallCount = 0;
 			const params = async () => {
 				paramsCallCount += 1;
-				return { params: {} };
+				return paramsResponse;
 			};
 
-			let convertCallCount = 0;
-			const convertUSDtoCHEQ = async () => {
-				convertCallCount += 1;
-				return { amount: '0ncheq' };
+			let convertArgs: unknown[] | undefined;
+			const convertUSDtoCHEQ = async (
+				usdAmount: string,
+				movingAverage: MovingAverage,
+				wmaStrategy?: WMAStrategy,
+				weights?: bigint[]
+			) => {
+				convertArgs = [usdAmount, movingAverage, wmaStrategy, weights];
+				return { amount: '20000000000ncheq' };
 			};
 
 			const mockQuerier = {
 				[defaultDidExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
 
 			const context = {
@@ -1035,11 +1249,12 @@ describe('DIDModule', () => {
 				context
 			);
 
-			expect(paramsCallCount).toBe(0);
-			expect(convertCallCount).toBe(0);
-			expect(fee.amount).toEqual([DIDModule.fees.DefaultUpdateDidDocFee]);
+			expect(paramsCallCount).toBe(1);
+			expect(convertArgs).toEqual([feeRange.minAmount, MovingAverages.WMA, WMAStrategies.BALANCED, undefined]);
+			expect(fee.amount).toEqual([{ amount: '20200000000', denom: DIDModule.baseMinimalDenom }]);
 			expect(fee.gas).toBe(DIDModule.gasLimits.UpdateDidDocGasLimit);
 			expect(fee.payer).toBe(faucet.address);
+			expect(fee.amount[0].amount).not.toBe(DIDModule.fees.DefaultUpdateDidDocFee.amount);
 		});
 	});
 
@@ -1599,7 +1814,7 @@ describe('DIDModule', () => {
 			defaultAsyncTxTimeout
 		);
 
-		it('should generate dynamic fees transacting on testnet - case: deactivate', async () => {
+		it('should generate dynamic fees when Oracle module is available - case: deactivate', async () => {
 			const feeRange = {
 				denom: DIDModule.baseUsdDenom,
 				minAmount: '500000000000000000',
@@ -1630,7 +1845,7 @@ describe('DIDModule', () => {
 
 			const mockQuerier = {
 				[defaultDidExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
 
 			const didModule = new DIDModule({} as CheqdSigningStargateClient, mockQuerier);
@@ -1644,22 +1859,38 @@ describe('DIDModule', () => {
 			expect(fee.amount[0].amount).not.toBe(DIDModule.fees.DefaultDeactivateDidDocFee.amount);
 		});
 
-		it('should generate static fees transacting on mainnet - case: deactivate', async () => {
+		it('should generate dynamic fees transacting on mainnet when Oracle module is available - case: deactivate', async () => {
+			const feeRange = {
+				denom: DIDModule.baseUsdDenom,
+				minAmount: '500000000000000000',
+				maxAmount: '500000000000000000',
+			};
+			const paramsResponse = {
+				params: {
+					deactivateDid: [feeRange],
+				},
+			};
+
 			let paramsCallCount = 0;
 			const params = async () => {
 				paramsCallCount += 1;
-				return { params: {} };
+				return paramsResponse;
 			};
 
-			let convertCallCount = 0;
-			const convertUSDtoCHEQ = async () => {
-				convertCallCount += 1;
-				return { amount: '0ncheq' };
+			let convertArgs: unknown[] | undefined;
+			const convertUSDtoCHEQ = async (
+				usdAmount: string,
+				movingAverage: MovingAverage,
+				wmaStrategy?: WMAStrategy,
+				weights?: bigint[]
+			) => {
+				convertArgs = [usdAmount, movingAverage, wmaStrategy, weights];
+				return { amount: '10000000000ncheq' };
 			};
 
 			const mockQuerier = {
 				[defaultDidExtensionKey]: { params },
-				[defaultOracleExtensionKey]: { convertUSDtoCHEQ },
+				[defaultOracleExtensionKey]: { queryParams: async () => ({ params: {} }), convertUSDtoCHEQ },
 			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
 
 			const context = {
@@ -1674,11 +1905,12 @@ describe('DIDModule', () => {
 				context
 			);
 
-			expect(paramsCallCount).toBe(0);
-			expect(convertCallCount).toBe(0);
-			expect(fee.amount).toEqual([DIDModule.fees.DefaultDeactivateDidDocFee]);
+			expect(paramsCallCount).toBe(1);
+			expect(convertArgs).toEqual([feeRange.minAmount, MovingAverages.WMA, WMAStrategies.BALANCED, undefined]);
+			expect(fee.amount).toEqual([{ amount: '10100000000', denom: DIDModule.baseMinimalDenom }]);
 			expect(fee.gas).toBe(DIDModule.gasLimits.DeactivateDidDocGasLimit);
 			expect(fee.payer).toBe(faucet.address);
+			expect(fee.amount[0].amount).not.toBe(DIDModule.fees.DefaultDeactivateDidDocFee.amount);
 		});
 	});
 
