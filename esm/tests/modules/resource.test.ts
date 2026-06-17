@@ -765,6 +765,62 @@ describe('ResourceModule', () => {
 			]);
 			expect(broadcastFees[0].gas).toBe(ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit);
 		});
+
+		it('should memoize Oracle availability per Resource module instance', async () => {
+			const feeRanges = {
+				image: {
+					denom: ResourceModule.baseUsdDenom,
+					minAmount: '100000000000000000',
+					maxAmount: '100000000000000000',
+				},
+				json: {
+					denom: ResourceModule.baseUsdDenom,
+					minAmount: '400000000000000000',
+					maxAmount: '400000000000000000',
+				},
+				default: {
+					denom: ResourceModule.baseUsdDenom,
+					minAmount: '50000000000000000',
+					maxAmount: '50000000000000000',
+				},
+			};
+			let oracleParamsCallCount = 0;
+			let resourceParamsCallCount = 0;
+			let convertCallCount = 0;
+			const mockQuerier = {
+				[defaultResourceExtensionKey]: {
+					params: async () => {
+						resourceParamsCallCount += 1;
+						return {
+							params: {
+								image: [feeRanges.image],
+								json: [feeRanges.json],
+								default: [feeRanges.default],
+							},
+						};
+					},
+				},
+				[defaultOracleExtensionKey]: {
+					queryParams: async () => {
+						oracleParamsCallCount += 1;
+						return { params: {} };
+					},
+					convertUSDtoCHEQ: async () => {
+						convertCallCount += 1;
+						return { amount: '50000000000ncheq' };
+					},
+				},
+			} as unknown as CheqdQuerier & ResourceExtension & OracleExtension;
+			const resourceModule = new ResourceModule({} as CheqdSigningStargateClient, mockQuerier);
+
+			await resourceModule.generateCreateResourceJsonFees(faucet.address);
+			await resourceModule.generateCreateResourceImageFees(faucet.address);
+			await resourceModule.generateCreateResourceDefaultFees(faucet.address);
+
+			expect(oracleParamsCallCount).toBe(1);
+			expect(resourceParamsCallCount).toBe(3);
+			expect(convertCallCount).toBe(3);
+		});
 	});
 
 	describe('queryLinkedResource', () => {

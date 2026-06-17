@@ -359,6 +359,8 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	/** Querier instance with DID extension capabilities */
 	querier: CheqdQuerier & DidExtension & OracleExtension;
 
+	private oracleFeesAvailability?: Promise<boolean>;
+
 	/**
 	 * Constructs a new DID module instance.
 	 *
@@ -747,21 +749,27 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	}
 
 	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
-		if (!this.querier && context?.sdk?.querier) {
-			this.querier = context.sdk.querier;
+		if (!this.oracleFeesAvailability) {
+			this.oracleFeesAvailability = (async () => {
+				if (!this.querier && context?.sdk?.querier) {
+					this.querier = context.sdk.querier;
+				}
+
+				const oracle = (this.querier as Partial<OracleExtension> | undefined)?.[defaultOracleExtensionKey];
+				if (!oracle?.queryParams) {
+					return false;
+				}
+
+				try {
+					await oracle.queryParams();
+					return true;
+				} catch {
+					return false;
+				}
+			})();
 		}
 
-		const oracle = (this.querier as Partial<OracleExtension> | undefined)?.[defaultOracleExtensionKey];
-		if (!oracle?.queryParams) {
-			return false;
-		}
-
-		try {
-			await oracle.queryParams();
-			return true;
-		} catch {
-			return false;
-		}
+		return this.oracleFeesAvailability;
 	}
 
 	/**

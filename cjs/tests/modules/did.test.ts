@@ -670,6 +670,62 @@ describe('DIDModule', () => {
 				DIDModule.gasLimits.DeactivateDidDocGasLimit,
 			]);
 		});
+
+		it('should memoize Oracle availability per DID module instance', async () => {
+			const feeRanges = {
+				create: {
+					denom: DIDModule.baseUsdDenom,
+					minAmount: '2000000000000000000',
+					maxAmount: '2000000000000000000',
+				},
+				update: {
+					denom: DIDModule.baseUsdDenom,
+					minAmount: '1000000000000000000',
+					maxAmount: '1000000000000000000',
+				},
+				deactivate: {
+					denom: DIDModule.baseUsdDenom,
+					minAmount: '500000000000000000',
+					maxAmount: '500000000000000000',
+				},
+			};
+			let oracleParamsCallCount = 0;
+			let didParamsCallCount = 0;
+			let convertCallCount = 0;
+			const mockQuerier = {
+				[defaultDidExtensionKey]: {
+					params: async () => {
+						didParamsCallCount += 1;
+						return {
+							params: {
+								createDid: [feeRanges.create],
+								updateDid: [feeRanges.update],
+								deactivateDid: [feeRanges.deactivate],
+							},
+						};
+					},
+				},
+				[defaultOracleExtensionKey]: {
+					queryParams: async () => {
+						oracleParamsCallCount += 1;
+						return { params: {} };
+					},
+					convertUSDtoCHEQ: async () => {
+						convertCallCount += 1;
+						return { amount: '50000000000ncheq' };
+					},
+				},
+			} as unknown as CheqdQuerier & DidExtension & OracleExtension;
+			const didModule = new DIDModule({} as CheqdSigningStargateClient, mockQuerier);
+
+			await didModule.generateCreateDidDocFees(faucet.address);
+			await didModule.generateUpdateDidDocFees(faucet.address);
+			await didModule.generateDeactivateDidDocFees(faucet.address);
+
+			expect(oracleParamsCallCount).toBe(1);
+			expect(didParamsCallCount).toBe(3);
+			expect(convertCallCount).toBe(3);
+		});
 	});
 
 	describe('updateDidDocTx', () => {

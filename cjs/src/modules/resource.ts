@@ -212,6 +212,8 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	/** Querier instance with resource extension capabilities */
 	querier: CheqdQuerier & ResourceExtension & OracleExtension;
 
+	private oracleFeesAvailability?: Promise<boolean>;
+
 	/**
 	 * Constructs a new resource module instance.
 	 *
@@ -439,21 +441,27 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	}
 
 	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
-		if (!this.querier && context?.sdk?.querier) {
-			this.querier = context.sdk.querier;
+		if (!this.oracleFeesAvailability) {
+			this.oracleFeesAvailability = (async () => {
+				if (!this.querier && context?.sdk?.querier) {
+					this.querier = context.sdk.querier;
+				}
+
+				const oracle = (this.querier as Partial<OracleExtension> | undefined)?.[defaultOracleExtensionKey];
+				if (!oracle?.queryParams) {
+					return false;
+				}
+
+				try {
+					await oracle.queryParams();
+					return true;
+				} catch {
+					return false;
+				}
+			})();
 		}
 
-		const oracle = (this.querier as Partial<OracleExtension> | undefined)?.[defaultOracleExtensionKey];
-		if (!oracle?.queryParams) {
-			return false;
-		}
-
-		try {
-			await oracle.queryParams();
-			return true;
-		} catch {
-			return false;
-		}
+		return this.oracleFeesAvailability;
 	}
 
 	/**
