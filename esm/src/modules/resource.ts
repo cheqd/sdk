@@ -1,7 +1,7 @@
 import { AbstractCheqdSDKModule, MinimalImportableCheqdSDKModule } from './_.js';
 import { CheqdSigningStargateClient } from '../signer.js';
 import { EncodeObject, GeneratedType, parseCoins } from '@cosmjs/proto-signing';
-import { CheqdNetwork, DidFeeOptions, DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types.js';
+import { DidFeeOptions, DidStdFee, IContext, ISignInputs, QueryExtensionSetup } from '../types.js';
 import {
 	Metadata,
 	MsgCreateResource,
@@ -211,6 +211,8 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 
 	/** Querier instance with resource extension capabilities */
 	querier: CheqdQuerier & ResourceExtension & OracleExtension;
+
+	private oracleFeesAvailability?: Promise<boolean>;
 
 	/**
 	 * Constructs a new resource module instance.
@@ -438,16 +440,28 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		return await this.querier[defaultResourceExtensionKey].latestResourceVersionMetadata(collectionId, name, type);
 	}
 
-	private async resolveNetworkForFees(context?: IContext): Promise<CheqdNetwork> {
-		if (context?.sdk?.options?.rpcUrl) {
-			return await CheqdQuerier.detectNetwork(context.sdk.options.rpcUrl);
+	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
+		if (!this.oracleFeesAvailability) {
+			this.oracleFeesAvailability = (async () => {
+				if (!this.querier && context?.sdk?.querier) {
+					this.querier = context.sdk.querier;
+				}
+
+				const oracle = (this.querier as Partial<OracleExtension> | undefined)?.[defaultOracleExtensionKey];
+				if (!oracle?.queryParams) {
+					return false;
+				}
+
+				try {
+					await oracle.queryParams();
+					return true;
+				} catch {
+					return false;
+				}
+			})();
 		}
 
-		return context?.sdk?.options?.network ?? CheqdNetwork.Testnet;
-	}
-
-	private async shouldUseOracleFees(context?: IContext): Promise<boolean> {
-		return (await this.resolveNetworkForFees(context)) === CheqdNetwork.Testnet;
+		return this.oracleFeesAvailability;
 	}
 
 	/**
@@ -588,27 +602,26 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		const operationFees = (() => {
 			switch (operation) {
 				case 'image':
-					return feeParams.params?.image.find(
-						(fee) => fee.denom === (feeOptions?.feeDenom ?? ResourceModule.baseUsdDenom)
-					);
+					return feeParams.params?.image;
 				case 'json':
-					return feeParams.params?.json.find(
-						(fee) => fee.denom === (feeOptions?.feeDenom ?? ResourceModule.baseUsdDenom)
-					);
+					return feeParams.params?.json;
 				case 'default':
-					return feeParams.params?.default.find(
-						(fee) => fee.denom === (feeOptions?.feeDenom ?? ResourceModule.baseUsdDenom)
-					);
+					return feeParams.params?.default;
 				default:
 					throw new Error('Unsupported operation for fee retrieval');
 			}
 		})();
 
-		if (!operationFees) {
+		const operationFee = feeOptions?.feeDenom
+			? operationFees?.find((fee) => fee.denom === feeOptions.feeDenom)
+			: (operationFees?.find((fee) => fee.denom === ResourceModule.baseUsdDenom) ??
+				operationFees?.find((fee) => fee.denom === ResourceModule.baseMinimalDenom));
+
+		if (!operationFee) {
 			throw new Error(`Fee parameters not found for operation: ${operation}`);
 		}
 
-		return operationFees;
+		return operationFee;
 	}
 
 	/**
