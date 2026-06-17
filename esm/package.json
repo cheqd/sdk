@@ -42,7 +42,7 @@
 		"@cosmjs/math": "^0.36.2",
 		"@cosmjs/proto-signing": "^0.36.2",
 		"@cosmjs/stargate": "^0.36.2",
-		"@cosmjs/tendermint-rpc": "^0.36.2",
+		"@cosmjs/tendermint-rpc": "^0.38.1",
 		"@cosmjs/utils": "^0.36.2",
 		"@stablelib/ed25519": "^2.0.2",
 		"@types/secp256k1": "^4.0.6",
