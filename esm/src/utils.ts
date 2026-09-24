@@ -15,6 +15,7 @@ import {
 	JsonWebKey,
 	Service,
 	ServiceType,
+	CosmosPayerWallet,
 } from './types.js';
 import { fromString, toString } from 'uint8arrays';
 import { bases } from 'multiformats/basics';
@@ -388,9 +389,7 @@ export function validateSpecCompliantPayload(didDocument: DIDDocument): SpecVali
  * @param cosmosPayerSeed - Mnemonic phrase or private key hex string
  * @returns Promise resolving to either HD wallet or direct key wallet
  */
-export function createCosmosPayerWallet(
-	cosmosPayerSeed: string
-): Promise<DirectSecp256k1HdWallet | DirectSecp256k1Wallet> {
+export function createCosmosPayerWallet(cosmosPayerSeed: string): Promise<CosmosPayerWallet> {
 	return EnglishMnemonic._mnemonicMatcher.test(cosmosPayerSeed)
 		? DirectSecp256k1HdWallet.fromMnemonic(cosmosPayerSeed, { prefix: 'cheqd' })
 		: DirectSecp256k1Wallet.fromKey(fromString(cosmosPayerSeed.replace(/^0x/, ''), 'hex'), 'cheqd');

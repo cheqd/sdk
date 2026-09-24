@@ -1,11 +1,19 @@
 import {
+	Metadata,
+	MsgCreateResourcePayload,
+	QueryCollectionResourcesResponse,
+	ResourceWithMetadata,
+} from '@cheqd/ts-proto/cheqd/resource/v2/index.js';
+import {
+	QueryAllDidDocVersionsMetadataResponse,
 	Service as ProtobufService,
+	SignInfo,
 	VerificationMethod as ProtobufVerificationMethod,
 } from '@cheqd/ts-proto/cheqd/did/v2/index.js';
 import { CheqdSDK } from './index.js';
-import { Coin, EncodeObject } from '@cosmjs/proto-signing';
+import { Coin, DirectSecp256k1HdWallet, DirectSecp256k1Wallet, EncodeObject } from '@cosmjs/proto-signing';
 import { Signer } from 'did-jwt';
-import { QueryClient } from '@cosmjs/stargate';
+import { DeliverTxResponse, QueryClient } from '@cosmjs/stargate';
 import { DIDDocument, DIDResolutionResult } from 'did-resolver';
 import { DidExtension } from './modules/did.js';
 import { ResourceExtension } from './modules/resource.js';
@@ -16,6 +24,30 @@ import { Any } from 'cosmjs-types/google/protobuf/any.js';
 import { Pubkey } from '@cosmjs/amino';
 import { MovingAverage, OracleExtension, WMAStrategy } from './modules/oracle.js';
 export { DIDDocument, VerificationMethod, Service, ServiceEndpoint, JsonWebKey } from 'did-resolver';
+
+/** Wallet types accepted by the cheqd SDK for signing Cosmos transactions */
+export type CosmosPayerWallet = DirectSecp256k1HdWallet | DirectSecp256k1Wallet;
+
+/** Result returned after broadcasting a transaction to the cheqd network */
+export type CheqdTransactionResponse = DeliverTxResponse;
+
+/** Signature information used by cheqd DID and resource transactions */
+export type CheqdSignInfo = SignInfo;
+
+/** Payload used to create a resource on the cheqd network */
+export type CheqdResourcePayload = MsgCreateResourcePayload;
+
+/** Metadata associated with a cheqd resource */
+export type CheqdResourceMetadata = Metadata;
+
+/** A cheqd resource together with its metadata */
+export type CheqdResourceWithMetadata = ResourceWithMetadata;
+
+/** Response returned when querying resources in a collection */
+export type CheqdCollectionResourcesResponse = QueryCollectionResourcesResponse;
+
+/** Response returned when querying all versions of a cheqd DID document */
+export type CheqdDidVersionsMetadataResponse = QueryAllDidDocVersionsMetadataResponse;
 
 /** Supported Cheqd blockchain networks */
 export enum CheqdNetwork {
