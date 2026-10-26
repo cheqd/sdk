@@ -10,6 +10,8 @@ import {
 import {
 	AbstractCheqdSDKModule,
 	applyMixins,
+	argumentsWithContext,
+	contextParameterIndex,
 	instantiateCheqdSDKModule,
 	instantiateCheqdSDKModuleRegistryTypes,
 	instantiateCheqdSDKModuleQuerierExtensionSetup,
@@ -124,7 +126,8 @@ export class CheqdSDK {
 		if (!Object.keys(this.methods).includes(method)) {
 			throw new Error(`Method ${method} is not authorized`);
 		}
-		return await this.methods[method](...params, { sdk: this } as IContext);
+		const fn = this.methods[method];
+		return await fn(...argumentsWithContext(params, contextParameterIndex(fn), { sdk: this } as IContext));
 	}
 
 	/**
@@ -307,7 +310,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 }
 
 export { DIDModule, ResourceModule, FeemarketModule, FeeabstractionModule, OracleModule };
-export { AbstractCheqdSDKModule, applyMixins } from './modules/_.js';
+export { AbstractCheqdSDKModule, applyMixins, argumentsWithContext, contextParameterIndex } from './modules/_.js';
 export {
 	DidExtension,
 	MinimalImportableDIDModule,
