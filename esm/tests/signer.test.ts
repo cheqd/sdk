@@ -208,6 +208,18 @@ describe('CheqdSigningStargateClient', () => {
 		});
 	});
 
+	describe('signIdentityTx', () => {
+		it('should throw a clear error when keyType is missing', async () => {
+			const signInputs = [
+				{ verificationMethodId: 'did:cheqd:testnet:z6Jn6NmYkaCepQe2#key-1', privateKeyHex: '00'.repeat(32) },
+			] as ISignInputs[];
+
+			await expect(
+				CheqdSigningStargateClient.signIdentityTx(new Uint8Array([1, 2, 3]), signInputs)
+			).rejects.toThrow('Key type is not defined for did:cheqd:testnet:z6Jn6NmYkaCepQe2#key-1');
+		});
+	});
+
 	describe('simulate', () => {
 		it(
 			'should simulate a did tx',
