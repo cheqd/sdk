@@ -124,7 +124,9 @@ export class CheqdSDK {
 			throw new Error(`Method ${method} is not authorized`);
 		}
 		const fn = this.methods[method];
-		return await fn(...argumentsWithContext(params, contextParameterIndex(fn), { sdk: this } as IContext));
+		const args = argumentsWithContext(params, contextParameterIndex(fn), { sdk: this } as IContext);
+		// call on this.methods, as before: module methods read and cache clients on `this`
+		return await fn.apply(this.methods, args);
 	}
 
 	/**
