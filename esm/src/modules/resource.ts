@@ -723,6 +723,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * Generates fee configuration for image resource creation transactions.
 	 * Uses higher gas limits appropriate for image processing and storage.
 	 *
+	 * Returns a fixed legacy amount in CHEQ. It is only correct on a network without oracle (USD) pricing, where the
+	 * module falls back to it. On a network with oracle pricing, such as cheqd testnet, this amount is too
+	 * low: use the instance method on the SDK instead (`sdk.generateCreateResourceImageFees(feePayer, ...)`), which prices the fee from the oracle.
+	 *
 	 * @param feePayer - Address of the account that will pay the transaction fees
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for image resources
@@ -740,6 +744,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * Generates fee configuration for JSON resource creation transactions.
 	 * Uses gas limits optimized for JSON data processing and validation.
 	 *
+	 * Returns a fixed legacy amount in CHEQ. It is only correct on a network without oracle (USD) pricing, where the
+	 * module falls back to it. On a network with oracle pricing, such as cheqd testnet, this amount is too
+	 * low: use the instance method on the SDK instead (`sdk.generateCreateResourceJsonFees(feePayer, ...)`), which prices the fee from the oracle.
+	 *
 	 * @param feePayer - Address of the account that will pay the transaction fees
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for JSON resources
@@ -756,6 +764,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	/**
 	 * Generates fee configuration for default resource creation transactions.
 	 * Uses standard gas limits for generic resource types and binary data.
+	 *
+	 * Returns a fixed legacy amount in CHEQ. It is only correct on a network without oracle (USD) pricing, where the
+	 * module falls back to it. On a network with oracle pricing, such as cheqd testnet, this amount is too
+	 * low: use the instance method on the SDK instead (`sdk.generateCreateResourceDefaultFees(feePayer, ...)`), which prices the fee from the oracle.
 	 *
 	 * @param feePayer - Address of the account that will pay the transaction fees
 	 * @param granter - Optional address of the account granting fee payment permissions
