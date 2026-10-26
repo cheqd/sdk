@@ -3,6 +3,7 @@ import { DIDModule, MinimalImportableDIDModule, DidExtension } from './modules/d
 import { MinimalImportableResourceModule, ResourceModule, ResourceExtension } from './modules/resource';
 import {
 	AbstractCheqdSDKModule,
+	CheqdSDKModuleConstructor,
 	applyMixins,
 	instantiateCheqdSDKModule,
 	instantiateCheqdSDKModuleRegistryTypes,
@@ -31,8 +32,11 @@ import { defaultOracleExtensionKey, OracleExtension, OracleModule } from './modu
  * Configuration options for initializing the CheqdSDK
  */
 export interface ICheqdSDKOptions {
-	/** Array of modules to be loaded and registered with the SDK */
-	modules: AbstractCheqdSDKModule[];
+	/**
+	 * Modules to load, passed as classes (for example `[DIDModule, ResourceModule]`). Instances are accepted for
+	 * backwards compatibility.
+	 */
+	modules: (CheqdSDKModuleConstructor | AbstractCheqdSDKModule)[];
 	/** Optional querier extensions to extend query functionality */
 	querierExtensions?: Record<string, any>[];
 	/** RPC URL of the blockchain node to connect to */
@@ -132,7 +136,7 @@ export class CheqdSDK {
 	 * @returns Promise resolving to the CheqdSDK instance with loaded modules
 	 * @private
 	 */
-	private async loadModules(modules: AbstractCheqdSDKModule[]): Promise<CheqdSDK> {
+	private async loadModules(modules: (CheqdSDKModuleConstructor | AbstractCheqdSDKModule)[]): Promise<CheqdSDK> {
 		this.options.modules = this.options.modules.map(
 			(module: any) =>
 				instantiateCheqdSDKModule(module, this.signer, this.querier, {
@@ -304,7 +308,7 @@ export async function createCheqdSDK(options: ICheqdSDKOptions): Promise<CheqdSD
 }
 
 export { DIDModule, ResourceModule, FeemarketModule, FeeabstractionModule, OracleModule };
-export { AbstractCheqdSDKModule, applyMixins } from './modules/_';
+export { AbstractCheqdSDKModule, CheqdSDKModuleConstructor, applyMixins } from './modules/_';
 export {
 	DidExtension,
 	MinimalImportableDIDModule,

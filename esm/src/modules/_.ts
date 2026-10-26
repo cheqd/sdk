@@ -57,6 +57,11 @@ type ProtectedMethods<T extends AbstractCheqdSDKModule, K extends keyof T> = T[K
 	: T[K];
 
 /**
+ * A module class, as passed to `createCheqdSDK({ modules })`. The SDK instantiates it.
+ */
+export type CheqdSDKModuleConstructor = new (...args: any[]) => AbstractCheqdSDKModule;
+
+/**
  * Minimal importable interface for SDK modules.
  * Excludes internal implementation details and protected methods for clean external APIs.
  */
