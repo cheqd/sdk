@@ -1,7 +1,7 @@
 import { GeneratedType } from '@cosmjs/proto-signing';
 import { QueryClient } from '@cosmjs/stargate';
 import { CheqdSigningStargateClient } from '../signer.js';
-import { IModuleMethodMap, QueryExtensionSetup } from '../types.js';
+import { IContext, IModuleMethodMap, QueryExtensionSetup } from '../types.js';
 import { CheqdQuerier } from '../querier.js';
 
 /**
@@ -120,4 +120,65 @@ export function applyMixins(derivedCtor: any, constructors: any[]): IModuleMetho
 	});
 
 	return methods;
+}
+
+/**
+ * Finds where a module method takes its SDK `context`, by reading the method's own parameter list. Module methods have
+ * optional parameters before `context` (and some after it), so appending the context to whatever the caller passed puts
+ * it in the wrong parameter whenever optional arguments are left out.
+ *
+ * @param fn - Module method
+ * @returns Index of the parameter named `context`, or -1 if there is none
+ */
+export function contextParameterIndex(fn: Function): number {
+	const source = Function.prototype.toString.call(fn);
+	const start = source.indexOf('(');
+	if (start < 0) return -1;
+	const names: string[] = [];
+	let depth = 0;
+	let quote: string | null = null;
+	let current = '';
+	for (let i = start + 1; i < source.length; i++) {
+		const char = source[i];
+		if (quote) {
+			if (char === quote && source[i - 1] !== '\\') quote = null;
+			current += char;
+			continue;
+		}
+		if (char === "'" || char === '"' || char === '`') {
+			quote = char;
+		} else if (char === '(' || char === '[' || char === '{') {
+			depth++;
+		} else if (char === ')' || char === ']' || char === '}') {
+			if (depth === 0) {
+				names.push(current);
+				break;
+			}
+			depth--;
+		} else if (char === ',' && depth === 0) {
+			names.push(current);
+			current = '';
+			continue;
+		}
+		current += char;
+	}
+	return names.map((param) => param.split('=')[0].trim()).indexOf('context');
+}
+
+/**
+ * Places the SDK context in a method's `context` parameter, padding any optional arguments the caller left out. If the
+ * caller already passed a value in that position it is kept. Without a known position the context is appended, as
+ * before.
+ *
+ * @param params - Arguments the caller passed
+ * @param contextIndex - Index of the method's `context` parameter, from {@link contextParameterIndex}
+ * @param context - SDK context to supply
+ * @returns Arguments to call the method with
+ */
+export function argumentsWithContext(params: unknown[], contextIndex: number, context: IContext): unknown[] {
+	if (contextIndex < 0) return [...params, context];
+	const args = [...params];
+	while (args.length <= contextIndex) args.push(undefined);
+	args[contextIndex] = args[contextIndex] ?? context;
+	return args;
 }
