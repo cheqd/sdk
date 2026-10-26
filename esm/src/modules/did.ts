@@ -1696,6 +1696,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	/**
 	 * Generates standard fees for creating a DID document.
 	 *
+	 * Returns a fixed legacy amount in CHEQ. It is only correct on a network without oracle (USD) pricing, where the
+	 * module falls back to it. On a network with oracle pricing, such as cheqd testnet, this amount is too
+	 * low: use the instance method on the SDK instead (`sdk.generateCreateDidDocFees(feePayer, ...)`), which prices the fee from the oracle.
+	 *
 	 * @param feePayer - Address of the account that will pay the transaction fees
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for DID document creation
@@ -1713,6 +1717,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	 * Generates fee configuration for DID document update transactions.
 	 * Uses default update fees and gas requirements.
 	 *
+	 * Returns a fixed legacy amount in CHEQ. It is only correct on a network without oracle (USD) pricing, where the
+	 * module falls back to it. On a network with oracle pricing, such as cheqd testnet, this amount is too
+	 * low: use the instance method on the SDK instead (`sdk.generateUpdateDidDocFees(feePayer, ...)`), which prices the fee from the oracle.
+	 *
 	 * @param feePayer - Address of the account that will pay the transaction fees
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for DID document updates
@@ -1729,6 +1737,10 @@ export class DIDModule extends AbstractCheqdSDKModule {
 	/**
 	 * Generates fee configuration for DID document deactivation transactions.
 	 * Uses default deactivation fees and gas requirements.
+	 *
+	 * Returns a fixed legacy amount in CHEQ. It is only correct on a network without oracle (USD) pricing, where the
+	 * module falls back to it. On a network with oracle pricing, such as cheqd testnet, this amount is too
+	 * low: use the instance method on the SDK instead (`sdk.generateDeactivateDidDocFees(feePayer, ...)`), which prices the fee from the oracle.
 	 *
 	 * @param feePayer - Address of the account that will pay the transaction fees
 	 * @param granter - Optional address of the account granting fee payment permissions
