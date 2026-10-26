@@ -808,8 +808,10 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		let signInfos: SignInfo[] = [];
 
 		for (let signInput of signInputs) {
-			if (typeof signInput.keyType === undefined) {
-				throw new Error('Key type is not defined');
+			if (!signInput.keyType) {
+				throw new Error(
+					`Key type is not defined for ${signInput.verificationMethodId}: set keyType to 'Ed25519', 'Secp256k1' or 'P256'`
+				);
 			}
 
 			let signature: string;
