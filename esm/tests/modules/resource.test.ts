@@ -663,6 +663,18 @@ describe('ResourceModule', () => {
 			expect(fee.payer).toBe(faucet.address);
 		});
 
+		it('should use feeOptions.gasLimit instead of the fixed default gas limit', async () => {
+			const gasLimit = '3000000';
+			for (const generate of [
+				ResourceModule.generateCreateResourceJsonFees,
+				ResourceModule.generateCreateResourceImageFees,
+				ResourceModule.generateCreateResourceDefaultFees,
+			]) {
+				expect((await generate(faucet.address, undefined, { gasLimit })).gas).toBe(gasLimit);
+				expect((await generate(faucet.address)).gas).toBe('1000000');
+			}
+		});
+
 		it('should auto-pick Resource pricing params by denom when feeDenom is omitted', async () => {
 			const usdFeeRange = {
 				denom: ResourceModule.baseUsdDenom,

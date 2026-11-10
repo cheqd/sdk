@@ -496,7 +496,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 
 		if (!(await this.shouldUseOracleFees(context))) {
-			return ResourceModule.generateCreateResourceImageFees(feePayer, granter);
+			return ResourceModule.generateCreateResourceImageFees(feePayer, granter, feeOptions);
 		}
 		// fetch fee parameters from the Resource module
 		const feeParams = await this.queryResourceParams(context);
@@ -507,7 +507,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		// calculate the oracle fee amount based on the price range and options
 		return {
 			amount: [await this.calculateOracleFeeAmount(priceRange, feeOptions, context)],
-			gas: ResourceModule.gasLimits.CreateLinkedResourceImageGasLimit,
+			gas: feeOptions?.gasLimit ?? ResourceModule.gasLimits.CreateLinkedResourceImageGasLimit,
 			payer: feePayer,
 			granter,
 		} satisfies DidStdFee;
@@ -533,7 +533,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 
 		if (!(await this.shouldUseOracleFees(context))) {
-			return ResourceModule.generateCreateResourceJsonFees(feePayer, granter);
+			return ResourceModule.generateCreateResourceJsonFees(feePayer, granter, feeOptions);
 		}
 		// fetch fee parameters from the Resource module
 		const feeParams = await this.queryResourceParams(context);
@@ -544,7 +544,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		// calculate the oracle fee amount based on the price range and options
 		return {
 			amount: [await this.calculateOracleFeeAmount(priceRange, feeOptions, context)],
-			gas: ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit,
+			gas: feeOptions?.gasLimit ?? ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit,
 			payer: feePayer,
 			granter,
 		} satisfies DidStdFee;
@@ -570,7 +570,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		}
 
 		if (!(await this.shouldUseOracleFees(context))) {
-			return ResourceModule.generateCreateResourceDefaultFees(feePayer, granter);
+			return ResourceModule.generateCreateResourceDefaultFees(feePayer, granter, feeOptions);
 		}
 		// fetch fee parameters from the Resource module
 		const feeParams = await this.queryResourceParams(context);
@@ -581,7 +581,7 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 		// calculate the oracle fee amount based on the price range and options
 		return {
 			amount: [await this.calculateOracleFeeAmount(priceRange, feeOptions, context)],
-			gas: ResourceModule.gasLimits.CreateLinkedResourceDefaultGasLimit,
+			gas: feeOptions?.gasLimit ?? ResourceModule.gasLimits.CreateLinkedResourceDefaultGasLimit,
 			payer: feePayer,
 			granter,
 		} satisfies DidStdFee;
@@ -727,10 +727,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for image resources
 	 */
-	static async generateCreateResourceImageFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+	static async generateCreateResourceImageFees(feePayer: string, granter?: string, feeOptions?: DidFeeOptions): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceImageFee],
-			gas: ResourceModule.gasLimits.CreateLinkedResourceImageGasLimit,
+			gas: feeOptions?.gasLimit ?? ResourceModule.gasLimits.CreateLinkedResourceImageGasLimit,
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
@@ -744,10 +744,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for JSON resources
 	 */
-	static async generateCreateResourceJsonFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+	static async generateCreateResourceJsonFees(feePayer: string, granter?: string, feeOptions?: DidFeeOptions): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceJsonFee],
-			gas: ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit,
+			gas: feeOptions?.gasLimit ?? ResourceModule.gasLimits.CreateLinkedResourceJsonGasLimit,
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
@@ -761,10 +761,10 @@ export class ResourceModule extends AbstractCheqdSDKModule {
 	 * @param granter - Optional address of the account granting fee payment permissions
 	 * @returns Promise resolving to the fee configuration for default resources
 	 */
-	static async generateCreateResourceDefaultFees(feePayer: string, granter?: string): Promise<DidStdFee> {
+	static async generateCreateResourceDefaultFees(feePayer: string, granter?: string, feeOptions?: DidFeeOptions): Promise<DidStdFee> {
 		return {
 			amount: [ResourceModule.fees.DefaultCreateResourceDefaultFee],
-			gas: ResourceModule.gasLimits.CreateLinkedResourceDefaultGasLimit,
+			gas: feeOptions?.gasLimit ?? ResourceModule.gasLimits.CreateLinkedResourceDefaultGasLimit,
 			payer: feePayer,
 			granter: granter,
 		} as DidStdFee;
