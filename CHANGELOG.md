@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.6.0](https://github.com/cheqd/sdk/compare/5.5.1...5.6.0) (2026-11-11)
+
+### Features
+
+* **resource:** honour feeOptions.gasLimit when creating linked resources ([3c3aa6c](https://github.com/cheqd/sdk/commit/3c3aa6c38700df0b89b730c1d5220a0f1bcc55dd))
+* **resource:** honour feeOptions.gasLimit when creating linked resources ([#518](https://github.com/cheqd/sdk/issues/518)) ([c7757e4](https://github.com/cheqd/sdk/commit/c7757e4dd52f595190b3ac0683127ad5e98ce5ca))
+
+### Bug Fixes
+
+* **signer:** limit concurrent simulations in batchMessages ([1dbba77](https://github.com/cheqd/sdk/commit/1dbba77ff929e437757adef6a279cb33b17d5c9e))
+* **signer:** limit concurrent simulations in batchMessages ([#519](https://github.com/cheqd/sdk/issues/519)) ([2923acb](https://github.com/cheqd/sdk/commit/2923acb96928a012d3490a8823638070c559b6fa)), closes [#518](https://github.com/cheqd/sdk/issues/518) [#518](https://github.com/cheqd/sdk/issues/518)
+
 ## [5.5.1](https://github.com/cheqd/sdk/compare/5.5.0...5.5.1) (2026-06-17)
 
 ### Bug Fixes
