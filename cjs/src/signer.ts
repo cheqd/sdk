@@ -136,6 +136,8 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 	private readonly endpoint?: string;
 	/** Maximum gas limit allowed for transactions */
 	static readonly maxGasLimit = Number.MAX_SAFE_INTEGER;
+	/** Number of simulations `batchMessages` runs at the same time */
+	static readonly simulationConcurrency = 10;
 
 	/**
 	 * Creates a new CheqdSigningStargateClient by establishing a connection to the specified endpoint.
@@ -576,9 +578,14 @@ export class CheqdSigningStargateClient extends SigningStargateClient {
 		maxGasLimit: number = 30000000 // default gas limit, use consensus params if available
 	): Promise<MessageBatch> {
 		// simulate
-		const gasEstimates = await Promise.all(
-			messages.map(async (message) => this.simulate(signerAddress, [message], memo))
-		);
+		// in chunks: each simulation opens its own connection, and an unbounded burst makes the node drop connections
+		const gasEstimates: number[] = [];
+		for (let i = 0; i < messages.length; i += CheqdSigningStargateClient.simulationConcurrency) {
+			const chunk = messages.slice(i, i + CheqdSigningStargateClient.simulationConcurrency);
+			gasEstimates.push(
+				...(await Promise.all(chunk.map(async (message) => this.simulate(signerAddress, [message], memo))))
+			);
+		}
 
 		// batch messages
 		const { batches, gasPerBatch, currentBatch, currentBatchGas } = gasEstimates.reduce(
